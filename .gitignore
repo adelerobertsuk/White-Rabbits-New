@@ -1,0 +1,6 @@
+.DS_Store
+.netlify
+.idea
+.vscode
+*.tgz
+node_modules
