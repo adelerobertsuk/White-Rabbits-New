@@ -7,12 +7,13 @@
 //  web app's artwork, so it stays crisp at any size and themes correctly
 //  for light and dark mode.
 //
-//  It has two looks, exactly like the web app:
-//  - .mark: the plain brand silhouette (dark outline, no fill, no
-//    seasonal decoration). Used for the logo and the Today ring.
+//  It has three looks, matching the web app:
+//  - .mark: a tight outline with no tail, for tiny chrome like the
+//    settings button, so the tail never reads as a stray dot.
+//  - .asset: the seated brand bunny as black line-art, with its round
+//    tail, no fill, no seasonal prop. Used in the Today ring.
 //  - .charm: the collectible version, filled and stroked in that
-//    month's own colors, with its seasonal prop (a scarf, a snowflake,
-//    a sprig of blossom). Used for the Charms grid and Year of Luck.
+//    month's own colors, with its seasonal prop.
 //
 
 import SwiftUI
@@ -29,6 +30,7 @@ struct BunnyMarkView: View {
     enum Style {
         case mark
         case charm
+        case asset
     }
 
     let bunny: Bunny
@@ -48,6 +50,20 @@ struct BunnyMarkView: View {
     }
     private var accentColor: Color { unlocked ? Color(hex: bunny.accentHex) : palette.faint }
 
+    /// `.mark` stays tailless at small sizes. `.asset` adds the round tail
+    /// so the Today ring matches the brand line-art. `.charm` adds tail
+    /// and the month's seasonal prop.
+    private var extraOps: [BunnyDraw] {
+        switch style {
+        case .mark:
+            return []
+        case .asset:
+            return [tailOp()]
+        case .charm:
+            return [tailOp()] + propOps()
+        }
+    }
+
     var body: some View {
         Canvas { context, size in
             let scale = min(size.width, size.height) / 80
@@ -63,7 +79,7 @@ struct BunnyMarkView: View {
                 )
             }
 
-            for op in bodyOps() + (style == .charm ? [tailOp()] + propOps() : []) {
+            for op in bodyOps() + extraOps {
                 let scaled = op.path.applying(transform)
                 if let fill = op.fill {
                     context.fill(scaled, with: .color(fill.opacity(op.opacity)))
@@ -96,12 +112,9 @@ struct BunnyMarkView: View {
         ]
     }
 
-    /// The little tail bump on the body's side. Only overlaps the body by a
-    /// sliver, so with no fill (the plain `.mark` outline used for the
-    /// settings button and the Today ring) its stroke reads as a stray dot
-    /// floating next to the bunny rather than a tail. Kept for `.charm`,
-    /// where the matching fill colour makes the two shapes read as one
-    /// silhouette; left out of `.mark` entirely for a cleaner brand mark.
+    /// The little tail bump on the body's side. Left off `.mark` at tiny
+    /// sizes, where the stroke reads as a stray dot. Drawn for `.asset`
+    /// and `.charm`, where there is room for it to read as a tail.
     private func tailOp() -> BunnyDraw {
         BunnyDraw(path: svgCircle(58.5, 59, 4.6), fill: fillColor, stroke: strokeColor, lineWidth: 1.5)
     }

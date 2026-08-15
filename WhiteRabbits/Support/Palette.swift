@@ -98,41 +98,38 @@ enum Layout {
 
 /// The uppercase micro-label used for things like "AUGUST INTENTION" or
 /// "TODAY · AUGUST 2026": the smallest, quietest text in the hierarchy.
-/// Sized to the share card's 9pt wide-tracked labels.
 private struct KickerText: ViewModifier {
-    @Environment(\.palette) private var palette
-    func body(content: Content) -> some View {
-        content
-            .font(.system(size: 9, weight: .semibold))
-            .textCase(.uppercase)
-            .tracking(2.4)
-            .foregroundStyle(palette.muted)
-    }
-}
-
-/// The uppercase label for a card or list section, e.g. "SUGGESTIONS",
-/// "FRIENDS": one step louder than a kicker, still delicate.
-private struct SectionHeaderText: ViewModifier {
     @Environment(\.palette) private var palette
     func body(content: Content) -> some View {
         content
             .font(.system(size: 10, weight: .semibold))
             .textCase(.uppercase)
-            .tracking(2.0)
+            .tracking(2.2)
             .foregroundStyle(palette.muted)
     }
 }
 
-/// A screen's own title, e.g. "Charms", "Quiet settings." Light serif,
-/// matching the share card's 22pt headline rather than a heavy display.
+/// The uppercase label for a card or list section, e.g. "SUGGESTIONS",
+/// "FRIENDS": one step louder than a kicker.
+private struct SectionHeaderText: ViewModifier {
+    @Environment(\.palette) private var palette
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 13, weight: .semibold))
+            .textCase(.uppercase)
+            .tracking(1.56)
+            .foregroundStyle(palette.muted)
+    }
+}
+
+/// A screen's own title, e.g. "Charms", "Quiet settings."
 private struct DisplayTitleText: ViewModifier {
     @Environment(\.palette) private var palette
     var weight: Font.Weight = .light
     func body(content: Content) -> some View {
         content
-            .font(.system(size: 22, weight: weight, design: .serif))
-            .tracking(0.2)
-            .lineSpacing(2)
+            .font(.system(size: 28, weight: weight))
+            .tracking(-1.0)
             .foregroundStyle(palette.ink)
     }
 }

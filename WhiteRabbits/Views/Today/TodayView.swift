@@ -69,7 +69,8 @@ struct TodayView: View {
                     }
                 }
                 .padding(Layout.screenInset)
-                .padding(.bottom, 40)
+                // Generous bottom padding to clear the floating bottom navigation bar completely
+                .padding(.bottom, 100)
             }
             .scrollBounceBehavior(.basedOnSize)
             .sanctuaryBackground()
@@ -90,14 +91,19 @@ struct TodayView: View {
     // MARK: - Pieces
 
     private var header: some View {
-        VStack(spacing: 6) {
+        VStack(spacing: 10) {
             Text("White Rabbits")
-                .displayTitleStyle()
+                .font(.system(size: 38, weight: .light))
+                .tracking(-2.1)
+                .foregroundStyle(palette.ink)
             Text(store.greeting())
-                .bodyStyle(muted: true)
+                .font(.system(size: 14, weight: .regular))
+                .foregroundStyle(palette.muted)
                 .multilineTextAlignment(.center)
             Text(doneText)
-                .kickerStyle()
+                .font(.system(size: 11, weight: .semibold))
+                .textCase(.uppercase)
+                .tracking(0.9)
                 .foregroundStyle(palette.faint)
         }
         .frame(maxWidth: .infinity)
@@ -110,7 +116,8 @@ struct TodayView: View {
             Text(store.monthLightKicker())
                 .kickerStyle()
             Text(inspiration.line)
-                .readingStyle()
+                .font(.system(size: 16, weight: .regular))
+                .foregroundStyle(palette.ink)
                 .multilineTextAlignment(.center)
             Text(inspiration.prompt)
                 .bodyStyle(muted: true)
