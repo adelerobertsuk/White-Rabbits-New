@@ -140,12 +140,14 @@ struct JournalEntryDetailView: View {
 
     private func renderCard() {
         #if canImport(UIKit)
+        let formatter = DateFormatter()
+        formatter.setLocalizedDateFormatFromTemplate("MMMMyyyy")
         cardImage = ShareCardRenderer.render(
-            kicker: dateLabel,
-            bodyText: text.isEmpty ? String(localized: "journal.detail.photoOnly", defaultValue: "A photograph for this day.") : text,
+            monthYear: formatter.string(from: entry.date),
+            headline: text.isEmpty ? String(localized: "journal.detail.photoOnly", defaultValue: "A photograph for this day.") : text,
+            subtitle: InspirationData.today(for: entry.date).line,
             photo: photo,
-            bunny: store.currentBunny(entry.date),
-            footer: "White Rabbits"
+            bunny: store.currentBunny(entry.date)
         )
         #endif
     }

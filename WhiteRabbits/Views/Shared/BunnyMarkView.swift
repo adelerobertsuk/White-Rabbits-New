@@ -63,7 +63,7 @@ struct BunnyMarkView: View {
                 )
             }
 
-            for op in bodyOps() + (style == .charm ? propOps() : []) {
+            for op in bodyOps() + (style == .charm ? [tailOp()] + propOps() : []) {
                 let scaled = op.path.applying(transform)
                 if let fill = op.fill {
                     context.fill(scaled, with: .color(fill.opacity(op.opacity)))
@@ -91,10 +91,19 @@ struct BunnyMarkView: View {
             BunnyDraw(path: svgPath("M29 34C27.2 12 33.5 5.5 37.2 24.5"), fill: fillColor, stroke: strokeColor, lineWidth: 1.6),
             BunnyDraw(path: svgPath("M41 31C47.5 11 55 14.5 45.5 33"), fill: fillColor, stroke: strokeColor, lineWidth: 1.6),
             BunnyDraw(path: svgEllipse(37.5, 39, 12.2, 11), fill: fillColor, stroke: strokeColor, lineWidth: 1.6),
-            BunnyDraw(path: svgCircle(58.5, 59, 4.6), fill: fillColor, stroke: strokeColor, lineWidth: 1.5),
             BunnyDraw(path: svgCircle(33.2, 38.2, 1.35), fill: strokeColor, stroke: nil),
             BunnyDraw(path: svgPath("M28.5 41.5c2.2 2.4 5.4 2.6 7.8.4"), fill: nil, stroke: strokeColor, lineWidth: 1.15),
         ]
+    }
+
+    /// The little tail bump on the body's side. Only overlaps the body by a
+    /// sliver, so with no fill (the plain `.mark` outline used for the
+    /// settings button and the Today ring) its stroke reads as a stray dot
+    /// floating next to the bunny rather than a tail. Kept for `.charm`,
+    /// where the matching fill colour makes the two shapes read as one
+    /// silhouette; left out of `.mark` entirely for a cleaner brand mark.
+    private func tailOp() -> BunnyDraw {
+        BunnyDraw(path: svgCircle(58.5, 59, 4.6), fill: fillColor, stroke: strokeColor, lineWidth: 1.5)
     }
 
     private func scarfOps(_ a: Color) -> [BunnyDraw] {

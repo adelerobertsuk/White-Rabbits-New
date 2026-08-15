@@ -76,12 +76,14 @@ struct IntentionCardView: View {
 
     private func renderCard() {
         #if canImport(UIKit)
+        let formatter = DateFormatter()
+        formatter.setLocalizedDateFormatFromTemplate("MMMMyyyy")
         cardImage = ShareCardRenderer.render(
-            kicker: kicker,
-            bodyText: record.intention ?? "",
+            monthYear: formatter.string(from: Date()),
+            headline: record.intention ?? "",
+            subtitle: InspirationData.today().line,
             photo: store.intentionPhoto(),
-            bunny: store.currentBunny(),
-            footer: "White Rabbits"
+            bunny: store.currentBunny()
         )
         #endif
     }
