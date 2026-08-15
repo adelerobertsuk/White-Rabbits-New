@@ -2,8 +2,9 @@
 //  YearOfLuckStampCardView.swift
 //  WhiteRabbits
 //
-//  The 12-month stamp card, living here in Circle as a quiet
-//  reference. It never pops up uninvited after journaling.
+//  A quiet teaser for the Year of luck: this month's charm, plus a link
+//  to the full 12-month grid over on the Charms tab, instead of
+//  duplicating that whole grid here too.
 //
 
 import SwiftUI
@@ -11,8 +12,9 @@ import SwiftUI
 struct YearOfLuckStampCardView: View {
     @EnvironmentObject private var store: AppStore
     @Environment(\.palette) private var palette
+    @Environment(\.tabSelection) private var tabSelection
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 4)
+    private var currentBunny: Bunny { store.currentBunny() }
 
     private var currentYear: String {
         let formatter = DateFormatter()
@@ -25,10 +27,7 @@ struct YearOfLuckStampCardView: View {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(currentYear)
-                        .font(.system(size: 10, weight: .medium))
-                        .textCase(.uppercase)
-                        .tracking(2.2)
-                        .foregroundStyle(palette.muted)
+                        .kickerStyle()
                     Text(String(localized: "circle.stampCard.title", defaultValue: "Year of luck"))
                         .font(.system(size: 24, weight: .light))
                         .tracking(-0.96)
@@ -36,24 +35,38 @@ struct YearOfLuckStampCardView: View {
                 }
                 Spacer()
                 Text(String(format: String(localized: "circle.stampCard.countShort", defaultValue: "%d OF 12"), store.unlockedCharmIds.count))
-                    .font(.system(size: 10, weight: .medium))
-                    .textCase(.uppercase)
-                    .tracking(2.2)
-                    .foregroundStyle(palette.muted)
+                    .kickerStyle()
             }
 
-            LazyVGrid(columns: columns, spacing: 14) {
-                ForEach(BunnyData.all) { bunny in
-                    VStack(spacing: 6) {
-                        CharmView(bunny: bunny, unlocked: store.unlockedCharmIds.contains(bunny.id), size: 48)
-                        Text(String(bunny.season.prefix(3)))
-                            .font(.system(size: 10, weight: .medium))
-                            .foregroundStyle(palette.faint)
-                    }
+            HStack(spacing: 14) {
+                CharmView(bunny: currentBunny, unlocked: store.unlockedCharmIds.contains(currentBunny.id), size: 56)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(String(localized: "circle.stampCard.thisMonth", defaultValue: "This month's charm"))
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(palette.ink)
+                    Text(currentBunny.season)
+                        .font(.system(size: 13))
+                        .foregroundStyle(palette.muted)
                 }
+                Spacer()
             }
+
+            Button {
+                Haptics.light()
+                tabSelection.wrappedValue = .charms
+            } label: {
+                HStack(spacing: 4) {
+                    Text(String(localized: "circle.stampCard.seeAll", defaultValue: "See all in Charms"))
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 11, weight: .semibold))
+                }
+                .font(.system(size: 13, weight: .medium))
+                .foregroundStyle(palette.ink)
+            }
+            .buttonStyle(.plain)
         }
-        .padding(18)
+        .padding(Layout.cardPadding)
         .cardBackground()
     }
 }

@@ -9,6 +9,19 @@ import SwiftUI
 
 enum RootTab { case today, journal, circle, charms }
 
+/// Lets a screen inside one tab switch the app to another tab, e.g.
+/// Circle's "Year of luck" teaser linking straight to the Charms tab.
+private struct TabSelectionKey: EnvironmentKey {
+    static let defaultValue: Binding<RootTab> = .constant(.today)
+}
+
+extension EnvironmentValues {
+    var tabSelection: Binding<RootTab> {
+        get { self[TabSelectionKey.self] }
+        set { self[TabSelectionKey.self] = newValue }
+    }
+}
+
 struct RootTabView: View {
     @State private var selection: RootTab = .today
 
@@ -56,6 +69,7 @@ private struct TintedTabs: View {
         .tint(palette.accent)
         .toolbarBackground(.ultraThinMaterial, for: .tabBar)
         .toolbarBackground(.visible, for: .tabBar)
+        .environment(\.tabSelection, $selection)
     }
 }
 

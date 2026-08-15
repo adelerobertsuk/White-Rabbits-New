@@ -55,10 +55,7 @@ struct CircleView: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text(String(localized: "tab.circle", defaultValue: "Circle"))
-                        .font(.system(size: 10, weight: .medium))
-                        .textCase(.uppercase)
-                        .tracking(2.2)
-                        .foregroundStyle(palette.muted)
+                        .kickerStyle()
                 }
             }
             .settingsButton()
@@ -94,10 +91,7 @@ struct CircleView: View {
 
             VStack(spacing: 8) {
                 Text(String(localized: "circle.onboarding.title", defaultValue: "Opt in, whenever you like"))
-                    .font(.system(size: 10, weight: .medium))
-                    .textCase(.uppercase)
-                    .tracking(2.2)
-                    .foregroundStyle(palette.muted)
+                    .kickerStyle()
 
                 Text(String(localized: "circle.onboarding.heading", defaultValue: "Shared Sanctuary"))
                     .font(.system(size: 32, weight: .light))
@@ -110,11 +104,14 @@ struct CircleView: View {
                     .multilineTextAlignment(.center)
             }
 
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 0) {
                 onboardingRow(
                     title: String(localized: "circle.onboarding.shared.title", defaultValue: "Shared, if you join"),
                     body: String(localized: "circle.onboarding.shared", defaultValue: "Your name, this month's intention, and your seasonal stamp.")
                 )
+                Rectangle()
+                    .fill(palette.line)
+                    .frame(height: 1)
                 onboardingRow(
                     title: String(localized: "circle.onboarding.private.title", defaultValue: "Never shared"),
                     body: String(localized: "circle.onboarding.private", defaultValue: "Journal notes, photographs, voice transcripts, and habits stay on this phone.")
@@ -146,16 +143,7 @@ struct CircleView: View {
                 .foregroundStyle(palette.muted)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 14)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(palette.card)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .strokeBorder(palette.line, lineWidth: 1)
-        )
+        .padding(.vertical, 12)
     }
 }
 

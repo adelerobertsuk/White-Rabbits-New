@@ -21,10 +21,7 @@ struct FriendsSparksView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     HStack {
                         Text(String(localized: "circle.members.title", defaultValue: "In your circle"))
-                            .font(.system(size: 13, weight: .semibold))
-                            .textCase(.uppercase)
-                            .tracking(1.2)
-                            .foregroundStyle(palette.muted)
+                            .sectionHeaderStyle()
                         Spacer()
                         if store.isSyncingCircle {
                             ProgressView()
@@ -53,10 +50,7 @@ struct FriendsSparksView: View {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
                     Text(String(localized: "circle.friends.title", defaultValue: "Friends"))
-                        .font(.system(size: 13, weight: .semibold))
-                        .textCase(.uppercase)
-                        .tracking(1.2)
-                        .foregroundStyle(palette.muted)
+                        .sectionHeaderStyle()
                     Spacer()
                     Button {
                         showAddFriend = true
@@ -77,19 +71,34 @@ struct FriendsSparksView: View {
                 }
             }
 
-            VStack(alignment: .leading, spacing: 10) {
-                Text(String(localized: "circle.fellows.title", defaultValue: "Fellow intentions"))
-                    .font(.system(size: 13, weight: .semibold))
-                    .textCase(.uppercase)
-                    .tracking(1.2)
-                    .foregroundStyle(palette.muted)
+            if showFellows {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(String(localized: "circle.fellows.title", defaultValue: "Fellow intentions"))
+                        .sectionHeaderStyle()
 
-                ForEach(store.fellows()) { card in
-                    SparkCardView(card: card, canRemove: false)
+                    ForEach(fellowCards) { card in
+                        SparkCardView(card: card, canRemove: false)
+                    }
                 }
             }
         }
         .sheet(isPresented: $showAddFriend) { AddFriendSheet() }
+    }
+
+    /// Real connections: circle members plus friends Adele has added.
+    private var realConnectionCount: Int {
+        store.circleMembers.count + store.friends.count
+    }
+
+    /// Once there are 2 or more real connections, the fictional "fellow"
+    /// cards step aside entirely so the screen reflects Adele's actual
+    /// circle rather than always padding it out with 4 placeholder cards.
+    private var showFellows: Bool {
+        realConnectionCount < 2
+    }
+
+    private var fellowCards: [SanctuaryCard] {
+        Array(store.fellows().prefix(2))
     }
 }
 
@@ -137,15 +146,16 @@ private struct SparkCardView: View {
                     HStack(spacing: 5) {
                         Image(systemName: sent ? "checkmark" : "sparkle")
                             .font(.system(size: 12, weight: .semibold))
+                            .foregroundStyle(sent ? palette.muted : palette.accent)
                         Text(sent
                              ? String(localized: "circle.spark.sent", defaultValue: "Sent")
                              : String(localized: "circle.spark.send", defaultValue: "Send a spark"))
                             .font(.system(size: 12, weight: .medium))
+                            .foregroundStyle(sent ? palette.muted : palette.ink)
                     }
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
-                    .background(Capsule().fill(sent ? palette.line : palette.accent))
-                    .foregroundStyle(sent ? palette.muted : palette.bg)
+                    .overlay(Capsule().strokeBorder(palette.line, lineWidth: 1))
                 }
                 .buttonStyle(.plain)
                 .disabled(sent)
@@ -172,7 +182,7 @@ private struct SparkCardView: View {
             }
         }
         .padding(12)
-        .cardBackground(cornerRadius: 18)
+        .cardBackground(cornerRadius: Layout.cardRadius)
     }
 
     @ViewBuilder

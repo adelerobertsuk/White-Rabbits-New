@@ -21,19 +21,12 @@ struct MyIntentionCardView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack(alignment: .top, spacing: 14) {
+            HStack(alignment: .center, spacing: 14) {
                 profilePhoto
 
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(store.monthName())
-                        .font(.system(size: 12, weight: .semibold))
-                        .textCase(.uppercase)
-                        .tracking(1)
-                        .foregroundStyle(palette.muted)
-                    Text(String(localized: "intention.card.title", defaultValue: "My Intention"))
-                        .font(.system(size: 19, weight: .medium))
-                        .foregroundStyle(palette.ink)
-                }
+                Text(kickerText)
+                    .kickerStyle()
+
                 Spacer()
             }
 
@@ -47,14 +40,11 @@ struct MyIntentionCardView: View {
                             .foregroundStyle(palette.ink)
                     } else {
                         Text(String(localized: "intention.card.empty", defaultValue: "Set it when you are ready. The circle can wait. Your journal is never asked for."))
-                            .font(.system(size: 15))
+                            .font(.system(size: 16))
                             .foregroundStyle(palette.muted)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(14)
-                .background(palette.card)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
             .buttonStyle(.plain)
 
@@ -67,7 +57,7 @@ struct MyIntentionCardView: View {
                 .tint(palette.accent)
             }
         }
-        .padding(18)
+        .padding(Layout.cardPadding)
         .cardBackground()
         .sheet(isPresented: $showEditor) { IntentionEditorView() }
         .onChange(of: profileItem) { _, newItem in
@@ -78,6 +68,10 @@ struct MyIntentionCardView: View {
                 #endif
             }
         }
+    }
+
+    private var kickerText: String {
+        String(format: String(localized: "intention.card.kicker", defaultValue: "%@ intention"), store.monthName())
     }
 
     private var pinBinding: Binding<Bool> {
