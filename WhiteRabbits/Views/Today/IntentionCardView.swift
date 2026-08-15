@@ -34,6 +34,7 @@ struct IntentionCardView: View {
         .cardBackground()
         .onAppear { renderCard() }
         .onChange(of: record.intention) { _, _ in renderCard() }
+        .onChange(of: record.photoFileName) { _, _ in renderCard() }
     }
 
     @ViewBuilder
@@ -47,6 +48,7 @@ struct IntentionCardView: View {
                 Text(String(localized: "today.intention.share", defaultValue: "Share story card"))
             }
             .buttonStyle(PillButtonStyle(filled: false, compact: true))
+            .id(cardImage)
         } else {
             Button {} label: {
                 Text(String(localized: "today.intention.share", defaultValue: "Share story card"))
@@ -81,7 +83,7 @@ struct IntentionCardView: View {
         cardImage = ShareCardRenderer.render(
             monthYear: formatter.string(from: Date()),
             headline: record.intention ?? "",
-            subtitle: InspirationData.today().line,
+            subtitle: InspirationData.signature().line,
             photo: store.intentionPhoto(),
             bunny: store.currentBunny()
         )

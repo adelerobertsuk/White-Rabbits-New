@@ -2,26 +2,17 @@
 //  ShareCardView.swift
 //  WhiteRabbits
 //
-//  Turns an intention or a journal page into a real story card: a tall
-//  9:16 image with a warm-to-dark gradient, a thin gold frame, the
-//  month's charm badge straddling the photo, and a fixed ritual footer.
-//  Rendered off-screen with ImageRenderer, so the iOS share sheet offers
-//  a real "Save Image" option (and Messages/Instagram get a photo to
-//  work with) instead of a bare line of text.
-//
-//  Always drawn in the light palette, regardless of the phone's current
-//  mode, so a card saved tonight looks the same as one saved next month.
+//  Story card laid out on a fixed 360×640 canvas. Positions are taken
+//  from the reference image (576×1024, same 9:16), scaled by 0.625, so
+//  ImageRenderer cannot reflow the photo over the header or the badge
+//  over the words.
 //
 
 import SwiftUI
 
 struct ShareCardView: View {
-    /// e.g. "August 2026".
     let monthYear: String
-    /// The main line: an intention, or a journal entry's text.
     let headline: String
-    /// A quiet second line under the headline, e.g. the day's
-    /// inspiration line. Left out entirely when `nil`.
     let subtitle: String?
     let photo: PlatformImage?
     let bunny: Bunny
@@ -29,135 +20,164 @@ struct ShareCardView: View {
     static let size = CGSize(width: 360, height: 640)
 
     private let palette = Palette.light
-    private let gold = Color(hex: "C4A36A")
+    private var gold: Color { palette.accent }
+
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            background
+
+            header
+                .padding(.leading, 32)
+                .padding(.top, 40)
+
+            photoBlock
+                .frame(width: 300, height: 198)
+                .padding(.leading, 30)
+                .padding(.top, 70)
+
+            badge
+                .frame(maxWidth: .infinity)
+                .padding(.top, 230)
+
+            VStack(spacing: 14) {
+                Text(Self.cleaned(headline))
+                    .font(.system(size: 22, weight: .regular))
+                    .tracking(-0.3)
+                    .lineSpacing(1)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(palette.ink)
+                    .lineLimit(4)
+                    .minimumScaleFactor(0.8)
+
+                if let subtitle, !subtitle.isEmpty {
+                    Text(subtitle)
+                        .font(.system(size: 13, weight: .regular))
+                        .multilineTextAlignment(.center)
+                        .foregroundStyle(gold.opacity(0.85))
+                        .lineLimit(2)
+                }
+            }
+            .padding(.horizontal, 36)
+            .padding(.top, 318)
+            .frame(maxWidth: .infinity, alignment: .top)
+
+            Text("PAUSE  ·  REFLECT  ·  INTEND  ·  BEGIN")
+                .font(.system(size: 9, weight: .medium))
+                .tracking(1.5)
+                .foregroundStyle(gold)
+                .padding(.leading, 32)
+                .padding(.top, 598)
+
+            Rectangle()
+                .strokeBorder(gold.opacity(0.7), lineWidth: 0.8)
+                .padding(18)
+        }
+        .frame(width: Self.size.width, height: Self.size.height)
+        .clipped()
+        .compositingGroup()
+    }
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text("WHITE RABBITS")
+                .font(.system(size: 11, weight: .semibold))
+                .tracking(3.8)
+                .foregroundStyle(gold)
+            Text(monthYear.uppercased())
+                .font(.system(size: 10, weight: .medium))
+                .tracking(2.6)
+                .foregroundStyle(gold.opacity(0.75))
+        }
+    }
 
     private var background: some View {
         LinearGradient(
-            gradient: Gradient(stops: [
+            stops: [
                 .init(color: Color(hex: "F6F1EB"), location: 0),
-                .init(color: Color(hex: "C7BEAF"), location: 0.22),
-                .init(color: Color(hex: "84795A"), location: 0.5),
-                .init(color: Color(hex: "49402F"), location: 0.78),
-                .init(color: Color(hex: "221C13"), location: 1),
-            ]),
+                .init(color: Color(hex: "E3D9CA"), location: 0.16),
+                .init(color: Color(hex: "C2B496"), location: 0.38),
+                .init(color: Color(hex: "8A7B62"), location: 0.55),
+                .init(color: Color(hex: "4A4030"), location: 0.78),
+                .init(color: Color(hex: "2B2418"), location: 1),
+            ],
             startPoint: .top,
             endPoint: .bottom
         )
     }
 
-    var body: some View {
-        ZStack {
-            background
-
-            VStack(alignment: .leading, spacing: 0) {
-                Text("WHITE RABBITS")
-                    .font(.system(size: 12, weight: .semibold))
-                    .tracking(3.4)
-                    .foregroundStyle(gold)
-                    .padding(.top, 34)
-
-                Text(monthYear.uppercased())
-                    .font(.system(size: 11, weight: .medium))
-                    .tracking(2)
-                    .foregroundStyle(gold.opacity(0.72))
-                    .padding(.top, 4)
-
-                ZStack(alignment: .bottom) {
-                    photoBlock
-                        .frame(height: 196)
-                        .frame(maxWidth: .infinity)
-
-                    badge
-                        .offset(y: 39)
-                }
-                .padding(.top, 18)
-                .padding(.bottom, 39)
-
-                Text(headline)
-                    .font(.system(size: 25, weight: .bold))
-                    .tracking(-0.3)
-                    .lineSpacing(2)
-                    .foregroundStyle(palette.ink)
-                    .lineLimit(4)
-                    .minimumScaleFactor(0.75)
-                    .padding(.top, 22)
-
-                if let subtitle, !subtitle.isEmpty {
-                    Text(subtitle)
-                        .font(.system(size: 14, weight: .regular))
-                        .foregroundStyle(Color(hex: "D8CFB8").opacity(0.85))
-                        .lineLimit(2)
-                        .padding(.top, 14)
-                }
-
-                Spacer(minLength: 20)
-
-                Text("PAUSE  ·  REFLECT  ·  INTEND  ·  BEGIN")
-                    .font(.system(size: 10.5, weight: .medium))
-                    .tracking(1.6)
-                    .foregroundStyle(gold.opacity(0.9))
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.bottom, 30)
-            }
-            .padding(.horizontal, 28)
-
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
-                .strokeBorder(gold.opacity(0.85), lineWidth: 1)
-                .padding(16)
-        }
-        .frame(width: Self.size.width, height: Self.size.height)
-        .clipped()
-    }
-
-    @ViewBuilder
     private var photoBlock: some View {
-        ZStack {
-            #if canImport(UIKit)
-            if let photo {
-                Image(uiImage: photo)
-                    .resizable()
-                    .scaledToFill()
-            } else {
+        Color.clear
+            .overlay {
+                #if canImport(UIKit)
+                if let photo {
+                    Image(uiImage: photo)
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    photoFallback
+                }
+                #else
                 photoFallback
+                #endif
             }
-            #else
-            photoFallback
-            #endif
-        }
-        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .mask(
+                LinearGradient(
+                    stops: [
+                        .init(color: .black, location: 0),
+                        .init(color: .black, location: 0.55),
+                        .init(color: .black.opacity(0.5), location: 0.78),
+                        .init(color: .clear, location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+            )
     }
 
     private var photoFallback: some View {
         ZStack {
             Color(hex: bunny.fillHex)
             BunnyMarkView(bunny: bunny, style: .charm)
-                .frame(width: 84, height: 84)
-                .opacity(0.6)
+                .frame(width: 80, height: 80)
+                .opacity(0.55)
         }
     }
 
     private var badge: some View {
         Circle()
-            .fill(Color(hex: "FBF7EF"))
-            .frame(width: 78, height: 78)
-            .shadow(color: .black.opacity(0.22), radius: 10, x: 0, y: 4)
-            .overlay(
+            .fill(Color(hex: "F7F1E6"))
+            .frame(width: 76, height: 76)
+            .overlay(Circle().strokeBorder(gold.opacity(0.4), lineWidth: 0.8))
+            .shadow(color: .black.opacity(0.18), radius: 8, x: 0, y: 4)
+            .overlay {
                 BunnyMarkView(bunny: bunny, style: .charm)
-                    .frame(width: 46, height: 46)
-            )
+                    .padding(16)
+            }
+    }
+
+    static func cleaned(_ text: String) -> String {
+        let filtered = text.unicodeScalars.filter { scalar in
+            !scalar.properties.isEmojiPresentation
+                && !scalar.properties.isEmojiModifier
+                && !scalar.properties.isEmojiModifierBase
+        }
+        return String(String.UnicodeScalarView(filtered))
+            .replacingOccurrences(of: "  ", with: " ")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
 
 #if canImport(UIKit)
 import UIKit
 
-/// Renders a `ShareCardView` to a real `UIImage`, at 3x scale so it looks
-/// crisp saved to Photos or posted anywhere else.
 @MainActor
 enum ShareCardRenderer {
     static func render(monthYear: String, headline: String, subtitle: String?, photo: PlatformImage?, bunny: Bunny) -> UIImage? {
         let card = ShareCardView(monthYear: monthYear, headline: headline, subtitle: subtitle, photo: photo, bunny: bunny)
         let renderer = ImageRenderer(content: card)
+        renderer.proposedSize = ProposedViewSize(width: ShareCardView.size.width, height: ShareCardView.size.height)
         renderer.scale = 3
         renderer.isOpaque = true
         return renderer.uiImage

@@ -96,4 +96,11 @@ enum InspirationData {
         let pool = byMonth[monthIndex]
         return pool[(day - 1) % pool.count]
     }
+
+    /// The month's signature line, used on the story card so a share
+    /// always reads as the month, not whichever daily prompt it happens to be.
+    static func signature(for date: Date = Date()) -> InspirationLine {
+        let monthIndex = max(0, Calendar.current.component(.month, from: date) - 1)
+        return byMonth[monthIndex][0]
+    }
 }

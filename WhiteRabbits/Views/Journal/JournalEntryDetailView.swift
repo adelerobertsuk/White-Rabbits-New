@@ -145,7 +145,7 @@ struct JournalEntryDetailView: View {
         cardImage = ShareCardRenderer.render(
             monthYear: formatter.string(from: entry.date),
             headline: text.isEmpty ? String(localized: "journal.detail.photoOnly", defaultValue: "A photograph for this day.") : text,
-            subtitle: InspirationData.today(for: entry.date).line,
+            subtitle: InspirationData.signature(for: entry.date).line,
             photo: photo,
             bunny: store.currentBunny(entry.date)
         )
