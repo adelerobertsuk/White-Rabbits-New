@@ -71,6 +71,10 @@ struct PillButtonStyle: ButtonStyle {
             )
             .shadow(color: filled && !compact ? palette.ink.opacity(0.08) : .clear, radius: 20, x: 0, y: 16)
             .foregroundStyle(filled ? palette.bg : palette.ink)
+            // Compact pills stay visually small, but always keep a real
+            // 44pt tap target so they're comfortable to hit.
+            .frame(minHeight: compact ? 44 : 0)
+            .contentShape(Rectangle())
             .scaleEffect(configuration.isPressed ? 0.975 : 1)
             .animation(.easeOut(duration: 0.18), value: configuration.isPressed)
     }

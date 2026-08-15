@@ -26,7 +26,7 @@ struct CharmsView: View {
                         LazyVGrid(columns: charmColumns, spacing: 20) {
                             ForEach(BunnyData.all) { bunny in
                                 VStack(spacing: 8) {
-                                    CharmView(bunny: bunny, unlocked: store.unlockedCharmIds.contains(bunny.id), size: 68)
+                                    CharmView(bunny: bunny, unlocked: store.unlockedCharmIds.contains(bunny.id))
                                     Text(bunny.name)
                                         .font(.system(size: 12, weight: .medium))
                                         .foregroundStyle(palette.ink)
@@ -37,7 +37,7 @@ struct CharmsView: View {
                             }
                         }
                     }
-                    .padding(18)
+                    .padding(Layout.cardPadding)
                     .cardBackground()
 
                     VStack(alignment: .leading, spacing: 14) {
@@ -45,14 +45,7 @@ struct CharmsView: View {
 
                         ForEach(store.milestones) { milestone in
                             HStack(spacing: 14) {
-                                ZStack {
-                                    Circle()
-                                        .fill(milestone.isUnlocked ? palette.accentGlow : palette.card)
-                                        .frame(width: 44, height: 44)
-                                    Image(systemName: milestone.systemImage)
-                                        .foregroundStyle(milestone.isUnlocked ? palette.accent : palette.faint)
-                                }
-                                .shadow(color: milestone.isUnlocked ? palette.accentGlow : .clear, radius: 10)
+                                milestoneIcon(milestone)
 
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(milestone.title)
@@ -64,23 +57,19 @@ struct CharmsView: View {
                                 }
                                 Spacer()
                             }
-                            .opacity(milestone.isUnlocked ? 1 : 0.55)
                         }
                     }
-                    .padding(18)
+                    .padding(Layout.cardPadding)
                     .cardBackground()
                 }
-                .padding(20)
+                .padding(Layout.screenInset)
             }
             .sanctuaryBackground()
             .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text(String(localized: "tab.charms", defaultValue: "Charms"))
-                        .font(.system(size: 10, weight: .medium))
-                        .textCase(.uppercase)
-                        .tracking(2.2)
-                        .foregroundStyle(palette.muted)
+                        .kickerStyle()
                 }
             }
             .settingsButton()
@@ -90,27 +79,38 @@ struct CharmsView: View {
     private var header: some View {
         HStack(alignment: .firstTextBaseline) {
             Text(String(format: String(localized: "charms.header.count", defaultValue: "%d of 12"), store.unlockedCharmIds.count))
-                .font(.system(size: 28, weight: .light))
-                .tracking(-1.12)
-                .foregroundStyle(palette.ink)
+                .displayTitleStyle()
             Spacer()
             Text(store.unlockedCharmIds.count >= 12
                  ? String(localized: "charms.header.complete", defaultValue: "A complete year")
                  : String(localized: "charms.header.gathering", defaultValue: "Still gathering"))
-                .font(.system(size: 10, weight: .medium))
-                .textCase(.uppercase)
-                .tracking(2.2)
-                .foregroundStyle(palette.muted)
+                .kickerStyle()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func sectionTitle(_ text: String) -> some View {
         Text(text)
-            .font(.system(size: 13, weight: .semibold))
-            .textCase(.uppercase)
-            .tracking(1.56)
-            .foregroundStyle(palette.muted)
+            .sectionHeaderStyle()
+    }
+
+    /// Matches `CharmView`'s own circle-badge-with-glow language, so a
+    /// milestone reads as part of the same collection as the seasonal
+    /// charms above it, not a plain system-icon afterthought.
+    private func milestoneIcon(_ milestone: Milestone) -> some View {
+        ZStack {
+            Circle()
+                .fill(milestone.isUnlocked ? palette.accentGlow : palette.card)
+            Circle()
+                .strokeBorder(milestone.isUnlocked ? palette.accent.opacity(0.5) : palette.line, lineWidth: milestone.isUnlocked ? 1.5 : 1)
+            Image(systemName: milestone.systemImage)
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(milestone.isUnlocked ? palette.accent : palette.faint)
+        }
+        .frame(width: 44, height: 44)
+        .shadow(color: milestone.isUnlocked ? palette.accentGlow : .clear, radius: 10)
+        .opacity(milestone.isUnlocked ? 1 : 0.55)
+        .animation(.spring(response: 0.5, dampingFraction: 0.8), value: milestone.isUnlocked)
     }
 }
 

@@ -27,15 +27,10 @@ struct SettingsView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(String(localized: "settings.kicker", defaultValue: "Preferences"))
-                        .font(.system(size: 10, weight: .medium))
-                        .textCase(.uppercase)
-                        .tracking(2.2)
-                        .foregroundStyle(palette.muted)
+                        .kickerStyle()
 
                     Text(title)
-                        .font(.system(size: 28, weight: .light))
-                        .tracking(-0.98)
-                        .foregroundStyle(palette.ink)
+                        .displayTitleStyle()
                         .padding(.top, 6)
 
                     Text(String(localized: "settings.lede", defaultValue: "Quiet settings. Everything stays on this device."))
@@ -50,7 +45,8 @@ struct SettingsView: View {
                         settingRow(
                             title: String(localized: "settings.haptics.title", defaultValue: "Haptics"),
                             caption: String(localized: "settings.haptics.caption", defaultValue: "A small pulse when luck arrives"),
-                            isOn: Binding(get: { store.hapticsEnabled }, set: { store.setHapticsEnabled($0) })
+                            isOn: Binding(get: { store.hapticsEnabled }, set: { store.setHapticsEnabled($0) }),
+                            isFirst: true
                         )
                         settingRow(
                             title: String(localized: "settings.darkEvening.title", defaultValue: "Dark evening"),
@@ -73,7 +69,9 @@ struct SettingsView: View {
 
                         dataRow
                     }
-                    .padding(.top, 4)
+                    .padding(.horizontal, Layout.cardPadding)
+                    .cardBackground()
+                    .padding(.top, 14)
 
                     Button {
                         showResetConfirm = true
@@ -85,7 +83,7 @@ struct SettingsView: View {
                     }
                     .padding(.top, 8)
                 }
-                .padding(20)
+                .padding(Layout.screenInset)
             }
             .sanctuaryBackground()
             .inlineNavigationTitle()
@@ -155,7 +153,7 @@ struct SettingsView: View {
         }
     }
 
-    private func settingRow(title: String, caption: String, isOn: Binding<Bool>) -> some View {
+    private func settingRow(title: String, caption: String, isOn: Binding<Bool>, isFirst: Bool = false) -> some View {
         HStack(spacing: 16) {
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
@@ -170,7 +168,9 @@ struct SettingsView: View {
         }
         .padding(.vertical, 16)
         .overlay(alignment: .top) {
-            Rectangle().fill(palette.line).frame(height: 1)
+            if !isFirst {
+                Rectangle().fill(palette.line).frame(height: 1)
+            }
         }
     }
 
