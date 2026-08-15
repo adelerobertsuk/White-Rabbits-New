@@ -69,10 +69,14 @@ struct BunnyMarkView: View {
                     context.fill(scaled, with: .color(fill.opacity(op.opacity)))
                 }
                 if let stroke = op.stroke {
+                    // Below about 0.75pt a stroke starts to look fuzzy and
+                    // broken rather than thin, which is what made this look
+                    // "messy" at small sizes like the settings button. Floor
+                    // it so the drawing stays crisp even when tiny.
                     context.stroke(
                         scaled,
                         with: .color(stroke.opacity(op.opacity)),
-                        style: StrokeStyle(lineWidth: op.lineWidth * scale, lineCap: .round, lineJoin: .round)
+                        style: StrokeStyle(lineWidth: max(op.lineWidth * scale, 0.75), lineCap: .round, lineJoin: .round)
                     )
                 }
             }

@@ -23,6 +23,13 @@ struct ProgressRingView: View {
     var body: some View {
         Button(action: onTap) {
             ZStack {
+                // The web app always casts a soft accent-colored shadow behind
+                // this whole ring group (`filter: drop-shadow(...)`), which is
+                // what makes the ring read as a "double ring": a crisp track
+                // plus its own soft glowing halo just outside it. Gating that
+                // shadow to celebratory-only (as this used to) made every
+                // ordinary day look like a single flat ring, so it's on here
+                // all the time, just brighter and bigger on the 1st.
                 Circle()
                     .stroke(palette.track, lineWidth: 10)
 
@@ -34,7 +41,6 @@ struct ProgressRingView: View {
                     )
                     .rotationEffect(.degrees(-90))
                     .animation(.easeInOut(duration: 0.6), value: progress)
-                    .shadow(color: isCelebratory ? palette.accentGlow : .clear, radius: isCelebratory ? 18 : 0)
 
                 if isCelebratory {
                     ForEach(0..<8, id: \.self) { i in
@@ -56,6 +62,7 @@ struct ProgressRingView: View {
                     .fill(palette.card)
                     .padding(6)
             )
+            .shadow(color: palette.accentGlow, radius: isCelebratory ? 24 : 14, x: 0, y: isCelebratory ? 4 : 10)
         }
         .buttonStyle(.plain)
         .onAppear {

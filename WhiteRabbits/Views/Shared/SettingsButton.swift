@@ -19,7 +19,7 @@ private struct SettingsToolbarButton: View {
             isPresented = true
         } label: {
             BunnyMarkView(bunny: store.currentBunny(), style: .mark)
-                .frame(width: 18, height: 18)
+                .frame(width: 22, height: 22)
                 .frame(width: 40, height: 40)
                 .background(Circle().fill(.ultraThinMaterial))
                 .overlay(Circle().strokeBorder(palette.line, lineWidth: 1))

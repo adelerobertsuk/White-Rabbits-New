@@ -52,7 +52,9 @@ struct TodayView: View {
                         onTapSuggestion: handle
                     )
 
-                    habitsCard
+                    if !doneHabitsToday.isEmpty {
+                        habitsCard
+                    }
 
                     inspirationBlock
 
@@ -148,6 +150,14 @@ struct TodayView: View {
         return String(format: String(localized: "today.keptCount", defaultValue: "%d kept today"), done)
     }
 
+    /// Only the habits actually kept today. The "Today" card below stays
+    /// off the page until at least one of these exists, so it reads as a
+    /// quiet little log of what's been carried out from Suggestions, not
+    /// a second, always-present checklist duplicating them.
+    private var doneHabitsToday: [Habit] {
+        store.data.habits.filter { store.isHabitDone($0.id) }
+    }
+
     private var habitsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(String(localized: "today.habits.title", defaultValue: "Today"))
@@ -156,7 +166,7 @@ struct TodayView: View {
                 .tracking(1.56)
                 .foregroundStyle(palette.muted)
 
-            ForEach(store.data.habits) { habit in
+            ForEach(doneHabitsToday) { habit in
                 Button {
                     Haptics.light()
                     store.toggleHabit(habit.id)

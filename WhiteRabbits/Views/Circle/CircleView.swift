@@ -17,8 +17,10 @@ struct CircleView: View {
             ZStack(alignment: .top) {
                 ScrollView {
                     VStack(spacing: 18) {
-                        header
-                            .padding(.top, 8)
+                        if !store.circleJoined {
+                            header
+                                .padding(.top, 8)
+                        }
 
                         if store.circleJoined {
                             MyIntentionCardView()
