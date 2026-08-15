@@ -7,28 +7,36 @@
 
 import SwiftUI
 
+enum RootTab { case today, journal, circle, charms }
+
 struct RootTabView: View {
+    @State private var selection: RootTab = .today
+
     var body: some View {
         PaletteProvider {
-            TabView {
+            TabView(selection: $selection) {
                 TodayView()
+                    .tag(RootTab.today)
                     .tabItem {
-                        Label(String(localized: "tab.today", defaultValue: "Today"), systemImage: "hare.fill")
+                        Label { Text(String(localized: "tab.today", defaultValue: "Today")) } icon: { TabIcons.today }
                     }
 
                 JournalView()
+                    .tag(RootTab.journal)
                     .tabItem {
-                        Label(String(localized: "tab.journal", defaultValue: "Journal"), systemImage: "book.closed.fill")
+                        Label { Text(String(localized: "tab.journal", defaultValue: "Journal")) } icon: { TabIcons.journal }
                     }
 
                 CircleView()
+                    .tag(RootTab.circle)
                     .tabItem {
-                        Label(String(localized: "tab.circle", defaultValue: "Circle"), systemImage: "person.2.fill")
+                        Label { Text(String(localized: "tab.circle", defaultValue: "Circle")) } icon: { TabIcons.circle }
                     }
 
                 CharmsView()
+                    .tag(RootTab.charms)
                     .tabItem {
-                        Label(String(localized: "tab.charms", defaultValue: "Charms"), systemImage: "seal.fill")
+                        Label { Text(String(localized: "tab.charms", defaultValue: "Charms")) } icon: { TabIcons.charms }
                     }
             }
         }

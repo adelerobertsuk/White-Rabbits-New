@@ -13,19 +13,18 @@ struct ProgressRingView: View {
     var progress: Double
     var isCelebratory: Bool
     var bunny: Bunny
-    var doneText: String
     var onTap: () -> Void
 
     @Environment(\.palette) private var palette
     @State private var sparklePhase: Bool = false
 
-    private var ringSize: CGFloat { 200 }
+    private var ringSize: CGFloat { 248 }
 
     var body: some View {
         Button(action: onTap) {
             ZStack {
                 Circle()
-                    .stroke(palette.line, lineWidth: 10)
+                    .stroke(palette.track, lineWidth: 10)
 
                 Circle()
                     .trim(from: 0, to: isCelebratory ? 1 : max(progress, 0.001))
@@ -48,16 +47,15 @@ struct ProgressRingView: View {
                     }
                 }
 
-                VStack(spacing: 6) {
-                    CharmView(bunny: bunny, unlocked: true, size: 56)
-                    Text(doneText)
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundStyle(palette.muted)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 20)
-                }
+                BunnyMarkView(bunny: bunny, style: .mark)
+                    .frame(width: ringSize * 0.62, height: ringSize * 0.62)
             }
             .frame(width: ringSize, height: ringSize)
+            .background(
+                Circle()
+                    .fill(palette.card)
+                    .padding(6)
+            )
         }
         .buttonStyle(.plain)
         .onAppear {
@@ -78,8 +76,8 @@ struct ProgressRingView: View {
 
 #Preview {
     VStack(spacing: 40) {
-        ProgressRingView(progress: 0.5, isCelebratory: false, bunny: BunnyData.bunny(forMonth: 8), doneText: "2 kept today", onTap: {})
-        ProgressRingView(progress: 1, isCelebratory: true, bunny: BunnyData.bunny(forMonth: 8), doneText: "Begin the month", onTap: {})
+        ProgressRingView(progress: 0.5, isCelebratory: false, bunny: BunnyData.bunny(forMonth: 8), onTap: {})
+        ProgressRingView(progress: 1, isCelebratory: true, bunny: BunnyData.bunny(forMonth: 8), onTap: {})
     }
     .environment(\.palette, .light)
 }

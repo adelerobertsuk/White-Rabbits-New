@@ -72,7 +72,7 @@ struct CharmsView: View {
                 }
                 .padding(20)
             }
-            .background(palette.bg)
+            .sanctuaryBackground()
             .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .principal) {

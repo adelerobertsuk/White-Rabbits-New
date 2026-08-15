@@ -14,18 +14,29 @@ struct YearOfLuckStampCardView: View {
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 4)
 
+    private var currentYear: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy"
+        return formatter.string(from: Date())
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack {
+            HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 2) {
+                    Text(currentYear)
+                        .font(.system(size: 11, weight: .semibold))
+                        .tracking(1.2)
+                        .foregroundStyle(palette.faint)
                     Text(String(localized: "circle.stampCard.title", defaultValue: "Year of luck"))
-                        .font(.system(size: 17, weight: .medium))
+                        .font(.system(size: 19, weight: .regular))
                         .foregroundStyle(palette.ink)
-                    Text(String(format: String(localized: "circle.stampCard.count", defaultValue: "%d of 12 collected"), store.unlockedCharmIds.count))
-                        .font(.system(size: 13))
-                        .foregroundStyle(palette.muted)
                 }
                 Spacer()
+                Text(String(format: String(localized: "circle.stampCard.countShort", defaultValue: "%d OF 12"), store.unlockedCharmIds.count))
+                    .font(.system(size: 11, weight: .semibold))
+                    .tracking(1.2)
+                    .foregroundStyle(palette.faint)
             }
 
             LazyVGrid(columns: columns, spacing: 14) {

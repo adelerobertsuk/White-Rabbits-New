@@ -15,6 +15,7 @@ struct Palette {
     let muted: Color
     let faint: Color
     let line: Color
+    let track: Color
     let accent: Color
     let accentGlow: Color
 
@@ -25,6 +26,7 @@ struct Palette {
         muted: Color(hex: "7A736B"),
         faint: Color(hex: "B7AEA4"),
         line: Color(hex: "2A2622").opacity(0.1),
+        track: Color(hex: "2A2622").opacity(0.08),
         accent: Color(hex: "C4A36A"),
         accentGlow: Color(hex: "C4A36A").opacity(0.3)
     )
@@ -36,6 +38,7 @@ struct Palette {
         muted: Color(hex: "A39A90"),
         faint: Color(hex: "6E675F"),
         line: Color(hex: "F3ECE4").opacity(0.1),
+        track: Color(hex: "F3ECE4").opacity(0.1),
         accent: Color(hex: "D4B57A"),
         accentGlow: Color(hex: "D4B57A").opacity(0.24)
     )
@@ -65,6 +68,39 @@ struct PaletteProvider<Content: View>: View {
     var body: some View {
         content()
             .environment(\.palette, Palette.current(for: colorScheme))
+    }
+}
+
+/// The soft glow that sits behind every screen: a warm radial highlight
+/// fading into the base background, matching the web app's
+/// `radial-gradient(120% 70% at 50% -8%, accent-glow, transparent 52%)`.
+struct SanctuaryBackground: View {
+    @Environment(\.palette) private var palette
+
+    var body: some View {
+        ZStack {
+            palette.bg
+            // A whisper of warmth, wide and diffused rather than a concentrated
+            // spotlight, so it never reads as a dark or "muddy" patch.
+            RadialGradient(
+                gradient: Gradient(stops: [
+                    .init(color: palette.accent.opacity(0.10), location: 0),
+                    .init(color: palette.accent.opacity(0.035), location: 0.45),
+                    .init(color: palette.accent.opacity(0), location: 0.85),
+                ]),
+                center: UnitPoint(x: 0.5, y: -0.1),
+                startRadius: 0,
+                endRadius: 480
+            )
+        }
+        .ignoresSafeArea()
+    }
+}
+
+extension View {
+    /// Applies the app's warm sanctuary backdrop behind a screen's content.
+    func sanctuaryBackground() -> some View {
+        background(SanctuaryBackground())
     }
 }
 

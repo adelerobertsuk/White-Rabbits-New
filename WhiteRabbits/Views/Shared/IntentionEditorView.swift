@@ -111,7 +111,7 @@ struct IntentionEditorView: View {
                 }
                 .padding(20)
             }
-            .background(palette.bg)
+            .sanctuaryBackground()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(String(localized: "action.close", defaultValue: "Close")) { dismiss() }

@@ -70,6 +70,20 @@ final class AppStore: ObservableObject {
         BunnyData.bunny(forMonth: Calendar.current.component(.month, from: date))
     }
 
+    /// "August light" style kicker for the daily inspiration line.
+    func monthLightKicker(_ date: Date = Date()) -> String {
+        String(format: String(localized: "today.inspiration.kicker", defaultValue: "%@ light"), monthName(date))
+    }
+
+    /// A small "Today · August 2026" style header line, reused across tabs.
+    func todayKicker(_ tab: String = "", date: Date = Date()) -> String {
+        let formatter = DateFormatter()
+        formatter.setLocalizedDateFormatFromTemplate("MMMMyyyy")
+        let monthYear = formatter.string(from: date)
+        let label = tab.isEmpty ? String(localized: "tab.today", defaultValue: "Today") : tab
+        return "\(label) · \(monthYear)"
+    }
+
     // MARK: - Month ritual
 
     func monthRecord(_ date: Date = Date()) -> MonthRecord? {

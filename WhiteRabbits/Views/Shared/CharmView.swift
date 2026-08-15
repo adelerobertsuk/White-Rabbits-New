@@ -2,12 +2,9 @@
 //  CharmView.swift
 //  WhiteRabbits
 //
-//  Draws one seasonal charm badge. Unlocked charms are full color with
-//  a soft glow; locked ones are a faint outline waiting its turn.
-//
-//  Adele: to use your own artwork later, drop images named
-//  "charm-<id>" (e.g. "charm-harvest") into Assets.xcassets and swap
-//  the `Image(systemName:)` below for `Image("charm-\(bunny.id)")`.
+//  Draws one seasonal charm badge using the app's hand-drawn bunny
+//  illustration (see BunnyMarkView). Unlocked charms are full color
+//  with a soft glow; locked ones are a faint outline waiting its turn.
 //
 
 import SwiftUI
@@ -22,12 +19,11 @@ struct CharmView: View {
     var body: some View {
         ZStack {
             Circle()
-                .fill(unlocked ? Color(hex: bunny.fillHex) : palette.card)
+                .fill(unlocked ? Color(hex: bunny.fillHex).opacity(0.35) : palette.card)
             Circle()
-                .strokeBorder(unlocked ? Color(hex: bunny.strokeHex) : palette.line, lineWidth: unlocked ? 1.5 : 1)
-            Image(systemName: "hare.fill")
-                .font(.system(size: size * 0.42, weight: .medium))
-                .foregroundStyle(unlocked ? Color(hex: bunny.strokeHex) : palette.faint)
+                .strokeBorder(unlocked ? Color(hex: bunny.strokeHex).opacity(0.5) : palette.line, lineWidth: unlocked ? 1.5 : 1)
+            BunnyMarkView(bunny: bunny, unlocked: unlocked)
+                .padding(size * 0.14)
         }
         .frame(width: size, height: size)
         .shadow(color: unlocked ? Color(hex: bunny.accentHex).opacity(0.55) : .clear, radius: unlocked ? size * 0.22 : 0)

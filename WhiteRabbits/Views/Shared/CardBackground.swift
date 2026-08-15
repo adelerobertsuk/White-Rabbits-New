@@ -23,7 +23,9 @@ struct CardBackground: ViewModifier {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .strokeBorder(palette.line, lineWidth: 1)
             )
-            .shadow(color: Color.black.opacity(0.06), radius: 20, x: 0, y: 10)
+            // A soft, warm-toned shadow (matching the web app's ink-tinted
+            // shadow) reads as gentle layering, not a heavy black border.
+            .shadow(color: palette.ink.opacity(0.07), radius: 28, x: 0, y: 12)
     }
 }
 

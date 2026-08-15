@@ -115,7 +115,7 @@ struct RitualSheetView: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 24)
         }
-        .background(palette.bg)
+        .sanctuaryBackground()
         .sheet(isPresented: $showIntentionEditor) {
             IntentionEditorView()
         }

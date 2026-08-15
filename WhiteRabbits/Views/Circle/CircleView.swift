@@ -40,7 +40,7 @@ struct CircleView: View {
                     .padding(.top, 44)
                     .padding(.bottom, 24)
                 }
-                .background(palette.bg)
+                .sanctuaryBackground()
 
                 HStack {
                     Spacer()
@@ -63,13 +63,14 @@ struct CircleView: View {
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: store.circleJoined ? .leading : .center, spacing: 4) {
             Text(headerCopy)
                 .font(.system(size: 15))
                 .foregroundStyle(palette.muted)
+                .multilineTextAlignment(store.circleJoined ? .leading : .center)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: store.circleJoined ? .leading : .center)
     }
 
     private var headerCopy: String {
@@ -79,25 +80,40 @@ struct CircleView: View {
     }
 
     private var onboardingCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Image(systemName: "hare.fill")
-                .font(.system(size: 22))
-                .foregroundStyle(palette.accent)
+        VStack(spacing: 16) {
+            BunnyMarkView(bunny: store.currentBunny(), style: .mark)
+                .frame(width: 46, height: 46)
+                .padding(18)
+                .background(Circle().fill(palette.card))
 
-            Text(String(localized: "circle.onboarding.title", defaultValue: "Opt in, whenever you like"))
-                .font(.system(size: 20, weight: .medium))
-                .foregroundStyle(palette.ink)
+            VStack(spacing: 8) {
+                Text(String(localized: "circle.onboarding.title", defaultValue: "Opt in, whenever you like"))
+                    .font(.system(size: 11, weight: .semibold))
+                    .textCase(.uppercase)
+                    .tracking(1.6)
+                    .foregroundStyle(palette.faint)
 
-            Text(String(localized: "circle.onboarding.body", defaultValue: "A gentle circle for monthly resets. No scores, no streaks, no comparison."))
-                .font(.system(size: 14))
-                .foregroundStyle(palette.muted)
+                Text(String(localized: "circle.onboarding.heading", defaultValue: "A gentle circle"))
+                    .font(.system(size: 26, weight: .thin))
+                    .tracking(-0.4)
+                    .foregroundStyle(palette.ink)
 
-            VStack(alignment: .leading, spacing: 8) {
-                Label(String(localized: "circle.onboarding.shared", defaultValue: "Shared: your name, this month's intention, and your seasonal stamp"), systemImage: "checkmark.circle")
-                Label(String(localized: "circle.onboarding.private", defaultValue: "Never shared: journal notes, photographs, and habits"), systemImage: "lock")
+                Text(String(localized: "circle.onboarding.body", defaultValue: "A gentle circle for monthly resets. No scores, no streaks, no comparison."))
+                    .font(.system(size: 14))
+                    .foregroundStyle(palette.muted)
+                    .multilineTextAlignment(.center)
             }
-            .font(.system(size: 13))
-            .foregroundStyle(palette.muted)
+
+            VStack(alignment: .leading, spacing: 12) {
+                onboardingRow(
+                    title: String(localized: "circle.onboarding.shared.title", defaultValue: "Shared, if you join"),
+                    body: String(localized: "circle.onboarding.shared", defaultValue: "Your name, this month's intention, and your seasonal stamp.")
+                )
+                onboardingRow(
+                    title: String(localized: "circle.onboarding.private.title", defaultValue: "Never shared"),
+                    body: String(localized: "circle.onboarding.private", defaultValue: "Journal notes, photographs, and habits stay on this phone.")
+                )
+            }
 
             Button {
                 Haptics.medium()
@@ -108,8 +124,27 @@ struct CircleView: View {
             }
             .buttonStyle(PillButtonStyle())
         }
-        .padding(18)
+        .padding(20)
         .cardBackground()
+    }
+
+    private func onboardingRow(title: String, body: String) -> some View {
+        VStack(alignment: .leading, spacing: 3) {
+            Text(title)
+                .font(.system(size: 12, weight: .semibold))
+                .textCase(.uppercase)
+                .tracking(0.8)
+                .foregroundStyle(palette.ink)
+            Text(body)
+                .font(.system(size: 13))
+                .foregroundStyle(palette.muted)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(palette.bg.opacity(0.6))
+        )
     }
 }
 

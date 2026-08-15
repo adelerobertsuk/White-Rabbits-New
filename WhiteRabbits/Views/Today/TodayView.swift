@@ -25,13 +25,10 @@ struct TodayView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    header
-
                     ProgressRingView(
                         progress: store.progress,
                         isCelebratory: isCelebratory,
                         bunny: store.currentBunny(),
-                        doneText: doneText,
                         onTap: {
                             if isCelebratory {
                                 Haptics.medium()
@@ -39,7 +36,13 @@ struct TodayView: View {
                             }
                         }
                     )
-                    .padding(.top, 4)
+                    .padding(.top, 12)
+
+                    header
+
+                    YearOfLuckStampCardView()
+
+                    inspirationBlock
 
                     SuggestionsCardView(
                         suggestions: store.suggestions(),
@@ -65,14 +68,14 @@ struct TodayView: View {
                 .padding(20)
                 .padding(.bottom, 12)
             }
-            .background(palette.bg)
+            .sanctuaryBackground()
             .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text(String(localized: "tab.today", defaultValue: "Today"))
-                        .font(.system(size: 13, weight: .semibold))
+                    Text(store.todayKicker())
+                        .font(.system(size: 12, weight: .semibold))
                         .textCase(.uppercase)
-                        .tracking(1)
+                        .tracking(1.4)
                         .foregroundStyle(palette.muted)
                 }
             }
@@ -90,21 +93,43 @@ struct TodayView: View {
     // MARK: - Pieces
 
     private var header: some View {
-        VStack(spacing: 8) {
-            Image(systemName: "hare.fill")
-                .font(.system(size: 20))
-                .foregroundStyle(palette.accent)
+        VStack(spacing: 10) {
             Text("White Rabbits")
-                .font(.system(size: 12, weight: .semibold))
-                .textCase(.uppercase)
-                .tracking(2)
-                .foregroundStyle(palette.faint)
-            Text(store.greeting())
-                .font(.system(size: 22, weight: .light))
+                .font(.system(size: 38, weight: .light))
+                .tracking(-2.1)
                 .foregroundStyle(palette.ink)
+            Text(store.greeting())
+                .font(.system(size: 14, weight: .regular))
+                .foregroundStyle(palette.muted)
                 .multilineTextAlignment(.center)
+            Text(doneText)
+                .font(.system(size: 11, weight: .semibold))
+                .textCase(.uppercase)
+                .tracking(1.6)
+                .foregroundStyle(palette.faint)
         }
         .frame(maxWidth: .infinity)
+        .padding(.horizontal, 24)
+    }
+
+    private var inspirationBlock: some View {
+        let inspiration = InspirationData.today()
+        return VStack(spacing: 6) {
+            Text(store.monthLightKicker())
+                .font(.system(size: 11, weight: .semibold))
+                .textCase(.uppercase)
+                .tracking(1.6)
+                .foregroundStyle(palette.faint)
+            Text(inspiration.line)
+                .font(.system(size: 16, weight: .regular))
+                .foregroundStyle(palette.ink)
+                .multilineTextAlignment(.center)
+            Text(inspiration.prompt)
+                .font(.system(size: 13))
+                .foregroundStyle(palette.muted)
+                .multilineTextAlignment(.center)
+        }
+        .padding(.horizontal, 20)
     }
 
     private var doneText: String {

@@ -58,7 +58,7 @@ struct JournalView: View {
                 .padding(20)
                 .padding(.bottom, 100)
             }
-            .background(palette.bg)
+            .sanctuaryBackground()
             .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .principal) {

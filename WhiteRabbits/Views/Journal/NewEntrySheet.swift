@@ -112,7 +112,7 @@ struct NewEntrySheet: View {
                 }
                 .padding(20)
             }
-            .background(palette.bg)
+            .sanctuaryBackground()
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(String(localized: "action.cancel", defaultValue: "Cancel")) { dismiss() }
