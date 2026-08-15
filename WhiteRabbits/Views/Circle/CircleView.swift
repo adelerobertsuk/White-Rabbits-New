@@ -79,8 +79,8 @@ struct CircleView: View {
 
     private var headerCopy: String {
         store.firstName.isEmpty
-            ? String(localized: "circle.header.unnamed", defaultValue: "This is inspiration only. Cheer and reset, never compare.")
-            : String(format: String(localized: "circle.header.named", defaultValue: "%@, this is inspiration only. Cheer and reset, never compare."), store.firstName)
+            ? String(localized: "circle.header.unnamed", defaultValue: "This is inspiration only. Cheer a reset. Never weigh it.")
+            : String(format: String(localized: "circle.header.named", defaultValue: "%@, this is inspiration only. Cheer a reset. Never weigh it."), store.firstName)
     }
 
     private var onboardingCard: some View {
@@ -97,7 +97,7 @@ struct CircleView: View {
                     .tracking(2.2)
                     .foregroundStyle(palette.muted)
 
-                Text(String(localized: "circle.onboarding.heading", defaultValue: "A gentle circle"))
+                Text(String(localized: "circle.onboarding.heading", defaultValue: "Shared Sanctuary"))
                     .font(.system(size: 32, weight: .light))
                     .tracking(-1.28)
                     .foregroundStyle(palette.ink)
@@ -115,7 +115,7 @@ struct CircleView: View {
                 )
                 onboardingRow(
                     title: String(localized: "circle.onboarding.private.title", defaultValue: "Never shared"),
-                    body: String(localized: "circle.onboarding.private", defaultValue: "Journal notes, photographs, and habits stay on this phone.")
+                    body: String(localized: "circle.onboarding.private", defaultValue: "Journal notes, photographs, voice transcripts, and habits stay on this phone.")
                 )
             }
 

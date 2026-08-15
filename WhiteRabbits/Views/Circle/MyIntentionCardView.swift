@@ -46,7 +46,7 @@ struct MyIntentionCardView: View {
                             .font(.system(size: 16))
                             .foregroundStyle(palette.ink)
                     } else {
-                        Text(String(localized: "intention.card.empty", defaultValue: "Your intention is still private. Set it when you are ready."))
+                        Text(String(localized: "intention.card.empty", defaultValue: "Set it when you are ready. The circle can wait. Your journal is never asked for."))
                             .font(.system(size: 15))
                             .foregroundStyle(palette.muted)
                     }

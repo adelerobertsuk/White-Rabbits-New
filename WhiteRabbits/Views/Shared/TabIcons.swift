@@ -66,7 +66,13 @@ enum TabIcons {
         renderer.scale = 3
         #if canImport(UIKit)
         if let uiImage = renderer.uiImage {
+            // `.renderingMode(.template)` here is the SwiftUI-level flag that
+            // actually gets the tab bar to tint this like a system glyph
+            // (soft grey unselected, accent when selected). Without it the
+            // baked-in black stroke shows through at full strength always,
+            // which is what was making these look too dark.
             return Image(uiImage: uiImage.withRenderingMode(.alwaysTemplate))
+                .renderingMode(.template)
         }
         #endif
         return Image(systemName: "circle")

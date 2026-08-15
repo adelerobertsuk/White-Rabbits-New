@@ -82,8 +82,17 @@ struct JournalInviteCardView: View {
         }
     }
 
+    /// "Today's page" when writing for today (matches the reference build
+    /// word for word); a plain date label when writing for a day picked
+    /// from the calendar below, so the card always names the day it will
+    /// actually save to.
     private var kickerText: String {
-        store.firstName.isEmpty
+        guard Calendar.current.isDateInToday(date) else {
+            let formatter = DateFormatter()
+            formatter.setLocalizedDateFormatFromTemplate("MMMMd")
+            return formatter.string(from: date)
+        }
+        return store.firstName.isEmpty
             ? String(localized: "journal.invite.kicker.unnamed", defaultValue: "Today’s page")
             : String(format: String(localized: "journal.invite.kicker.named", defaultValue: "Today’s page, %@"), store.firstName)
     }

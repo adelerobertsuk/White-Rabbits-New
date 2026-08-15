@@ -139,7 +139,7 @@ private struct SparkCardView: View {
                             .font(.system(size: 12, weight: .semibold))
                         Text(sent
                              ? String(localized: "circle.spark.sent", defaultValue: "Sent")
-                             : String(localized: "circle.spark.send", defaultValue: "Send a Spark"))
+                             : String(localized: "circle.spark.send", defaultValue: "Send a spark"))
                             .font(.system(size: 12, weight: .medium))
                     }
                     .padding(.horizontal, 12)

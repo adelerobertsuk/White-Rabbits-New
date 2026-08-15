@@ -22,7 +22,7 @@ struct JournalView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    JournalInviteCardView()
+                    JournalInviteCardView(date: selectedDate ?? Date())
 
                     Text(monthTitle)
                         .font(.system(size: 13, weight: .semibold))

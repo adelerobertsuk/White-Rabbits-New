@@ -498,19 +498,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, this is inspiration only. Cheer and reset, never compare."
+            "value" : "%@, this is inspiration only. Cheer a reset. Never weigh it."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@さん、ここはインスピレーションのための場所です。応援し、リセットする。比べることはありません。"
+            "value" : "%@さん、ここはインスピレーションのための場所です。リセットを応援するだけ。決して測ったりしません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@님, 여기는 오직 영감을 위한 공간이에요. 응원하고 리셋할 뿐, 비교하지 않아요."
+            "value" : "%@님, 여기는 오직 영감을 위한 공간이에요. 리셋을 응원할 뿐, 절대 평가하지 않아요."
           }
         }
       }
@@ -520,19 +520,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This is inspiration only. Cheer and reset, never compare."
+            "value" : "This is inspiration only. Cheer a reset. Never weigh it."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ここはインスピレーションのための場所です。応援し、リセットする。比べることはありません。"
+            "value" : "ここはインスピレーションのための場所です。リセットを応援するだけ。決して測ったりしません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "여기는 오직 영감을 위한 공간이에요. 응원하고 리셋할 뿐, 비교하지 않아요."
+            "value" : "여기는 오직 영감을 위한 공간이에요. 리셋을 응원할 뿐, 절대 평가하지 않아요."
           }
         }
       }
@@ -586,19 +586,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gentle circle"
+            "value" : "Shared Sanctuary"
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "やさしいサークル"
+            "value" : "共有の聖域"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "부드러운 서클"
+            "value" : "공유된 안식처"
           }
         }
       }
@@ -630,19 +630,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Journal notes, photographs, and habits stay on this phone."
+            "value" : "Journal notes, photographs, voice transcripts, and habits stay on this phone."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "日記のメモ、写真、習慣は、この端末だけに残ります。"
+            "value" : "日記のメモ、写真、音声の書き起こし、習慣は、この端末だけに残ります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "저널 기록, 사진, 습관은 이 기기에만 남아요."
+            "value" : "저널 기록, 사진, 음성 기록, 습관은 이 기기에만 남아요."
           }
         }
       }
@@ -740,7 +740,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Send a Spark"
+            "value" : "Send a spark"
           }
         },
         "ja" : {
@@ -1028,19 +1028,19 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your intention is still private. Set it when you are ready."
+            "value" : "Set it when you are ready. The circle can wait. Your journal is never asked for."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "あなたの意図はまだ非公開です。準備ができたら設定しましょう。"
+            "value" : "準備ができたら設定しましょう。サークルはいつまでも待っています。日記は聞かれることはありません。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "당신의 의도는 아직 비공개예요. 준비되면 설정해 보세요."
+            "value" : "준비되면 설정해 보세요. 서클은 기다릴 수 있어요. 당신의 저널은 절대 묻지 않아요."
           }
         }
       }
@@ -2557,6 +2557,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@의 빛"
+          }
+        }
+      }
+    },
+    "today.intention.kicker" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ intention"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@の意図"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@의 의도"
+          }
+        }
+      }
+    },
+    "today.intention.share" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share story card"
+          }
+        },
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ストーリーカードを共有"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "스토리 카드 공유"
           }
         }
       }

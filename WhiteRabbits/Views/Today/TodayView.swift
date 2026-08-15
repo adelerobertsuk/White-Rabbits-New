@@ -39,7 +39,9 @@ struct TodayView: View {
 
                     header
 
-                    inspirationBlock
+                    if let record = store.monthRecord(), let intention = record.intention, !intention.isEmpty {
+                        IntentionCardView(record: record)
+                    }
 
                     SuggestionsCardView(
                         suggestions: store.suggestions(),
@@ -51,6 +53,8 @@ struct TodayView: View {
                     )
 
                     habitsCard
+
+                    inspirationBlock
 
                     VStack(alignment: .leading, spacing: 12) {
                         Text(String(localized: "today.journal.title", defaultValue: "Journal"))

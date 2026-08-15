@@ -2,8 +2,11 @@
 //  AudioPillView.swift
 //  WhiteRabbits
 //
-//  A small floating pill, tucked in the corner of Circle, for the
-//  soft lofi soundscape. Tap to turn it on or off.
+//  A small, quiet circle in the corner of Circle for the ambient lofi
+//  soundscape, styled exactly like the bunny-mark settings button so
+//  it reads as one calm family of icon buttons, not a separate loud
+//  control. Tap to turn it on or off; while playing, three small bars
+//  breathe in place of a fourth static one.
 //
 
 import SwiftUI
@@ -17,46 +20,45 @@ struct AudioPillView: View {
         Button {
             Haptics.light()
             manager.toggle()
-            if manager.isPlaying {
-                withAnimation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true)) {
-                    barPhase.toggle()
-                }
+            withAnimation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true)) {
+                barPhase = manager.isPlaying
             }
         } label: {
-            HStack(spacing: 8) {
-                Image(systemName: manager.isPlaying ? "waveform" : "waveform.slash")
-                    .font(.system(size: 13, weight: .medium))
-                Text(manager.isPlaying
-                     ? String(localized: "audio.playing", defaultValue: "Soft lofi")
-                     : String(localized: "audio.paused", defaultValue: "Ambient sound"))
-                    .font(.system(size: 13, weight: .medium))
+            Group {
                 if manager.isPlaying {
-                    HStack(spacing: 2) {
+                    HStack(spacing: 2.5) {
                         ForEach(0..<3, id: \.self) { i in
                             Capsule()
                                 .fill(palette.accent)
-                                .frame(width: 2.5, height: barPhase ? CGFloat(6 + i * 3) : 4)
-                                .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true).delay(Double(i) * 0.12), value: barPhase)
+                                .frame(width: 2, height: barPhase ? CGFloat(5 + i * 3) : 4)
                         }
                     }
+                } else {
+                    Image(systemName: "moon.zzz")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(palette.muted)
                 }
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
-            .foregroundStyle(palette.ink)
-            .background(.ultraThinMaterial, in: Capsule())
-            .overlay(Capsule().strokeBorder(palette.line, lineWidth: 1))
-            .shadow(color: Color.black.opacity(0.08), radius: 12, y: 6)
+            .frame(width: 40, height: 40)
+            .background(Circle().fill(.ultraThinMaterial))
+            .overlay(Circle().strokeBorder(palette.line, lineWidth: 1))
+            .shadow(color: palette.ink.opacity(0.08), radius: 20, x: 0, y: 16)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(manager.isPlaying
+            ? String(localized: "audio.playing", defaultValue: "Soft lofi")
+            : String(localized: "audio.paused", defaultValue: "Ambient sound"))
+        .animation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true), value: barPhase)
         .onAppear {
-            if manager.isPlaying { barPhase = true }
+            barPhase = manager.isPlaying
         }
     }
 }
 
 #Preview {
-    AudioPillView(manager: AmbientAudioManager())
-        .environment(\.palette, .light)
-        .padding()
+    HStack(spacing: 12) {
+        AudioPillView(manager: AmbientAudioManager())
+    }
+    .environment(\.palette, .light)
+    .padding()
 }
