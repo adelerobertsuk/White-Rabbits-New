@@ -30,6 +30,7 @@ struct JournalEntryDetailView: View {
     @State private var showDeleteConfirm = false
     @StateObject private var dictation = DictationManager()
     @State private var dictationPrefix = ""
+    @State private var cardImage: PlatformImage?
 
     init(entry: JournalEntry) {
         self.entry = entry
@@ -70,9 +71,7 @@ struct JournalEntryDetailView: View {
                 }
                 ToolbarItemGroup(placement: .primaryAction) {
                     if !isEditing {
-                        ShareLink(item: shareText) {
-                            Image(systemName: "square.and.arrow.up")
-                        }
+                        shareButton
                         Button(String(localized: "action.edit", defaultValue: "Edit")) {
                             Haptics.light()
                             isEditing = true
@@ -83,6 +82,7 @@ struct JournalEntryDetailView: View {
         }
         .onAppear {
             photo = store.entryPhoto(entry)
+            renderCard()
         }
         .onDisappear {
             dictation.stop()
@@ -94,9 +94,13 @@ struct JournalEntryDetailView: View {
                 if let image = UIImage(data: data) {
                     photo = image
                     removePhoto = false
+                    renderCard()
                 }
                 #endif
             }
+        }
+        .onChange(of: isEditing) { wasEditing, editing in
+            if wasEditing && !editing { renderCard() }
         }
         .onChange(of: dictation.transcript) { _, newValue in
             guard dictation.isListening else { return }
@@ -117,6 +121,39 @@ struct JournalEntryDetailView: View {
 
     private var isToday: Bool {
         Calendar.current.isDateInToday(entry.date)
+    }
+
+    @ViewBuilder
+    private var shareButton: some View {
+        #if canImport(UIKit)
+        if let cardImage {
+            ShareLink(
+                item: Image(uiImage: cardImage),
+                preview: SharePreview(dateLabel, image: Image(uiImage: cardImage))
+            ) {
+                Image(systemName: "square.and.arrow.up")
+            }
+        } else {
+            Image(systemName: "square.and.arrow.up")
+                .foregroundStyle(palette.faint)
+        }
+        #else
+        ShareLink(item: shareText) {
+            Image(systemName: "square.and.arrow.up")
+        }
+        #endif
+    }
+
+    private func renderCard() {
+        #if canImport(UIKit)
+        cardImage = ShareCardRenderer.render(
+            kicker: dateLabel,
+            bodyText: text.isEmpty ? String(localized: "journal.detail.photoOnly", defaultValue: "A photograph for this day.") : text,
+            photo: photo,
+            bunny: store.currentBunny(entry.date),
+            footer: "White Rabbits"
+        )
+        #endif
     }
 
     @ViewBuilder

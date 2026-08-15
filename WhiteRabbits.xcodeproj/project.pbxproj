@@ -266,6 +266,7 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Used only for the \"Voice to text\" button in your journal, to turn your spoken words into a page. Nothing is recorded or sent anywhere.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Used only when you choose \"Save Image\" on a story card, so it can be added to your camera roll.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Used only for the \"Voice to text\" button in your journal, to turn your spoken words into text on this phone.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -312,6 +313,7 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Used only for the \"Voice to text\" button in your journal, to turn your spoken words into a page. Nothing is recorded or sent anywhere.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Used only when you choose \"Save Image\" on a story card, so it can be added to your camera roll.";
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Used only for the \"Voice to text\" button in your journal, to turn your spoken words into text on this phone.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;

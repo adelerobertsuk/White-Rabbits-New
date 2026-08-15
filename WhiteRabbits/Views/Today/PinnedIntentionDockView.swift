@@ -64,8 +64,8 @@ struct PinnedIntentionDockView: View {
             .fill(Color(hex: bunny.fillHex))
             .frame(width: 44, height: 44)
             .overlay(
-                Image(systemName: "hare.fill")
-                    .foregroundStyle(Color(hex: bunny.strokeHex))
+                BunnyMarkView(bunny: bunny, style: .charm)
+                    .padding(6)
             )
     }
 }

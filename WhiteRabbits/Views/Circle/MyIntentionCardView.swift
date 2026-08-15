@@ -120,9 +120,8 @@ struct MyIntentionCardView: View {
     private var fallbackPhoto: some View {
         ZStack {
             Color(hex: bunny.fillHex)
-            Image(systemName: "hare.fill")
-                .font(.system(size: 22, weight: .medium))
-                .foregroundStyle(Color(hex: bunny.strokeHex))
+            BunnyMarkView(bunny: bunny, style: .charm)
+                .padding(8)
         }
     }
 }

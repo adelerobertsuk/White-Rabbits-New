@@ -40,9 +40,8 @@ struct RitualSheetView: View {
                     .frame(width: 140, height: 140)
                     .shadow(color: Color(hex: bunny.accentHex).opacity(didCelebrate ? 0.7 : 0.3), radius: didCelebrate ? 30 : 14)
 
-                Image(systemName: "hare.fill")
-                    .font(.system(size: 56, weight: .medium))
-                    .foregroundStyle(Color(hex: bunny.strokeHex))
+                BunnyMarkView(bunny: bunny, style: .charm)
+                    .frame(width: 92, height: 92)
 
                 if didCelebrate {
                     ForEach(0..<14, id: \.self) { i in
