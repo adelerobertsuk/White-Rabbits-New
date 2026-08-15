@@ -1,0 +1,186 @@
+//
+//  FriendsSparksView.swift
+//  WhiteRabbits
+//
+//  Friends and gentle reference cards, each with a one-tap "Send a
+//  Spark" that gives a small animation and haptic buzz. No scores,
+//  no streaks, no comparison.
+//
+
+import SwiftUI
+
+struct FriendsSparksView: View {
+    @EnvironmentObject private var store: AppStore
+    @Environment(\.palette) private var palette
+
+    @State private var showAddFriend = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Text(String(localized: "circle.friends.title", defaultValue: "Friends"))
+                        .font(.system(size: 13, weight: .semibold))
+                        .textCase(.uppercase)
+                        .tracking(1.2)
+                        .foregroundStyle(palette.muted)
+                    Spacer()
+                    Button {
+                        showAddFriend = true
+                    } label: {
+                        Label(String(localized: "circle.friends.add", defaultValue: "Add"), systemImage: "plus")
+                            .font(.system(size: 13, weight: .medium))
+                    }
+                }
+
+                if store.friends.isEmpty {
+                    Text(String(localized: "circle.friends.empty", defaultValue: "Add a friend's name and their intention. You'll see their intention and stamp, nothing else."))
+                        .font(.system(size: 14))
+                        .foregroundStyle(palette.muted)
+                } else {
+                    ForEach(store.friends) { card in
+                        SparkCardView(card: card, canRemove: true)
+                    }
+                }
+            }
+
+            VStack(alignment: .leading, spacing: 10) {
+                Text(String(localized: "circle.fellows.title", defaultValue: "Fellow intentions"))
+                    .font(.system(size: 13, weight: .semibold))
+                    .textCase(.uppercase)
+                    .tracking(1.2)
+                    .foregroundStyle(palette.muted)
+
+                ForEach(store.fellows()) { card in
+                    SparkCardView(card: card, canRemove: false)
+                }
+            }
+        }
+        .sheet(isPresented: $showAddFriend) { AddFriendSheet() }
+    }
+}
+
+private struct SparkCardView: View {
+    let card: SanctuaryCard
+    let canRemove: Bool
+
+    @EnvironmentObject private var store: AppStore
+    @Environment(\.palette) private var palette
+    @State private var motes: [CGFloat] = []
+
+    private var bunny: Bunny { BunnyData.bunny(id: card.charmId) }
+    private var sent: Bool { store.hasSparked(card.id) }
+
+    var body: some View {
+        HStack(spacing: 12) {
+            CharmView(bunny: bunny, unlocked: true, size: 44)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(card.name)
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(palette.ink)
+                Text(card.intention)
+                    .font(.system(size: 13))
+                    .foregroundStyle(palette.muted)
+                    .lineLimit(2)
+            }
+
+            Spacer()
+
+            ZStack {
+                Button {
+                    guard !sent else { return }
+                    Haptics.success()
+                    store.sendSpark(card.id)
+                    burst()
+                } label: {
+                    HStack(spacing: 5) {
+                        Image(systemName: sent ? "checkmark" : "sparkle")
+                            .font(.system(size: 12, weight: .semibold))
+                        Text(sent
+                             ? String(localized: "circle.spark.sent", defaultValue: "Sent")
+                             : String(localized: "circle.spark.send", defaultValue: "Send a Spark"))
+                            .font(.system(size: 12, weight: .medium))
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(Capsule().fill(sent ? palette.line : palette.accent))
+                    .foregroundStyle(sent ? palette.muted : palette.bg)
+                }
+                .buttonStyle(.plain)
+                .disabled(sent)
+
+                ForEach(motes, id: \.self) { seed in
+                    Image(systemName: "sparkle")
+                        .font(.system(size: 9))
+                        .foregroundStyle(palette.accent)
+                        .offset(x: cos(seed) * 30, y: sin(seed) * 22 - 16)
+                        .opacity(0)
+                        .animation(.easeOut(duration: 0.6), value: motes)
+                }
+            }
+
+            if canRemove {
+                Button {
+                    store.removeFriend(card.id)
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 11, weight: .semibold))
+                        .foregroundStyle(palette.faint)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .padding(12)
+        .cardBackground(cornerRadius: 18)
+    }
+
+    private func burst() {
+        motes = (0..<8).map { _ in CGFloat.random(in: 0...(2 * .pi)) }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            motes = []
+        }
+    }
+}
+
+private struct AddFriendSheet: View {
+    @EnvironmentObject private var store: AppStore
+    @Environment(\.palette) private var palette
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var name = ""
+    @State private var intention = ""
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField(String(localized: "circle.addFriend.name", defaultValue: "Their name"), text: $name)
+                    TextField(String(localized: "circle.addFriend.intention", defaultValue: "Their intention"), text: $intention)
+                } footer: {
+                    Text(String(localized: "circle.addFriend.footer", defaultValue: "This stays on your phone only. It's just a nice reminder of what they're working towards."))
+                }
+            }
+            .navigationTitle(String(localized: "circle.addFriend.title", defaultValue: "Add a friend"))
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(String(localized: "action.cancel", defaultValue: "Cancel")) { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button(String(localized: "action.save", defaultValue: "Save")) {
+                        store.addFriend(name: name, intention: intention)
+                        dismiss()
+                    }
+                    .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty || intention.trimmingCharacters(in: .whitespaces).isEmpty)
+                }
+            }
+        }
+    }
+}
+
+#Preview {
+    FriendsSparksView()
+        .environmentObject(AppStore())
+        .environment(\.palette, .light)
+        .padding()
+}

@@ -2,16 +2,22 @@
 //  WhiteRabbitsApp.swift
 //  WhiteRabbits
 //
-//  Created by Adele Roberts on 15/08/2026.
+//  App entry point. One shared AppStore lives here and is handed down
+//  to every screen, so the whole app always reads from the same
+//  on-device data.
 //
 
 import SwiftUI
 
 @main
 struct WhiteRabbitsApp: App {
+    @StateObject private var store = AppStore()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootTabView()
+                .environmentObject(store)
+                .tint(Palette.light.accent)
         }
     }
 }
