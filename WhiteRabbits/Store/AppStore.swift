@@ -622,12 +622,139 @@ final class AppStore: ObservableObject {
     func importSnapshot(from fileData: Data) -> Bool {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
-        guard let imported = try? decoder.decode(AppData.self, from: fileData) else { return false }
-        data = imported
-        Haptics.isEnabled = data.hapticsEnabled
-        persist()
-        return true
+        if let imported = try? decoder.decode(AppData.self, from: fileData) {
+            data = imported
+            Haptics.isEnabled = data.hapticsEnabled
+            persist()
+            return true
+        }
+
+        // Not one of this app's own backups. It might be an "Export Data"
+        // file from the White Rabbits *website* instead (Safari on the
+        // phone, before this app existed): same idea, but a slightly
+        // different JSON shape (base64 photos, no id/date on each entry
+        // since the dictionary key already carries that). Try translating
+        // that shape into ours rather than just failing.
+        if let converted = Self.convertWebBackup(fileData) {
+            data = converted
+            Haptics.isEnabled = data.hapticsEnabled
+            persist()
+            return true
+        }
+
+        return false
     }
+
+    /// Reads a White Rabbits *web app* "Export Data" JSON file (see
+    /// `backupPayload()` in the website's app.js) and rebuilds it as this
+    /// app's own `AppData`, carrying journal pages, habits, check-ins,
+    /// and monthly intentions (with their photos) across.
+    private static func convertWebBackup(_ fileData: Data) -> AppData? {
+        guard let json = try? JSONSerialization.jsonObject(with: fileData) as? [String: Any],
+              json["journal"] != nil || json["checks"] != nil || json["months"] != nil else {
+            return nil
+        }
+
+        var result = AppData()
+        result.name = (json["name"] as? String) ?? ""
+        result.hapticsEnabled = (json["haptics"] as? Bool) ?? true
+
+        if let rawHabits = json["habits"] as? [[String: Any]], !rawHabits.isEmpty {
+            let habits: [Habit] = rawHabits.compactMap { entry in
+                guard let id = entry["id"] as? String, let name = entry["name"] as? String else { return nil }
+                return Habit(id: id, name: name)
+            }
+            if !habits.isEmpty { result.habits = habits }
+        }
+
+        if let rawChecks = json["checks"] as? [String: [String]] {
+            result.checks = rawChecks
+        }
+
+        if let rawJournal = json["journal"] as? [String: [String: Any]] {
+            var journal: [String: JournalEntry] = [:]
+            for (key, entry) in rawJournal {
+                let date = parseDayKey(key) ?? Date()
+                var photoFileName: String?
+                #if canImport(UIKit)
+                if let photoString = entry["photo"] as? String, let image = decodeDataURLImage(photoString) {
+                    photoFileName = Persistence.savePhoto(image)
+                }
+                #endif
+                let record = JournalEntry(
+                    id: key,
+                    date: date,
+                    text: (entry["text"] as? String) ?? "",
+                    mood: (entry["mood"] as? String) ?? "",
+                    photoFileName: photoFileName,
+                    updated: parseWebDate(entry["updated"] as? String) ?? date
+                )
+                if record.hasContent {
+                    journal[key] = record
+                }
+            }
+            result.journal = journal
+        }
+
+        if let rawMonths = json["months"] as? [String: [String: Any]] {
+            var months: [String: MonthRecord] = [:]
+            for (key, entry) in rawMonths {
+                let parts = key.split(separator: "-")
+                guard parts.count == 2, let year = Int(parts[0]), let month = Int(parts[1]) else { continue }
+                var photoFileName: String?
+                #if canImport(UIKit)
+                if let photoString = entry["photo"] as? String, let image = decodeDataURLImage(photoString) {
+                    photoFileName = Persistence.savePhoto(image)
+                }
+                #endif
+                months[key] = MonthRecord(
+                    key: key,
+                    year: year,
+                    month: month,
+                    completed: (entry["completed"] as? Bool) ?? false,
+                    charmId: entry["charmId"] as? String,
+                    saidAt: parseWebDate(entry["saidAt"] as? String),
+                    intention: entry["intention"] as? String,
+                    photoFileName: photoFileName
+                )
+            }
+            result.months = months
+        }
+
+        return result
+    }
+
+    private static func parseDayKey(_ key: String) -> Date? {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.timeZone = .current
+        return formatter.date(from: key)
+    }
+
+    private static func parseWebDate(_ string: String?) -> Date? {
+        guard let string else { return nil }
+        let iso = ISO8601DateFormatter()
+        iso.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = iso.date(from: string) { return date }
+        iso.formatOptions = [.withInternetDateTime]
+        return iso.date(from: string)
+    }
+
+    #if canImport(UIKit)
+    /// Decodes a `data:image/jpeg;base64,...` string, the format the
+    /// website stores photos in, into a real image.
+    private static func decodeDataURLImage(_ dataURL: String) -> UIImage? {
+        guard !dataURL.isEmpty else { return nil }
+        let base64Part: Substring
+        if let commaIndex = dataURL.firstIndex(of: ",") {
+            base64Part = dataURL[dataURL.index(after: commaIndex)...]
+        } else {
+            base64Part = Substring(dataURL)
+        }
+        guard let data = Data(base64Encoded: String(base64Part)) else { return nil }
+        return UIImage(data: data)
+    }
+    #endif
 
     /// "Clear this device": wipes every saved page, stamp, and setting.
     func resetDevice() {
