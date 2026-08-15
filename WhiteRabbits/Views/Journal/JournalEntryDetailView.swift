@@ -2,13 +2,17 @@
 //  JournalEntryDetailView.swift
 //  WhiteRabbits
 //
-//  View, edit, or share a single day's page.
+//  View, edit, or share a single day's page. Reading mode uses the same
+//  editorial hierarchy as the compose sheet (title, lede, a soft card
+//  around the words) so a kept page feels just as considered as writing
+//  a new one, not like a stripped-down afterthought.
 //
 
 import SwiftUI
 import PhotosUI
 
 private let moods = ["Calm", "Clear", "Tender", "Tired", "Lucky"]
+private let maxLength = 2000
 
 struct JournalEntryDetailView: View {
     let entry: JournalEntry
@@ -24,6 +28,8 @@ struct JournalEntryDetailView: View {
     @State private var photoItem: PhotosPickerItem?
     @State private var removePhoto = false
     @State private var showDeleteConfirm = false
+    @StateObject private var dictation = DictationManager()
+    @State private var dictationPrefix = ""
 
     init(entry: JournalEntry) {
         self.entry = entry
@@ -34,12 +40,18 @@ struct JournalEntryDetailView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 10) {
                     Text(dateLabel)
                         .font(.system(size: 13, weight: .semibold))
                         .textCase(.uppercase)
                         .tracking(1)
                         .foregroundStyle(palette.muted)
+
+                    Text(isToday ? String(localized: "journal.new.title.today", defaultValue: "Today’s page") : String(localized: "journal.new.title.kept", defaultValue: "A kept page"))
+                        .font(.system(size: 28, weight: .light))
+                        .tracking(-0.3)
+                        .foregroundStyle(palette.ink)
+                        .padding(.bottom, 6)
 
                     photoView
 
@@ -62,6 +74,7 @@ struct JournalEntryDetailView: View {
                             Image(systemName: "square.and.arrow.up")
                         }
                         Button(String(localized: "action.edit", defaultValue: "Edit")) {
+                            Haptics.light()
                             isEditing = true
                         }
                     }
@@ -70,6 +83,9 @@ struct JournalEntryDetailView: View {
         }
         .onAppear {
             photo = store.entryPhoto(entry)
+        }
+        .onDisappear {
+            dictation.stop()
         }
         .onChange(of: photoItem) { _, newItem in
             Task {
@@ -81,6 +97,10 @@ struct JournalEntryDetailView: View {
                 }
                 #endif
             }
+        }
+        .onChange(of: dictation.transcript) { _, newValue in
+            guard dictation.isListening else { return }
+            text = dictationPrefix.isEmpty ? newValue : "\(dictationPrefix) \(newValue)"
         }
         .confirmationDialog(
             String(localized: "journal.delete.confirm", defaultValue: "Delete this entry?"),
@@ -95,6 +115,10 @@ struct JournalEntryDetailView: View {
         }
     }
 
+    private var isToday: Bool {
+        Calendar.current.isDateInToday(entry.date)
+    }
+
     @ViewBuilder
     private var photoView: some View {
         #if canImport(UIKit)
@@ -102,7 +126,7 @@ struct JournalEntryDetailView: View {
             Image(uiImage: photo)
                 .resizable()
                 .scaledToFill()
-                .frame(height: 220)
+                .frame(height: 200)
                 .frame(maxWidth: .infinity)
                 .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         }
@@ -110,7 +134,7 @@ struct JournalEntryDetailView: View {
     }
 
     private var viewingContent: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 16) {
             if !mood.isEmpty {
                 Text(mood)
                     .font(.system(size: 12, weight: .medium))
@@ -119,33 +143,65 @@ struct JournalEntryDetailView: View {
                     .background(Capsule().fill(palette.accentGlow))
                     .foregroundStyle(palette.ink)
             }
+
             Text(text.isEmpty ? String(localized: "journal.detail.photoOnly", defaultValue: "A photograph for this day.") : text)
-                .font(.system(size: 17))
+                .font(.system(size: 16, weight: .medium))
+                .lineSpacing(5)
                 .foregroundStyle(palette.ink)
+                .padding(16)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(palette.card)
+                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .strokeBorder(palette.line, lineWidth: 1)
+                )
 
             Button(role: .destructive) {
+                Haptics.light()
                 showDeleteConfirm = true
             } label: {
                 Text(String(localized: "journal.delete.action", defaultValue: "Delete Entry"))
                     .font(.system(size: 14))
             }
-            .padding(.top, 12)
+            .padding(.top, 4)
         }
     }
 
     private var editingContent: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            TextField(String(localized: "journal.new.placeholder", defaultValue: "Write here..."), text: $text, axis: .vertical)
-                .font(.system(size: 17))
-                .lineLimit(6...12)
-                .padding(14)
-                .background(palette.card)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        VStack(alignment: .leading, spacing: 10) {
+            ZStack(alignment: .bottomTrailing) {
+                TextField(String(localized: "journal.new.placeholder", defaultValue: "A few honest lines, whenever you like..."), text: $text, axis: .vertical)
+                    .font(.system(size: 16, weight: .medium))
+                    .lineSpacing(4)
+                    .lineLimit(7...14)
+                    .padding(.trailing, 40)
+                    .onChange(of: text) { _, newValue in
+                        if newValue.count > maxLength {
+                            text = String(newValue.prefix(maxLength))
+                        }
+                    }
+
+                Text("\(text.count)/\(maxLength)")
+                    .font(.system(size: 11))
+                    .foregroundStyle(palette.faint)
+            }
+            .padding(14)
+            .frame(minHeight: 88)
+            .background(palette.card)
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(palette.line, lineWidth: 1)
+            )
+
+            voiceButton
 
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(moods, id: \.self) { item in
                         Button {
+                            Haptics.light()
                             mood = (mood == item) ? "" : item
                         } label: {
                             Text(item)
@@ -159,24 +215,58 @@ struct JournalEntryDetailView: View {
                         .buttonStyle(.plain)
                     }
                 }
+                .padding(.vertical, 4)
             }
 
             PhotosPicker(selection: $photoItem, matching: .images) {
                 Text(photo == nil ? String(localized: "journal.new.addPhoto", defaultValue: "Add a photo") : String(localized: "journal.new.changePhoto", defaultValue: "Change photo"))
                     .font(.system(size: 14))
+                    .foregroundStyle(palette.accent)
             }
+            .padding(.top, 2)
 
-            HStack(spacing: 12) {
-                Button {
-                    Haptics.success()
-                    store.saveJournalEntry(date: entry.date, text: text, mood: mood, photo: photo, removePhoto: removePhoto)
-                    isEditing = false
-                } label: {
-                    Text(String(localized: "journal.new.save", defaultValue: "Save Entry"))
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(PillButtonStyle())
+            Button {
+                Haptics.success()
+                dictation.stop()
+                store.saveJournalEntry(date: entry.date, text: text, mood: mood, photo: photo, removePhoto: removePhoto)
+                isEditing = false
+            } label: {
+                Text(String(localized: "journal.new.save", defaultValue: "Keep this page"))
+                    .frame(maxWidth: .infinity)
             }
+            .buttonStyle(PillButtonStyle())
+            .padding(.top, 6)
+        }
+    }
+
+    private var voiceButton: some View {
+        Button {
+            Haptics.light()
+            if dictation.isListening {
+                dictation.stop()
+            } else {
+                dictationPrefix = text
+                dictation.start()
+            }
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "mic.fill")
+                    .font(.system(size: 13))
+                Text(dictation.isListening
+                    ? String(localized: "journal.new.listening", defaultValue: "Listening…")
+                    : String(localized: "journal.new.voiceToText", defaultValue: "Voice to text"))
+                    .font(.system(size: 13, weight: .medium))
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(Capsule().fill(dictation.isListening ? palette.ink : palette.accentGlow))
+            .foregroundStyle(dictation.isListening ? palette.bg : palette.accent)
+        }
+        .buttonStyle(.plain)
+        .alert(String(localized: "journal.new.micDenied", defaultValue: "Microphone access is off"), isPresented: $dictation.authorizationDenied) {
+            Button(String(localized: "action.ok", defaultValue: "OK"), role: .cancel) {}
+        } message: {
+            Text(String(localized: "journal.new.micDenied.body", defaultValue: "Turn it on in Settings to use Voice to text."))
         }
     }
 

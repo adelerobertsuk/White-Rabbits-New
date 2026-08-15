@@ -2,14 +2,18 @@
 //  NewEntrySheet.swift
 //  WhiteRabbits
 //
-//  Write, add a photo, or just pick a mood. Nothing is required.
-//  Saving here is always called "Save Entry", never anything else.
+//  "Today's page" / "A kept page": write, add a photo, or dictate a few
+//  lines, then pick a mood. Nothing is required. Matches the reference
+//  build's compose sheet: big photograph up top, a lined text card with
+//  a live character count, then Voice to text, moods, and "Keep this
+//  page" to finish.
 //
 
 import SwiftUI
 import PhotosUI
 
 private let moods = ["Calm", "Clear", "Tender", "Tired", "Lucky"]
+private let maxLength = 2000
 
 /// Which of the journal invite's three buttons (Write / Photo / Voice)
 /// opened this sheet, so it can jump straight to the right control.
@@ -31,28 +35,35 @@ struct NewEntrySheet: View {
     @State private var removePhoto = false
     @State private var autoShowPhotoPicker = false
     @FocusState private var textFieldFocused: Bool
+    @StateObject private var dictation = DictationManager()
+    @State private var dictationPrefix = ""
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: 10) {
                     Text(dateLabel)
                         .font(.system(size: 13, weight: .semibold))
                         .textCase(.uppercase)
                         .tracking(1)
                         .foregroundStyle(palette.muted)
 
-                    Text(String(localized: "journal.new.subtitle", defaultValue: "Whenever it feels right, write a few lines or add a photo."))
+                    Text(isToday ? String(localized: "journal.new.title.today", defaultValue: "Today’s page") : String(localized: "journal.new.title.kept", defaultValue: "A kept page"))
+                        .font(.system(size: 28, weight: .light))
+                        .tracking(-0.3)
+                        .foregroundStyle(palette.ink)
+                        .padding(.bottom, 2)
+
+                    Text(lede)
                         .font(.system(size: 14))
                         .foregroundStyle(palette.muted)
+                        .padding(.bottom, 4)
 
-                    TextField(String(localized: "journal.new.placeholder", defaultValue: "Write here..."), text: $text, axis: .vertical)
-                        .font(.system(size: 17))
-                        .lineLimit(6...12)
-                        .padding(14)
-                        .background(palette.card)
-                        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                        .focused($textFieldFocused)
+                    photoButton
+
+                    textField
+
+                    voiceButton
 
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
@@ -76,46 +87,14 @@ struct NewEntrySheet: View {
                                 .buttonStyle(.plain)
                             }
                         }
+                        .padding(.vertical, 4)
                     }
-
-                    PhotosPicker(selection: $photoItem, matching: .images) {
-                        HStack(spacing: 10) {
-                            #if canImport(UIKit)
-                            if let photo {
-                                Image(uiImage: photo)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .frame(width: 48, height: 48)
-                                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-                            } else {
-                                photoIcon
-                            }
-                            #else
-                            photoIcon
-                            #endif
-                            Text(photo == nil ? String(localized: "journal.new.addPhoto", defaultValue: "Add a photo") : String(localized: "journal.new.changePhoto", defaultValue: "Change photo"))
-                                .font(.system(size: 14))
-                                .foregroundStyle(palette.ink)
-                            Spacer()
-                            if photo != nil {
-                                Button {
-                                    photo = nil
-                                    removePhoto = true
-                                } label: {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .foregroundStyle(palette.faint)
-                                }
-                            }
-                        }
-                        .padding(12)
-                        .cardBackground(cornerRadius: 16)
-                    }
-                    .buttonStyle(.plain)
+                    .padding(.bottom, 6)
 
                     Button {
                         save()
                     } label: {
-                        Text(String(localized: "journal.new.save", defaultValue: "Save Entry"))
+                        Text(String(localized: "journal.new.save", defaultValue: "Keep this page"))
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(PillButtonStyle())
@@ -126,7 +105,7 @@ struct NewEntrySheet: View {
             .photosPicker(isPresented: $autoShowPhotoPicker, selection: $photoItem, matching: .images)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(String(localized: "action.cancel", defaultValue: "Cancel")) { dismiss() }
+                    Button(String(localized: "action.close", defaultValue: "Close")) { dismiss() }
                 }
             }
         }
@@ -137,11 +116,16 @@ struct NewEntrySheet: View {
                 photo = store.entryPhoto(existing)
             }
             switch focus {
-            case .write, .voice:
+            case .write:
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { textFieldFocused = true }
             case .photo:
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { autoShowPhotoPicker = true }
+            case .voice:
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { startDictation() }
             }
+        }
+        .onDisappear {
+            dictation.stop()
         }
         .onChange(of: photoItem) { _, newItem in
             Task {
@@ -154,6 +138,144 @@ struct NewEntrySheet: View {
                 #endif
             }
         }
+        .onChange(of: dictation.transcript) { _, newValue in
+            guard dictation.isListening else { return }
+            text = dictationPrefix.isEmpty ? newValue : "\(dictationPrefix) \(newValue)"
+        }
+    }
+
+    private var isToday: Bool {
+        Calendar.current.isDateInToday(date)
+    }
+
+    private var lede: String {
+        if store.firstName.isEmpty {
+            return isToday
+                ? String(localized: "journal.new.lede.today.unnamed", defaultValue: "This page stays on this phone, in your journal.")
+                : String(localized: "journal.new.lede.kept.unnamed", defaultValue: "This page stays on this phone, in your journal.")
+        }
+        let format = isToday
+            ? String(localized: "journal.new.lede.today.named", defaultValue: "%@, this page stays on this phone, in your journal.")
+            : String(localized: "journal.new.lede.kept.named", defaultValue: "%@, this page stays on this phone, in your journal.")
+        return String(format: format, store.firstName)
+    }
+
+    private var photoButton: some View {
+        PhotosPicker(selection: $photoItem, matching: .images) {
+            ZStack {
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(palette.card)
+                #if canImport(UIKit)
+                if let photo {
+                    Image(uiImage: photo)
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    photoEmptyLabel
+                }
+                #else
+                photoEmptyLabel
+                #endif
+            }
+            .frame(height: 170)
+            .frame(maxWidth: .infinity)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .strokeBorder(palette.line, style: StrokeStyle(lineWidth: 1, dash: photo == nil ? [5, 5] : []))
+            )
+        }
+        .buttonStyle(.plain)
+        .overlay(alignment: .topTrailing) {
+            if photo != nil {
+                Button {
+                    Haptics.light()
+                    photo = nil
+                    removePhoto = true
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: 20))
+                        .foregroundStyle(palette.ink)
+                        .background(Circle().fill(palette.bg))
+                }
+                .padding(8)
+            }
+        }
+    }
+
+    private var photoEmptyLabel: some View {
+        VStack(spacing: 6) {
+            Image(systemName: "camera")
+                .font(.system(size: 18))
+            Text(String(localized: "journal.new.addPhotograph", defaultValue: "Add a photograph"))
+                .font(.system(size: 14))
+        }
+        .foregroundStyle(palette.muted)
+    }
+
+    private var textField: some View {
+        ZStack(alignment: .bottomTrailing) {
+            TextField(String(localized: "journal.new.placeholder", defaultValue: "A few honest lines, whenever you like..."), text: $text, axis: .vertical)
+                .font(.system(size: 16, weight: .medium))
+                .lineSpacing(4)
+                .lineLimit(7...14)
+                .focused($textFieldFocused)
+                .padding(.trailing, 40)
+                .onChange(of: text) { _, newValue in
+                    if newValue.count > maxLength {
+                        text = String(newValue.prefix(maxLength))
+                    }
+                }
+
+            Text("\(text.count)/\(maxLength)")
+                .font(.system(size: 11))
+                .foregroundStyle(palette.faint)
+        }
+        .padding(14)
+        .frame(minHeight: 88)
+        .background(palette.card)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(palette.line, lineWidth: 1)
+        )
+    }
+
+    private var voiceButton: some View {
+        Button {
+            Haptics.light()
+            dictation.toggle()
+            if dictation.isListening {
+                dictationPrefix = text
+            }
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "mic.fill")
+                    .font(.system(size: 13))
+                Text(dictation.isListening
+                    ? String(localized: "journal.new.listening", defaultValue: "Listening…")
+                    : String(localized: "journal.new.voiceToText", defaultValue: "Voice to text"))
+                    .font(.system(size: 13, weight: .medium))
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(
+                Capsule().fill(dictation.isListening ? palette.ink : palette.accentGlow)
+            )
+            .foregroundStyle(dictation.isListening ? palette.bg : palette.accent)
+        }
+        .buttonStyle(.plain)
+        .padding(.bottom, 4)
+        .alert(String(localized: "journal.new.micDenied", defaultValue: "Microphone access is off"), isPresented: $dictation.authorizationDenied) {
+            Button(String(localized: "action.ok", defaultValue: "OK"), role: .cancel) {}
+        } message: {
+            Text(String(localized: "journal.new.micDenied.body", defaultValue: "Turn it on in Settings to use Voice to text."))
+        }
+    }
+
+    private func startDictation() {
+        dictationPrefix = text
+        dictation.start()
     }
 
     private var dateLabel: String {
@@ -162,15 +284,9 @@ struct NewEntrySheet: View {
         return formatter.string(from: date)
     }
 
-    private var photoIcon: some View {
-        RoundedRectangle(cornerRadius: 12, style: .continuous)
-            .fill(palette.card)
-            .frame(width: 48, height: 48)
-            .overlay(Image(systemName: "camera").foregroundStyle(palette.muted))
-    }
-
     private func save() {
         Haptics.success()
+        dictation.stop()
         store.saveJournalEntry(date: date, text: text, mood: mood, photo: photo, removePhoto: removePhoto)
         dismiss()
     }
