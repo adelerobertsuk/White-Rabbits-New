@@ -17,7 +17,6 @@ struct WhiteRabbitsApp: App {
         WindowGroup {
             RootTabView()
                 .environmentObject(store)
-                .tint(Palette.light.accent)
         }
     }
 }

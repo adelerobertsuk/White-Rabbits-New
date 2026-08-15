@@ -58,15 +58,7 @@ struct TodayView: View {
 
                     inspirationBlock
 
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text(String(localized: "today.journal.title", defaultValue: "Journal"))
-                            .font(.system(size: 13, weight: .semibold))
-                            .textCase(.uppercase)
-                            .tracking(1.56)
-                            .foregroundStyle(palette.muted)
-
-                        JournalInviteCardView()
-                    }
+                    JournalInviteCardView()
 
                     if let record = store.pinnedRecord, let intention = record.intention, !intention.isEmpty {
                         PinnedIntentionDockView(
@@ -76,7 +68,7 @@ struct TodayView: View {
                         )
                     }
                 }
-                .padding(20)
+                .padding(Layout.screenInset)
                 .padding(.bottom, 40)
             }
             .scrollBounceBehavior(.basedOnSize)
@@ -85,10 +77,7 @@ struct TodayView: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text(store.todayKicker())
-                        .font(.system(size: 10, weight: .medium))
-                        .textCase(.uppercase)
-                        .tracking(2.2)
-                        .foregroundStyle(palette.muted)
+                        .kickerStyle()
                 }
             }
             .settingsButton()
@@ -117,17 +106,14 @@ struct TodayView: View {
                 .foregroundStyle(palette.faint)
         }
         .frame(maxWidth: .infinity)
-        .padding(.horizontal, 24)
+        .padding(.horizontal, Layout.screenInset)
     }
 
     private var inspirationBlock: some View {
         let inspiration = InspirationData.today()
         return VStack(spacing: 6) {
             Text(store.monthLightKicker())
-                .font(.system(size: 10, weight: .medium))
-                .textCase(.uppercase)
-                .tracking(2.2)
-                .foregroundStyle(palette.muted)
+                .kickerStyle()
             Text(inspiration.line)
                 .font(.system(size: 16, weight: .regular))
                 .foregroundStyle(palette.ink)
@@ -137,7 +123,9 @@ struct TodayView: View {
                 .foregroundStyle(palette.muted)
                 .multilineTextAlignment(.center)
         }
-        .padding(.horizontal, 20)
+        .frame(maxWidth: .infinity)
+        .padding(Layout.cardPadding)
+        .cardBackground()
     }
 
     private var doneText: String {
@@ -161,10 +149,7 @@ struct TodayView: View {
     private var habitsCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text(String(localized: "today.habits.title", defaultValue: "Today"))
-                .font(.system(size: 13, weight: .semibold))
-                .textCase(.uppercase)
-                .tracking(1.56)
-                .foregroundStyle(palette.muted)
+                .sectionHeaderStyle()
 
             ForEach(doneHabitsToday) { habit in
                 Button {
@@ -184,7 +169,7 @@ struct TodayView: View {
                 .buttonStyle(.plain)
             }
         }
-        .padding(18)
+        .padding(Layout.cardPadding)
         .cardBackground()
     }
 

@@ -19,10 +19,7 @@ struct IntentionCardView: View {
     var body: some View {
         VStack(spacing: 10) {
             Text(kicker)
-                .font(.system(size: 10, weight: .medium))
-                .textCase(.uppercase)
-                .tracking(2.2)
-                .foregroundStyle(palette.muted)
+                .kickerStyle()
 
             Text(record.intention ?? "")
                 .font(.system(size: 20, weight: .regular))
@@ -32,7 +29,7 @@ struct IntentionCardView: View {
 
             shareButton
         }
-        .padding(20)
+        .padding(Layout.cardPadding)
         .frame(maxWidth: .infinity)
         .cardBackground()
         .onAppear { renderCard() }

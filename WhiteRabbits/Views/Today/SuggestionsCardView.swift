@@ -23,10 +23,7 @@ struct SuggestionsCardView: View {
             } label: {
                 HStack {
                     Text(String(localized: "suggestions.title", defaultValue: "Suggestions"))
-                        .font(.system(size: 13, weight: .semibold))
-                        .textCase(.uppercase)
-                        .tracking(1.2)
-                        .foregroundStyle(palette.muted)
+                        .sectionHeaderStyle()
                     Spacer()
                     Image(systemName: isCollapsed ? "chevron.down" : "chevron.up")
                         .font(.system(size: 12, weight: .semibold))
@@ -54,9 +51,9 @@ struct SuggestionsCardView: View {
                                 HStack(spacing: 12) {
                                     Image(systemName: suggestion.systemImage)
                                         .font(.system(size: 15, weight: .medium))
-                                        .foregroundStyle(palette.accent)
+                                        .foregroundStyle(palette.muted)
                                         .frame(width: 28, height: 28)
-                                        .background(Circle().fill(palette.accentGlow))
+                                        .background(Circle().fill(palette.track))
                                     Text(suggestion.title)
                                         .font(.system(size: 15))
                                         .foregroundStyle(palette.ink)

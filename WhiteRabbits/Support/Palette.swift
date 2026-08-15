@@ -76,6 +76,68 @@ struct PaletteProvider<Content: View>: View {
     }
 }
 
+/// The app's spacing and radius scale, so every screen reaches for the
+/// same handful of numbers instead of inventing a new one each time.
+enum Layout {
+    /// The gap from a screen's edge to its content.
+    static let screenInset: CGFloat = 20
+    /// The gap between a card's border and what's inside it.
+    static let cardPadding: CGFloat = 18
+    /// Corner radius for cards (the app's primary "surface").
+    static let cardRadius: CGFloat = 20
+    /// Corner radius for buttons and other small controls.
+    static let controlRadius: CGFloat = 16
+    /// Corner radius for a large photo living inside a card, e.g. a
+    /// journal entry's hero image.
+    static let mediaRadiusLarge: CGFloat = 16
+    /// Corner radius for a small thumbnail, e.g. a list row's photo.
+    static let mediaRadiusSmall: CGFloat = 12
+}
+
+/// The uppercase micro-label used for things like "AUGUST INTENTION" or
+/// "TODAY · AUGUST 2026": the smallest, quietest text in the hierarchy.
+private struct KickerText: ViewModifier {
+    @Environment(\.palette) private var palette
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 10, weight: .medium))
+            .textCase(.uppercase)
+            .tracking(2.2)
+            .foregroundStyle(palette.muted)
+    }
+}
+
+/// The uppercase label for a card or list section, e.g. "SUGGESTIONS",
+/// "FRIENDS": one step louder than a kicker.
+private struct SectionHeaderText: ViewModifier {
+    @Environment(\.palette) private var palette
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 13, weight: .semibold))
+            .textCase(.uppercase)
+            .tracking(1.56)
+            .foregroundStyle(palette.muted)
+    }
+}
+
+/// A screen's own title, e.g. "Charms", "Quiet settings."
+private struct DisplayTitleText: ViewModifier {
+    @Environment(\.palette) private var palette
+    var weight: Font.Weight = .light
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 28, weight: weight))
+            .tracking(-1.0)
+            .foregroundStyle(palette.ink)
+    }
+}
+
+extension View {
+    func kickerStyle() -> some View { modifier(KickerText()) }
+    func sectionHeaderStyle() -> some View { modifier(SectionHeaderText()) }
+    func displayTitleStyle(weight: Font.Weight = .light) -> some View { modifier(DisplayTitleText(weight: weight)) }
+}
+
 /// The soft glow that sits behind every screen: a warm radial highlight
 /// fading into the base background, matching the web app's
 /// `radial-gradient(120% 70% at 50% -8%, accent-glow, transparent 52%)`.
