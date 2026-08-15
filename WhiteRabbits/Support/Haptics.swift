@@ -12,20 +12,28 @@ import UIKit
 #endif
 
 enum Haptics {
+    /// Mirrors the "Haptics" toggle in Settings. Kept as a plain static
+    /// flag so every `Haptics.light()` call site doesn't need access
+    /// to the store.
+    static var isEnabled = true
+
     static func light() {
         #if os(iOS)
+        guard isEnabled else { return }
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         #endif
     }
 
     static func medium() {
         #if os(iOS)
+        guard isEnabled else { return }
         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         #endif
     }
 
     static func success() {
         #if os(iOS)
+        guard isEnabled else { return }
         UINotificationFeedbackGenerator().notificationOccurred(.success)
         #endif
     }

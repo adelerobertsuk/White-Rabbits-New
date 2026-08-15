@@ -61,13 +61,18 @@ extension EnvironmentValues {
 
 /// Reads the system color scheme and hands every child view a matching
 /// `Palette` through the environment. Put this once near the root.
+///
+/// Settings' "Dark evening" toggle can force dark mode on regardless of
+/// the system setting, matching the web app's manual theme override.
 struct PaletteProvider<Content: View>: View {
     @Environment(\.colorScheme) private var colorScheme
+    @EnvironmentObject private var store: AppStore
     @ViewBuilder var content: () -> Content
 
     var body: some View {
         content()
-            .environment(\.palette, Palette.current(for: colorScheme))
+            .environment(\.palette, store.forceDarkMode ? .dark : Palette.current(for: colorScheme))
+            .preferredColorScheme(store.forceDarkMode ? .dark : nil)
     }
 }
 
@@ -80,18 +85,16 @@ struct SanctuaryBackground: View {
     var body: some View {
         ZStack {
             palette.bg
-            // A whisper of warmth, wide and diffused rather than a concentrated
-            // spotlight, so it never reads as a dark or "muddy" patch.
-            RadialGradient(
-                gradient: Gradient(stops: [
-                    .init(color: palette.accent.opacity(0.10), location: 0),
-                    .init(color: palette.accent.opacity(0.035), location: 0.45),
-                    .init(color: palette.accent.opacity(0), location: 0.85),
-                ]),
-                center: UnitPoint(x: 0.5, y: -0.1),
-                startRadius: 0,
-                endRadius: 480
-            )
+            GeometryReader { geo in
+                EllipticalGradient(
+                    gradient: Gradient(colors: [palette.accentGlow, palette.accentGlow.opacity(0)]),
+                    center: .center,
+                    startRadiusFraction: 0,
+                    endRadiusFraction: 0.52
+                )
+                .frame(width: geo.size.width * 1.2, height: geo.size.height * 0.7)
+                .position(x: geo.size.width * 0.5, y: geo.size.height * -0.08)
+            }
         }
         .ignoresSafeArea()
     }

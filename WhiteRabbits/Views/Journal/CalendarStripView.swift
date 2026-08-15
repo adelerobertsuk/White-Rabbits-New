@@ -16,33 +16,40 @@ struct CalendarStripView: View {
     @Binding var displayedMonth: Date
     @Binding var selectedDate: Date?
     let hasEntry: (Date) -> Bool
+    /// Matches the web app's fixed, arrow-less current-month calendar.
+    /// Set true only where paging between months is actually wanted.
+    var allowsNavigation: Bool = true
 
     @Environment(\.palette) private var palette
     private let calendar = Calendar.current
 
     var body: some View {
         VStack(spacing: 14) {
-            HStack {
-                Button { changeMonth(by: -1) } label: {
-                    Image(systemName: "chevron.left")
-                        .foregroundStyle(palette.muted)
+            if allowsNavigation {
+                HStack {
+                    Button { changeMonth(by: -1) } label: {
+                        Image(systemName: "chevron.left")
+                            .foregroundStyle(palette.muted)
+                    }
+                    Spacer()
+                    Text(monthTitle)
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(palette.ink)
+                    Spacer()
+                    Button { changeMonth(by: 1) } label: {
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(palette.muted)
+                    }
                 }
-                Spacer()
-                Text(monthTitle)
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(palette.ink)
-                Spacer()
-                Button { changeMonth(by: 1) } label: {
-                    Image(systemName: "chevron.right")
-                        .foregroundStyle(palette.muted)
-                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
 
             HStack {
                 ForEach(weekdaySymbols, id: \.self) { symbol in
                     Text(symbol)
-                        .font(.system(size: 11, weight: .medium))
+                        .font(.system(size: 9, weight: .semibold))
+                        .textCase(.uppercase)
+                        .tracking(0.72)
                         .foregroundStyle(palette.faint)
                         .frame(maxWidth: .infinity)
                 }
@@ -81,19 +88,21 @@ struct CalendarStripView: View {
                 selectedDate = date
             }
         } label: {
-            VStack(spacing: 4) {
-                Text("\(calendar.component(.day, from: date))")
-                    .font(.system(size: 14, weight: isToday ? .semibold : .regular))
-                    .foregroundStyle(isSelected ? palette.bg : palette.ink)
-                    .frame(width: 30, height: 30)
-                    .background(
-                        Circle().fill(isSelected ? palette.ink : (isToday ? palette.accentGlow : Color.clear))
-                    )
-                Circle()
-                    .fill(filled ? palette.accent : Color.clear)
-                    .frame(width: 4, height: 4)
-            }
-            .frame(maxWidth: .infinity)
+            // Matches the web app: a day with an entry gets a soft
+            // accent-glow fill; today gets a thin accent ring instead of
+            // a fill, unless it's also selected.
+            Text("\(calendar.component(.day, from: date))")
+                .font(.system(size: 14, weight: .regular))
+                .foregroundStyle(isSelected ? palette.bg : palette.ink)
+                .frame(width: 32, height: 32)
+                .background(
+                    Circle().fill(isSelected ? palette.ink : (filled ? palette.accentGlow : Color.clear))
+                )
+                .overlay(
+                    Circle().strokeBorder(palette.accent, lineWidth: 1.5)
+                        .opacity(isToday && !isSelected ? 1 : 0)
+                )
+                .frame(maxWidth: .infinity)
         }
         .buttonStyle(.plain)
     }

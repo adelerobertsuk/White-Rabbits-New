@@ -72,4 +72,12 @@ enum Persistence {
         let url = photosURL.appendingPathComponent(fileName)
         try? FileManager.default.removeItem(at: url)
     }
+
+    /// Used by "Clear this device" in Settings: wipes every saved photo.
+    static func deleteAllPhotos() {
+        guard let names = try? FileManager.default.contentsOfDirectory(atPath: photosURL.path) else { return }
+        for name in names {
+            try? FileManager.default.removeItem(at: photosURL.appendingPathComponent(name))
+        }
+    }
 }

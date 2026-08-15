@@ -77,24 +77,29 @@ struct CharmsView: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text(String(localized: "tab.charms", defaultValue: "Charms"))
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.system(size: 10, weight: .medium))
                         .textCase(.uppercase)
-                        .tracking(1)
+                        .tracking(2.2)
                         .foregroundStyle(palette.muted)
                 }
             }
+            .settingsButton()
         }
     }
 
     private var header: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        HStack(alignment: .firstTextBaseline) {
             Text(String(format: String(localized: "charms.header.count", defaultValue: "%d of 12"), store.unlockedCharmIds.count))
-                .font(.system(size: 26, weight: .light))
+                .font(.system(size: 28, weight: .light))
+                .tracking(-1.12)
                 .foregroundStyle(palette.ink)
+            Spacer()
             Text(store.unlockedCharmIds.count >= 12
                  ? String(localized: "charms.header.complete", defaultValue: "A complete year")
-                 : String(localized: "charms.header.gathering", defaultValue: "Still gathering, one month at a time"))
-                .font(.system(size: 14))
+                 : String(localized: "charms.header.gathering", defaultValue: "Still gathering"))
+                .font(.system(size: 10, weight: .medium))
+                .textCase(.uppercase)
+                .tracking(2.2)
                 .foregroundStyle(palette.muted)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -104,7 +109,7 @@ struct CharmsView: View {
         Text(text)
             .font(.system(size: 13, weight: .semibold))
             .textCase(.uppercase)
-            .tracking(1.2)
+            .tracking(1.56)
             .foregroundStyle(palette.muted)
     }
 }

@@ -60,11 +60,11 @@ struct Habit: Identifiable, Codable, Hashable {
     ]
 }
 
-/// A card shown in the Circle tab: your own, a friend's, or a reference
-/// "fellow" that ships with the app so Circle never feels empty.
+/// A card shown in the Circle tab: your own, a friend's, a reference
+/// "fellow" that ships with the app, or a real member synced from Supabase.
 struct SanctuaryCard: Identifiable, Codable, Hashable {
     enum Kind: String, Codable {
-        case me, friend, fellow
+        case me, friend, fellow, circleMember
     }
 
     var id: String
@@ -74,6 +74,10 @@ struct SanctuaryCard: Identifiable, Codable, Hashable {
     var year: Int
     var charmId: String
     var kind: Kind
+    /// Set only for `.circleMember` cards, so sparks can be sent through Supabase.
+    var remoteUserID: UUID? = nil
+    /// Set only for `.circleMember` cards with an uploaded intention photo.
+    var photoURL: URL? = nil
 }
 
 /// A little glowing badge in the Charms tab, e.g. "First entry".
@@ -113,4 +117,7 @@ struct AppData: Codable {
     var sparksGiven: Set<String> = []                     // "fellowId:monthKey"
     var suggestionsCollapsed: Bool = false
     var profilePhotoFileName: String?
+    var hapticsEnabled: Bool = true
+    var forceDarkMode: Bool = false
+    var previewFirstOfMonth: Bool = false
 }

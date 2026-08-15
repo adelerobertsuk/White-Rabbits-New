@@ -11,8 +11,15 @@ import PhotosUI
 
 private let moods = ["Calm", "Clear", "Tender", "Tired", "Lucky"]
 
+/// Which of the journal invite's three buttons (Write / Photo / Voice)
+/// opened this sheet, so it can jump straight to the right control.
+enum JournalEntryFocus {
+    case write, photo, voice
+}
+
 struct NewEntrySheet: View {
     let date: Date
+    var focus: JournalEntryFocus = .write
     @EnvironmentObject private var store: AppStore
     @Environment(\.palette) private var palette
     @Environment(\.dismiss) private var dismiss
@@ -22,6 +29,8 @@ struct NewEntrySheet: View {
     @State private var photoItem: PhotosPickerItem?
     @State private var photo: PlatformImage?
     @State private var removePhoto = false
+    @State private var autoShowPhotoPicker = false
+    @FocusState private var textFieldFocused: Bool
 
     var body: some View {
         NavigationStack {
@@ -43,6 +52,7 @@ struct NewEntrySheet: View {
                         .padding(14)
                         .background(palette.card)
                         .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        .focused($textFieldFocused)
 
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 8) {
@@ -113,6 +123,7 @@ struct NewEntrySheet: View {
                 .padding(20)
             }
             .sanctuaryBackground()
+            .photosPicker(isPresented: $autoShowPhotoPicker, selection: $photoItem, matching: .images)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(String(localized: "action.cancel", defaultValue: "Cancel")) { dismiss() }
@@ -124,6 +135,12 @@ struct NewEntrySheet: View {
                 text = existing.text
                 mood = existing.mood
                 photo = store.entryPhoto(existing)
+            }
+            switch focus {
+            case .write, .voice:
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { textFieldFocused = true }
+            case .photo:
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { autoShowPhotoPicker = true }
             }
         }
         .onChange(of: photoItem) { _, newItem in

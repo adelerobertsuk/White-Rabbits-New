@@ -10,6 +10,7 @@
 import Foundation
 import Combine
 import SwiftUI
+import Supabase
 #if canImport(UIKit)
 import UIKit
 #elseif canImport(AppKit)
@@ -19,6 +20,15 @@ import AppKit
 @MainActor
 final class AppStore: ObservableObject {
     @Published private(set) var data: AppData
+
+    // MARK: - Circle sync (Supabase)
+
+    /// Real members synced from Supabase, this month's intention and photo
+    /// included. Empty until `ensureCircleSession()`/`refreshCircle()` succeeds.
+    @Published private(set) var circleMembers: [SanctuaryCard] = []
+    @Published private(set) var isSyncingCircle = false
+    @Published private(set) var circleSyncError: String?
+    private var sentSparkUserIDs: Set<UUID> = []
 
     private let dayFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -36,6 +46,7 @@ final class AppStore: ObservableObject {
 
     init() {
         self.data = Persistence.load()
+        Haptics.isEnabled = data.hapticsEnabled
     }
 
     private func persist() {
@@ -48,7 +59,7 @@ final class AppStore: ObservableObject {
     func monthKey(_ date: Date = Date()) -> String { monthFormatter.string(from: date) }
 
     func isFirstOfMonth(_ date: Date = Date()) -> Bool {
-        Calendar.current.component(.day, from: date) == 1
+        data.previewFirstOfMonth || Calendar.current.component(.day, from: date) == 1
     }
 
     var firstName: String {
@@ -58,6 +69,9 @@ final class AppStore: ObservableObject {
     func setName(_ name: String) {
         data.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         persist()
+        guard data.circleJoined else { return }
+        let name = firstName
+        Task { try? await CircleSyncService.updateDisplayName(name.isEmpty ? "A friend" : name) }
     }
 
     func monthName(_ date: Date = Date()) -> String {
@@ -120,7 +134,8 @@ final class AppStore: ObservableObject {
         record.completed = true
         record.charmId = currentBunny(date).id
         if record.saidAt == nil { record.saidAt = date }
-        record.intention = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        record.intention = trimmed
         #if canImport(UIKit)
         if let photo, let fileName = Persistence.savePhoto(photo) {
             record.photoFileName = fileName
@@ -128,6 +143,33 @@ final class AppStore: ObservableObject {
         #endif
         data.months[key] = record
         persist()
+        syncIntentionIfJoined(monthKey: key, text: trimmed, charmID: record.charmId, photo: photo, date: date)
+    }
+
+    /// Pushes my own intention (and photo, if provided) up to Supabase so the
+    /// rest of the circle can see it. Silent no-op unless "Enter the circle"
+    /// has been tapped. Never touches journal, habits, or check-ins.
+    private func syncIntentionIfJoined(monthKey: String, text: String, charmID: String?, photo: PlatformImage?, date: Date) {
+        guard data.circleJoined else { return }
+        #if canImport(UIKit)
+        let jpegData = photo?.jpegData(compressionQuality: 0.85)
+        #else
+        let jpegData: Data? = nil
+        #endif
+        Task {
+            do {
+                try await CircleSyncService.setIntention(
+                    monthKey: monthKey,
+                    text: text,
+                    charmID: charmID,
+                    photoData: jpegData
+                )
+                circleSyncError = nil
+                await refreshCircle(date)
+            } catch {
+                circleSyncError = error.localizedDescription
+            }
+        }
     }
 
     func intentionPhoto(_ date: Date = Date()) -> PlatformImage? {
@@ -330,14 +372,91 @@ final class AppStore: ObservableObject {
 
     var circleJoined: Bool { data.circleJoined }
 
+    /// Signs this device in anonymously (only ever once) and starts syncing
+    /// name, monthly intention, charm, and sparks with everyone else who's
+    /// joined. Journal, habits, and check-ins are never part of this.
     func joinCircle() {
         data.circleJoined = true
         persist()
+        let name = firstName
+        Task {
+            isSyncingCircle = true
+            defer { isSyncingCircle = false }
+            do {
+                try await CircleSyncService.joinCircle(displayName: name.isEmpty ? "A friend" : name)
+                circleSyncError = nil
+                await refreshCircle()
+            } catch {
+                circleSyncError = error.localizedDescription
+            }
+        }
     }
 
     func leaveCircle() {
         data.circleJoined = false
+        circleMembers = []
+        sentSparkUserIDs = []
         persist()
+    }
+
+    /// Called when Circle appears. Restores a previous anonymous session
+    /// (e.g. after relaunching the app) before fetching everyone's cards.
+    /// If no session can be restored (fresh install, known limitation) it
+    /// quietly rejoins so the tab still works.
+    func ensureCircleSession() async {
+        guard data.circleJoined else { return }
+        if CircleSyncService.currentUserID == nil {
+            _ = try? await supabase.auth.session
+        }
+        if CircleSyncService.currentUserID == nil {
+            let name = firstName
+            _ = try? await CircleSyncService.joinCircle(displayName: name.isEmpty ? "A friend" : name)
+        }
+        await refreshCircle()
+    }
+
+    /// Fetches every member's card and my own sent sparks for the given
+    /// month. Failures are stored in `circleSyncError` rather than thrown,
+    /// so the tab always keeps showing whatever it last had.
+    func refreshCircle(_ date: Date = Date()) async {
+        guard data.circleJoined, CircleSyncService.currentUserID != nil else { return }
+        isSyncingCircle = true
+        defer { isSyncingCircle = false }
+        do {
+            let key = monthKey(date)
+            let myID = CircleSyncService.currentUserID
+            async let membersTask = CircleSyncService.fetchMembers()
+            async let intentionsTask = CircleSyncService.fetchIntentions(monthKey: key)
+            async let sparksTask = CircleSyncService.fetchSparksSentByMe(monthKey: key)
+            let members = try await membersTask
+            let intentions = try await intentionsTask
+            let sparks = try await sparksTask
+
+            let intentionByUser = Dictionary(uniqueKeysWithValues: intentions.map { ($0.user_id, $0) })
+            circleMembers = members.compactMap { member -> SanctuaryCard? in
+                guard member.user_id != myID else { return nil }
+                guard let intention = intentionByUser[member.user_id],
+                      !intention.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                else { return nil }
+                return SanctuaryCard(
+                    id: member.user_id.uuidString,
+                    name: member.display_name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                        ? String(localized: "circle.aFriend", defaultValue: "A friend")
+                        : member.display_name,
+                    intention: intention.text,
+                    month: Calendar.current.component(.month, from: date),
+                    year: Calendar.current.component(.year, from: date),
+                    charmId: intention.charm_id ?? currentBunny(date).id,
+                    kind: .circleMember,
+                    remoteUserID: member.user_id,
+                    photoURL: intention.photo_path.flatMap { CircleSyncService.photoURL(for: $0) }
+                )
+            }
+            sentSparkUserIDs = sparks
+            circleSyncError = nil
+        } catch {
+            circleSyncError = error.localizedDescription
+        }
     }
 
     func myCard(_ date: Date = Date()) -> SanctuaryCard? {
@@ -394,6 +513,26 @@ final class AppStore: ObservableObject {
         persist()
     }
 
+    /// Sparking a real, synced circle member (as opposed to a manually
+    /// typed-in "friend"), sent through Supabase so it shows up on their phone.
+    func hasSparked(remoteUserID id: UUID) -> Bool {
+        sentSparkUserIDs.contains(id)
+    }
+
+    func sendSpark(remoteUserID id: UUID, date: Date = Date()) {
+        guard !sentSparkUserIDs.contains(id) else { return }
+        sentSparkUserIDs.insert(id)
+        Task {
+            do {
+                try await CircleSyncService.sendSpark(to: id, monthKey: monthKey(date))
+                circleSyncError = nil
+            } catch {
+                sentSparkUserIDs.remove(id)
+                circleSyncError = error.localizedDescription
+            }
+        }
+    }
+
     // MARK: - Profile photo
 
     func profileImage() -> PlatformImage? {
@@ -410,6 +549,18 @@ final class AppStore: ObservableObject {
             Persistence.deletePhoto(data.profilePhotoFileName)
             data.profilePhotoFileName = fileName
             persist()
+            // The only "photo" the circle can see is this month's intention
+            // photo, so the profile picture doubles as that upload.
+            let date = Date()
+            let key = monthKey(date)
+            let record = data.months[key]
+            syncIntentionIfJoined(
+                monthKey: key,
+                text: record?.intention ?? "",
+                charmID: record?.charmId ?? currentBunny(date).id,
+                photo: image,
+                date: date
+            )
         }
         #endif
     }
@@ -431,6 +582,61 @@ final class AppStore: ObservableObject {
             Milestone(id: "first-spark", title: String(localized: "milestone.firstSpark.title", defaultValue: "First spark"), caption: String(localized: "milestone.firstSpark.caption", defaultValue: "You sent someone a little encouragement"), systemImage: "sparkle", isUnlocked: hasSpark),
             Milestone(id: "full-year", title: String(localized: "milestone.fullYear.title", defaultValue: "A full year"), caption: String(localized: "milestone.fullYear.caption", defaultValue: "All twelve charms, collected"), systemImage: "crown.fill", isUnlocked: fullYear),
         ]
+    }
+
+    // MARK: - Settings
+
+    var hapticsEnabled: Bool { data.hapticsEnabled }
+
+    func setHapticsEnabled(_ on: Bool) {
+        data.hapticsEnabled = on
+        Haptics.isEnabled = on
+        persist()
+    }
+
+    /// "Dark evening": a manual override so Adele can preview dark mode
+    /// without waiting for the system to switch.
+    var forceDarkMode: Bool { data.forceDarkMode }
+
+    func setForceDarkMode(_ on: Bool) {
+        data.forceDarkMode = on
+        persist()
+    }
+
+    /// Lets Adele preview the first-of-the-month ritual on any day.
+    var previewFirstOfMonth: Bool { data.previewFirstOfMonth }
+
+    func setPreviewFirstOfMonth(_ on: Bool) {
+        data.previewFirstOfMonth = on
+        persist()
+    }
+
+    /// Everything on this phone, as one JSON file, for the "Export Data" row.
+    func exportSnapshot() -> Data? {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        encoder.dateEncodingStrategy = .iso8601
+        return try? encoder.encode(data)
+    }
+
+    func importSnapshot(from fileData: Data) -> Bool {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        guard let imported = try? decoder.decode(AppData.self, from: fileData) else { return false }
+        data = imported
+        Haptics.isEnabled = data.hapticsEnabled
+        persist()
+        return true
+    }
+
+    /// "Clear this device": wipes every saved page, stamp, and setting.
+    func resetDevice() {
+        #if canImport(UIKit)
+        Persistence.deleteAllPhotos()
+        #endif
+        data = AppData(name: "", habits: Habit.defaults)
+        Haptics.isEnabled = true
+        persist()
     }
 }
 

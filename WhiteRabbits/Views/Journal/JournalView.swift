@@ -2,8 +2,10 @@
 //  JournalView.swift
 //  WhiteRabbits
 //
-//  Tab 2: the archive. A calendar that always matches what's actually
-//  saved, and a list underneath that a tapped day filters instantly.
+//  Tab 2: the archive, laid out exactly like the reference build. The
+//  "Write / Photo / Voice" invite for today sits on top, then this
+//  month's calendar (always the current month, no paging), then every
+//  page written so far.
 //
 
 import SwiftUI
@@ -12,19 +14,28 @@ struct JournalView: View {
     @EnvironmentObject private var store: AppStore
     @Environment(\.palette) private var palette
 
-    @State private var displayedMonth = Date()
     @State private var selectedDate: Date?
-    @State private var showNewEntry = false
     @State private var selectedEntry: JournalEntry?
+    private let currentMonth = Date()
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 16) {
+                    JournalInviteCardView()
+
+                    Text(monthTitle)
+                        .font(.system(size: 13, weight: .semibold))
+                        .textCase(.uppercase)
+                        .tracking(1.56)
+                        .foregroundStyle(palette.muted)
+                        .padding(.top, 12)
+
                     CalendarStripView(
-                        displayedMonth: $displayedMonth,
+                        displayedMonth: .constant(currentMonth),
                         selectedDate: $selectedDate,
-                        hasEntry: { store.hasEntry(on: $0) }
+                        hasEntry: { store.hasEntry(on: $0) },
+                        allowsNavigation: false
                     )
 
                     if selectedDate != nil {
@@ -46,7 +57,7 @@ struct JournalView: View {
                             .font(.system(size: 14))
                             .foregroundStyle(palette.muted)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.top, 8)
+                            .padding(.top, 4)
                     } else {
                         VStack(spacing: 10) {
                             ForEach(filteredEntries) { entry in
@@ -62,25 +73,14 @@ struct JournalView: View {
             .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    Text(String(localized: "tab.journal", defaultValue: "Journal"))
-                        .font(.system(size: 13, weight: .semibold))
+                    Text(store.todayKicker(String(localized: "tab.journal", defaultValue: "Journal")))
+                        .font(.system(size: 10, weight: .medium))
                         .textCase(.uppercase)
-                        .tracking(1)
+                        .tracking(2.2)
                         .foregroundStyle(palette.muted)
                 }
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        Haptics.light()
-                        showNewEntry = true
-                    } label: {
-                        Text(String(localized: "today.journal.newEntry", defaultValue: "New Entry"))
-                            .font(.system(size: 14, weight: .medium))
-                    }
-                }
             }
-        }
-        .sheet(isPresented: $showNewEntry) {
-            NewEntrySheet(date: selectedDate ?? Date())
+            .settingsButton()
         }
         .sheet(item: $selectedEntry) { entry in
             JournalEntryDetailView(entry: entry)
@@ -88,7 +88,9 @@ struct JournalView: View {
     }
 
     private func entryRow(_ entry: JournalEntry) -> some View {
-        Button { selectedEntry = entry } label: {
+        Button {
+            selectedEntry = entry
+        } label: {
             HStack(spacing: 12) {
                 #if canImport(UIKit)
                 if let image = store.entryPhoto(entry) {
@@ -125,10 +127,14 @@ struct JournalView: View {
     }
 
     private var filteredEntries: [JournalEntry] {
-        let entries = store.entries(inMonthContaining: displayedMonth)
+        let entries = store.entries(inMonthContaining: currentMonth)
         guard let selectedDate else { return entries }
         let key = store.dayKey(selectedDate)
         return entries.filter { $0.id == key }
+    }
+
+    private var monthTitle: String {
+        store.monthName(currentMonth)
     }
 
     private var filterLabel: String {

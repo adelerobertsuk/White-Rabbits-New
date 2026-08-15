@@ -53,19 +53,23 @@ struct CircleView: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text(String(localized: "tab.circle", defaultValue: "Circle"))
-                        .font(.system(size: 13, weight: .semibold))
+                        .font(.system(size: 10, weight: .medium))
                         .textCase(.uppercase)
-                        .tracking(1)
+                        .tracking(2.2)
                         .foregroundStyle(palette.muted)
                 }
             }
+            .settingsButton()
+        }
+        .task {
+            await store.ensureCircleSession()
         }
     }
 
     private var header: some View {
         VStack(alignment: store.circleJoined ? .leading : .center, spacing: 4) {
             Text(headerCopy)
-                .font(.system(size: 15))
+                .font(.system(size: 15, weight: .medium))
                 .foregroundStyle(palette.muted)
                 .multilineTextAlignment(store.circleJoined ? .leading : .center)
                 .fixedSize(horizontal: false, vertical: true)
@@ -82,24 +86,24 @@ struct CircleView: View {
     private var onboardingCard: some View {
         VStack(spacing: 16) {
             BunnyMarkView(bunny: store.currentBunny(), style: .mark)
-                .frame(width: 46, height: 46)
-                .padding(18)
+                .frame(width: 44, height: 44)
+                .padding(14)
                 .background(Circle().fill(palette.card))
 
             VStack(spacing: 8) {
                 Text(String(localized: "circle.onboarding.title", defaultValue: "Opt in, whenever you like"))
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: 10, weight: .medium))
                     .textCase(.uppercase)
-                    .tracking(1.6)
-                    .foregroundStyle(palette.faint)
+                    .tracking(2.2)
+                    .foregroundStyle(palette.muted)
 
                 Text(String(localized: "circle.onboarding.heading", defaultValue: "A gentle circle"))
-                    .font(.system(size: 26, weight: .thin))
-                    .tracking(-0.4)
+                    .font(.system(size: 32, weight: .light))
+                    .tracking(-1.28)
                     .foregroundStyle(palette.ink)
 
                 Text(String(localized: "circle.onboarding.body", defaultValue: "A gentle circle for monthly resets. No scores, no streaks, no comparison."))
-                    .font(.system(size: 14))
+                    .font(.system(size: 15, weight: .medium))
                     .foregroundStyle(palette.muted)
                     .multilineTextAlignment(.center)
             }
@@ -129,21 +133,26 @@ struct CircleView: View {
     }
 
     private func onboardingRow(title: String, body: String) -> some View {
-        VStack(alignment: .leading, spacing: 3) {
+        VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.system(size: 12, weight: .semibold))
                 .textCase(.uppercase)
-                .tracking(0.8)
+                .tracking(1.44)
                 .foregroundStyle(palette.ink)
             Text(body)
-                .font(.system(size: 13))
+                .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(palette.muted)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(14)
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
         .background(
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .fill(palette.bg.opacity(0.6))
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(palette.card)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(palette.line, lineWidth: 1)
         )
     }
 }

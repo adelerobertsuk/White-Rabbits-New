@@ -10,7 +10,7 @@ import SwiftUI
 
 struct CardBackground: ViewModifier {
     @Environment(\.palette) private var palette
-    var cornerRadius: CGFloat = 22
+    var cornerRadius: CGFloat = 20
 
     func body(content: Content) -> some View {
         content
@@ -23,14 +23,13 @@ struct CardBackground: ViewModifier {
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .strokeBorder(palette.line, lineWidth: 1)
             )
-            // A soft, warm-toned shadow (matching the web app's ink-tinted
-            // shadow) reads as gentle layering, not a heavy black border.
-            .shadow(color: palette.ink.opacity(0.07), radius: 28, x: 0, y: 12)
+            // Matches the web app's `box-shadow: 0 16px 40px rgba(42,38,34,0.08)`.
+            .shadow(color: palette.ink.opacity(0.08), radius: 20, x: 0, y: 16)
     }
 }
 
 extension View {
-    func cardBackground(cornerRadius: CGFloat = 22) -> some View {
+    func cardBackground(cornerRadius: CGFloat = 20) -> some View {
         modifier(CardBackground(cornerRadius: cornerRadius))
     }
 
@@ -46,23 +45,33 @@ extension View {
     }
 }
 
+/// Matches the web app's `.primary` / `.ghost` buttons: a 16px rounded
+/// rectangle (not a full pill), 50pt tall, semibold 13pt label.
 struct PillButtonStyle: ButtonStyle {
     @Environment(\.palette) private var palette
     var filled: Bool = true
+    /// Full-size CTAs (like "Enter the circle") are 50pt tall; compact ones
+    /// (like the inline "New Entry" button) are sized to their label.
+    var compact: Bool = false
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: 15, weight: .medium))
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
+            .font(.system(size: compact ? 12 : 13, weight: .semibold))
+            .tracking(0.26)
+            .frame(minHeight: compact ? 0 : 50)
+            .padding(.horizontal, compact ? 14 : 18)
+            .padding(.vertical, compact ? 8 : 0)
             .background(
-                Capsule().fill(filled ? palette.ink : Color.clear)
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(filled ? palette.ink : Color.clear)
             )
             .overlay(
-                Capsule().strokeBorder(filled ? Color.clear : palette.line, lineWidth: 1)
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(filled ? Color.clear : palette.line, lineWidth: 1)
             )
+            .shadow(color: filled && !compact ? palette.ink.opacity(0.08) : .clear, radius: 20, x: 0, y: 16)
             .foregroundStyle(filled ? palette.bg : palette.ink)
-            .scaleEffect(configuration.isPressed ? 0.96 : 1)
-            .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
+            .scaleEffect(configuration.isPressed ? 0.975 : 1)
+            .animation(.easeOut(duration: 0.18), value: configuration.isPressed)
     }
 }

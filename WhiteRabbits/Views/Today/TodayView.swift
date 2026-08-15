@@ -13,9 +13,8 @@ struct TodayView: View {
     @Environment(\.palette) private var palette
 
     @State private var showRitual = false
-    @State private var showNewEntry = false
-    @State private var showEntryDetail = false
     @State private var showPinnedCard = false
+    @State private var showNewEntry = false
 
     private var isCelebratory: Bool {
         store.isFirstOfMonth() && !store.ritualCompleted()
@@ -40,8 +39,6 @@ struct TodayView: View {
 
                     header
 
-                    YearOfLuckStampCardView()
-
                     inspirationBlock
 
                     SuggestionsCardView(
@@ -55,7 +52,15 @@ struct TodayView: View {
 
                     habitsCard
 
-                    journalCard
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text(String(localized: "today.journal.title", defaultValue: "Journal"))
+                            .font(.system(size: 13, weight: .semibold))
+                            .textCase(.uppercase)
+                            .tracking(1.56)
+                            .foregroundStyle(palette.muted)
+
+                        JournalInviteCardView()
+                    }
 
                     if let record = store.pinnedRecord, let intention = record.intention, !intention.isEmpty {
                         PinnedIntentionDockView(
@@ -66,28 +71,25 @@ struct TodayView: View {
                     }
                 }
                 .padding(20)
-                .padding(.bottom, 12)
+                .padding(.bottom, 40)
             }
+            .scrollBounceBehavior(.basedOnSize)
             .sanctuaryBackground()
             .inlineNavigationTitle()
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text(store.todayKicker())
-                        .font(.system(size: 12, weight: .semibold))
+                        .font(.system(size: 10, weight: .medium))
                         .textCase(.uppercase)
-                        .tracking(1.4)
+                        .tracking(2.2)
                         .foregroundStyle(palette.muted)
                 }
             }
+            .settingsButton()
         }
         .sheet(isPresented: $showRitual) { RitualSheetView() }
-        .sheet(isPresented: $showNewEntry) { NewEntrySheet(date: Date()) }
-        .sheet(isPresented: $showEntryDetail) {
-            if let entry = store.journalEntry() {
-                JournalEntryDetailView(entry: entry)
-            }
-        }
         .sheet(isPresented: $showPinnedCard) { IntentionEditorView() }
+        .sheet(isPresented: $showNewEntry) { NewEntrySheet(date: Date()) }
     }
 
     // MARK: - Pieces
@@ -103,9 +105,9 @@ struct TodayView: View {
                 .foregroundStyle(palette.muted)
                 .multilineTextAlignment(.center)
             Text(doneText)
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: 11, weight: .medium))
                 .textCase(.uppercase)
-                .tracking(1.6)
+                .tracking(0.9)
                 .foregroundStyle(palette.faint)
         }
         .frame(maxWidth: .infinity)
@@ -116,10 +118,10 @@ struct TodayView: View {
         let inspiration = InspirationData.today()
         return VStack(spacing: 6) {
             Text(store.monthLightKicker())
-                .font(.system(size: 11, weight: .semibold))
+                .font(.system(size: 10, weight: .medium))
                 .textCase(.uppercase)
-                .tracking(1.6)
-                .foregroundStyle(palette.faint)
+                .tracking(2.2)
+                .foregroundStyle(palette.muted)
             Text(inspiration.line)
                 .font(.system(size: 16, weight: .regular))
                 .foregroundStyle(palette.ink)
@@ -147,7 +149,7 @@ struct TodayView: View {
             Text(String(localized: "today.habits.title", defaultValue: "Today"))
                 .font(.system(size: 13, weight: .semibold))
                 .textCase(.uppercase)
-                .tracking(1.2)
+                .tracking(1.56)
                 .foregroundStyle(palette.muted)
 
             ForEach(store.data.habits) { habit in
@@ -166,55 +168,6 @@ struct TodayView: View {
                     }
                 }
                 .buttonStyle(.plain)
-            }
-        }
-        .padding(18)
-        .cardBackground()
-    }
-
-    private var journalCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text(String(localized: "today.journal.title", defaultValue: "Journal"))
-                    .font(.system(size: 13, weight: .semibold))
-                    .textCase(.uppercase)
-                    .tracking(1.2)
-                    .foregroundStyle(palette.muted)
-                Spacer()
-                Button {
-                    Haptics.light()
-                    showNewEntry = true
-                } label: {
-                    Text(String(localized: "today.journal.newEntry", defaultValue: "New Entry"))
-                        .font(.system(size: 13, weight: .medium))
-                }
-                .buttonStyle(PillButtonStyle(filled: false))
-            }
-
-            if let entry = store.journalEntry(), entry.hasContent {
-                Button { showEntryDetail = true } label: {
-                    HStack(spacing: 10) {
-                        #if canImport(UIKit)
-                        if let image = store.entryPhoto(entry) {
-                            Image(uiImage: image)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 40, height: 40)
-                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
-                        }
-                        #endif
-                        Text(entry.text.isEmpty ? String(localized: "today.journal.photoOnly", defaultValue: "A photograph for today.") : entry.text)
-                            .font(.system(size: 14))
-                            .foregroundStyle(palette.muted)
-                            .lineLimit(2)
-                        Spacer()
-                    }
-                }
-                .buttonStyle(.plain)
-            } else {
-                Text(String(localized: "today.journal.empty", defaultValue: "Whenever it feels right, write a few lines or add a photo."))
-                    .font(.system(size: 14))
-                    .foregroundStyle(palette.muted)
             }
         }
         .padding(18)

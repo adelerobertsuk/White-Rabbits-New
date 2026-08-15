@@ -17,6 +17,39 @@ struct FriendsSparksView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 18) {
+            if store.circleJoined {
+                VStack(alignment: .leading, spacing: 10) {
+                    HStack {
+                        Text(String(localized: "circle.members.title", defaultValue: "In your circle"))
+                            .font(.system(size: 13, weight: .semibold))
+                            .textCase(.uppercase)
+                            .tracking(1.2)
+                            .foregroundStyle(palette.muted)
+                        Spacer()
+                        if store.isSyncingCircle {
+                            ProgressView()
+                                .scaleEffect(0.7)
+                        }
+                    }
+
+                    if store.circleMembers.isEmpty {
+                        Text(String(localized: "circle.members.empty", defaultValue: "As soon as someone else in the circle sets an intention this month, their card appears here."))
+                            .font(.system(size: 14))
+                            .foregroundStyle(palette.muted)
+                    } else {
+                        ForEach(store.circleMembers) { card in
+                            SparkCardView(card: card, canRemove: false)
+                        }
+                    }
+
+                    if let error = store.circleSyncError {
+                        Text(error)
+                            .font(.system(size: 12))
+                            .foregroundStyle(palette.faint)
+                    }
+                }
+            }
+
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
                     Text(String(localized: "circle.friends.title", defaultValue: "Friends"))
@@ -69,11 +102,14 @@ private struct SparkCardView: View {
     @State private var motes: [CGFloat] = []
 
     private var bunny: Bunny { BunnyData.bunny(id: card.charmId) }
-    private var sent: Bool { store.hasSparked(card.id) }
+    private var sent: Bool {
+        if let remoteID = card.remoteUserID { return store.hasSparked(remoteUserID: remoteID) }
+        return store.hasSparked(card.id)
+    }
 
     var body: some View {
         HStack(spacing: 12) {
-            CharmView(bunny: bunny, unlocked: true, size: 44)
+            cardIcon
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(card.name)
@@ -91,7 +127,11 @@ private struct SparkCardView: View {
                 Button {
                     guard !sent else { return }
                     Haptics.success()
-                    store.sendSpark(card.id)
+                    if let remoteID = card.remoteUserID {
+                        store.sendSpark(remoteUserID: remoteID)
+                    } else {
+                        store.sendSpark(card.id)
+                    }
                     burst()
                 } label: {
                     HStack(spacing: 5) {
@@ -133,6 +173,24 @@ private struct SparkCardView: View {
         }
         .padding(12)
         .cardBackground(cornerRadius: 18)
+    }
+
+    @ViewBuilder
+    private var cardIcon: some View {
+        if let url = card.photoURL {
+            AsyncImage(url: url) { phase in
+                if let image = phase.image {
+                    image.resizable().scaledToFill()
+                } else {
+                    CharmView(bunny: bunny, unlocked: true, size: 44)
+                }
+            }
+            .frame(width: 44, height: 44)
+            .clipShape(Circle())
+            .overlay(Circle().strokeBorder(palette.line, lineWidth: 1))
+        } else {
+            CharmView(bunny: bunny, unlocked: true, size: 44)
+        }
     }
 
     private func burst() {

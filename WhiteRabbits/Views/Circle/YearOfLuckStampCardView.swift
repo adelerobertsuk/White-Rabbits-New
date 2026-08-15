@@ -25,18 +25,21 @@ struct YearOfLuckStampCardView: View {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(currentYear)
-                        .font(.system(size: 11, weight: .semibold))
-                        .tracking(1.2)
-                        .foregroundStyle(palette.faint)
+                        .font(.system(size: 10, weight: .medium))
+                        .textCase(.uppercase)
+                        .tracking(2.2)
+                        .foregroundStyle(palette.muted)
                     Text(String(localized: "circle.stampCard.title", defaultValue: "Year of luck"))
-                        .font(.system(size: 19, weight: .regular))
+                        .font(.system(size: 24, weight: .light))
+                        .tracking(-0.96)
                         .foregroundStyle(palette.ink)
                 }
                 Spacer()
                 Text(String(format: String(localized: "circle.stampCard.countShort", defaultValue: "%d OF 12"), store.unlockedCharmIds.count))
-                    .font(.system(size: 11, weight: .semibold))
-                    .tracking(1.2)
-                    .foregroundStyle(palette.faint)
+                    .font(.system(size: 10, weight: .medium))
+                    .textCase(.uppercase)
+                    .tracking(2.2)
+                    .foregroundStyle(palette.muted)
             }
 
             LazyVGrid(columns: columns, spacing: 14) {
