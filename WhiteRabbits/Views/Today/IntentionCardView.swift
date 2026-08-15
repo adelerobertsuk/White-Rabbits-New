@@ -17,13 +17,12 @@ struct IntentionCardView: View {
     @State private var cardImage: PlatformImage?
 
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 8) {
             Text(kicker)
                 .kickerStyle()
 
             Text(record.intention ?? "")
-                .font(.system(size: 20, weight: .regular))
-                .foregroundStyle(palette.ink)
+                .displayTitleStyle(weight: .regular)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
 

@@ -20,7 +20,7 @@ struct MyIntentionCardView: View {
     private var bunny: Bunny { store.currentBunny() }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .center, spacing: 14) {
                 profilePhoto
 
@@ -36,12 +36,10 @@ struct MyIntentionCardView: View {
                 Group {
                     if let intention = store.monthRecord()?.intention, !intention.isEmpty {
                         Text(intention)
-                            .font(.system(size: 16))
-                            .foregroundStyle(palette.ink)
+                            .readingStyle()
                     } else {
                         Text(String(localized: "intention.card.empty", defaultValue: "Set it when you are ready. The circle can wait. Your journal is never asked for."))
-                            .font(.system(size: 16))
-                            .foregroundStyle(palette.muted)
+                            .readingStyle(muted: true)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -51,8 +49,7 @@ struct MyIntentionCardView: View {
             if store.monthRecord()?.intention != nil {
                 Toggle(isOn: pinBinding) {
                     Text(String(localized: "intention.card.pin", defaultValue: "Pin to Today Page"))
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(palette.ink)
+                        .bodyStyle(weight: .medium)
                 }
                 .tint(palette.accent)
             }

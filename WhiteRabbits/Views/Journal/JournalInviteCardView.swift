@@ -24,10 +24,9 @@ struct JournalInviteCardView: View {
                 .kickerStyle()
 
             Text(String(localized: "journal.invite.copy", defaultValue: "Whenever it feels right... write, drop a photo, or voice-note your thoughts."))
-                .font(.system(size: 14, weight: .regular))
-                .foregroundStyle(palette.muted)
-                .padding(.top, 4)
-                .padding(.bottom, 10)
+                .bodyStyle(muted: true)
+                .padding(.top, 2)
+                .padding(.bottom, 8)
 
             HStack(spacing: 6) {
                 actionButton(.write, systemImage: "pencil.line", label: String(localized: "journal.invite.write", defaultValue: "Write"))
@@ -51,8 +50,7 @@ struct JournalInviteCardView: View {
                         }
                         #endif
                         Text(entry.text.isEmpty ? String(localized: "journal.detail.photoOnly", defaultValue: "A photograph for this day.") : entry.text)
-                            .font(.system(size: 13))
-                            .foregroundStyle(palette.muted)
+                            .bodyStyle(muted: true)
                             .lineLimit(2)
                             .multilineTextAlignment(.leading)
                         Spacer(minLength: 0)
@@ -101,15 +99,15 @@ struct JournalInviteCardView: View {
             entryFocus = focus
             showEntrySheet = true
         } label: {
-            VStack(spacing: 6) {
+            VStack(spacing: 4) {
                 Image(systemName: systemImage)
-                    .font(.system(size: 16))
+                    .font(.system(size: 14))
                 Text(label)
-                    .font(.system(size: 11, weight: .medium))
-                    .tracking(0.44)
+                    .font(.system(size: 10, weight: .semibold))
+                    .tracking(1.2)
             }
             .foregroundStyle(palette.ink)
-            .frame(maxWidth: .infinity, minHeight: 64)
+            .frame(maxWidth: .infinity, minHeight: 56)
             .background(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(Color.clear)

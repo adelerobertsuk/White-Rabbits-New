@@ -2,9 +2,10 @@
 //  ProgressRingView.swift
 //  WhiteRabbits
 //
-//  The central ring on Today. It fills smoothly as habits are checked
-//  off, and switches to a golden, sparkling "celebratory" look on the
-//  1st of the month, before the ritual is said.
+//  The central ring on Today. A faint outer track sits just outside a
+//  thicker inner progress ring, so the hero reads as a double ring.
+//  The bunny in the middle is the plain brand silhouette (.mark),
+//  sized to leave air inside the inner ring.
 //
 
 import SwiftUI
@@ -19,27 +20,29 @@ struct ProgressRingView: View {
     @State private var sparklePhase: Bool = false
 
     private var ringSize: CGFloat { 248 }
+    /// Gap between the outer track and the inner progress ring.
+    private var innerInset: CGFloat { 14 }
+    private var innerLine: CGFloat { 8 }
+    private var bunnySize: CGFloat { ringSize * 0.46 }
 
     var body: some View {
         Button(action: onTap) {
             ZStack {
-                // The web app always casts a soft accent-colored shadow behind
-                // this whole ring group (`filter: drop-shadow(...)`), which is
-                // what makes the ring read as a "double ring": a crisp track
-                // plus its own soft glowing halo just outside it. Gating that
-                // shadow to celebratory-only (as this used to) made every
-                // ordinary day look like a single flat ring, so it's on here
-                // all the time, just brighter and bigger on the 1st.
                 Circle()
-                    .stroke(palette.track, lineWidth: 10)
+                    .stroke(palette.track, lineWidth: 1.5)
+
+                Circle()
+                    .stroke(palette.track, lineWidth: innerLine)
+                    .padding(innerInset)
 
                 Circle()
                     .trim(from: 0, to: isCelebratory ? 1 : max(progress, 0.001))
                     .stroke(
                         ringGradient,
-                        style: StrokeStyle(lineWidth: 10, lineCap: .round)
+                        style: StrokeStyle(lineWidth: innerLine, lineCap: .round)
                     )
                     .rotationEffect(.degrees(-90))
+                    .padding(innerInset)
                     .animation(.easeInOut(duration: 0.6), value: progress)
 
                 if isCelebratory {
@@ -47,14 +50,16 @@ struct ProgressRingView: View {
                         Image(systemName: "sparkle")
                             .font(.system(size: 10))
                             .foregroundStyle(palette.accent)
-                            .offset(x: cos(Double(i) / 8 * 2 * .pi) * (ringSize / 2 + 6),
-                                    y: sin(Double(i) / 8 * 2 * .pi) * (ringSize / 2 + 6))
+                            .offset(
+                                x: cos(Double(i) / 8 * 2 * .pi) * (ringSize / 2 + 6),
+                                y: sin(Double(i) / 8 * 2 * .pi) * (ringSize / 2 + 6)
+                            )
                             .opacity(sparklePhase ? 0.9 : 0.25)
                     }
                 }
 
                 BunnyMarkView(bunny: bunny, style: .mark)
-                    .frame(width: ringSize * 0.62, height: ringSize * 0.62)
+                    .frame(width: bunnySize, height: bunnySize)
             }
             .frame(width: ringSize, height: ringSize)
             .background(

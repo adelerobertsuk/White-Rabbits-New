@@ -15,32 +15,12 @@ struct CircleView: View {
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
-                ScrollView {
-                    VStack(spacing: 18) {
-                        if !store.circleJoined {
-                            header
-                                .padding(.top, 8)
-                        }
-
-                        if store.circleJoined {
-                            MyIntentionCardView()
-                            FriendsSparksView()
-                            YearOfLuckStampCardView()
-
-                            Button(role: .destructive) {
-                                store.leaveCircle()
-                            } label: {
-                                Text(String(localized: "circle.leave", defaultValue: "Step out of the circle"))
-                                    .font(.system(size: 13))
-                            }
-                            .padding(.top, 4)
-                        } else {
-                            onboardingCard
-                        }
+                Group {
+                    if store.circleJoined {
+                        joinedContent
+                    } else {
+                        unjoinedContent
                     }
-                    .padding(20)
-                    .padding(.top, 44)
-                    .padding(.bottom, 24)
                 }
                 .sanctuaryBackground()
 
@@ -48,7 +28,7 @@ struct CircleView: View {
                     Spacer()
                     AudioPillView(manager: audio)
                 }
-                .padding(.horizontal, 20)
+                .padding(.horizontal, Layout.screenInset)
                 .padding(.top, 6)
             }
             .inlineNavigationTitle()
@@ -65,42 +45,61 @@ struct CircleView: View {
         }
     }
 
-    private var header: some View {
-        VStack(alignment: store.circleJoined ? .leading : .center, spacing: 4) {
-            Text(headerCopy)
-                .font(.system(size: 15, weight: .medium))
-                .foregroundStyle(palette.muted)
-                .multilineTextAlignment(store.circleJoined ? .leading : .center)
-                .fixedSize(horizontal: false, vertical: true)
+    private var joinedContent: some View {
+        ScrollView {
+            VStack(spacing: Layout.stackSpacing) {
+                MyIntentionCardView()
+                FriendsSparksView()
+                YearOfLuckStampCardView()
+
+                Button(role: .destructive) {
+                    store.leaveCircle()
+                } label: {
+                    Text(String(localized: "circle.leave", defaultValue: "Step out of the circle"))
+                        .bodyStyle(muted: true)
+                }
+                .padding(.top, 4)
+            }
+            .padding(Layout.screenInset)
+            .padding(.top, 36)
+            .padding(.bottom, 20)
         }
-        .frame(maxWidth: .infinity, alignment: store.circleJoined ? .leading : .center)
     }
 
-    private var headerCopy: String {
-        store.firstName.isEmpty
-            ? String(localized: "circle.header.unnamed", defaultValue: "This is inspiration only. Cheer a reset. Never weigh it.")
-            : String(format: String(localized: "circle.header.named", defaultValue: "%@, this is inspiration only. Cheer a reset. Never weigh it."), store.firstName)
+    private var unjoinedContent: some View {
+        VStack {
+            Spacer(minLength: 56)
+            onboardingCard
+                .padding(.horizontal, Layout.screenInset)
+            Spacer(minLength: 40)
+        }
     }
 
     private var onboardingCard: some View {
-        VStack(spacing: 16) {
-            BunnyMarkView(bunny: store.currentBunny(), style: .mark)
-                .frame(width: 44, height: 44)
-                .padding(14)
-                .background(Circle().fill(palette.card))
+        VStack(spacing: 20) {
+            ZStack {
+                Circle()
+                    .fill(palette.card)
+                    .frame(width: 72, height: 72)
+                    .shadow(color: palette.ink.opacity(0.08), radius: 6, x: 0, y: 3)
+                BunnyMarkView(bunny: store.currentBunny(), style: .mark)
+                    .frame(width: 36, height: 36)
+            }
+            .overlay(
+                Circle()
+                    .strokeBorder(palette.accent.opacity(0.35), lineWidth: 1)
+            )
 
             VStack(spacing: 8) {
                 Text(String(localized: "circle.onboarding.title", defaultValue: "Opt in, whenever you like"))
                     .kickerStyle()
 
                 Text(String(localized: "circle.onboarding.heading", defaultValue: "Shared Sanctuary"))
-                    .font(.system(size: 32, weight: .light))
-                    .tracking(-1.28)
-                    .foregroundStyle(palette.ink)
+                    .displayTitleStyle()
+                    .multilineTextAlignment(.center)
 
                 Text(String(localized: "circle.onboarding.body", defaultValue: "A gentle circle for monthly resets. No scores, no streaks, no comparison."))
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(palette.muted)
+                    .readingStyle(muted: true)
                     .multilineTextAlignment(.center)
             }
 
@@ -127,20 +126,17 @@ struct CircleView: View {
             }
             .buttonStyle(PillButtonStyle())
         }
-        .padding(20)
+        .padding(24)
+        .frame(maxWidth: .infinity)
         .cardBackground()
     }
 
     private func onboardingRow(title: String, body: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.system(size: 12, weight: .semibold))
-                .textCase(.uppercase)
-                .tracking(1.44)
-                .foregroundStyle(palette.ink)
+                .kickerStyle()
             Text(body)
-                .font(.system(size: 14, weight: .medium))
-                .foregroundStyle(palette.muted)
+                .readingStyle(muted: true)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 12)

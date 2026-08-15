@@ -23,15 +23,13 @@ struct YearOfLuckStampCardView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 14) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .top) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(currentYear)
                         .kickerStyle()
                     Text(String(localized: "circle.stampCard.title", defaultValue: "Year of luck"))
-                        .font(.system(size: 24, weight: .light))
-                        .tracking(-0.96)
-                        .foregroundStyle(palette.ink)
+                        .displayTitleStyle()
                 }
                 Spacer()
                 Text(String(format: String(localized: "circle.stampCard.countShort", defaultValue: "%d OF 12"), store.unlockedCharmIds.count))
@@ -43,11 +41,9 @@ struct YearOfLuckStampCardView: View {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(String(localized: "circle.stampCard.thisMonth", defaultValue: "This month's charm"))
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundStyle(palette.ink)
+                        .bodyStyle(weight: .medium)
                     Text(currentBunny.season)
-                        .font(.system(size: 13))
-                        .foregroundStyle(palette.muted)
+                        .bodyStyle(muted: true)
                 }
                 Spacer()
             }
@@ -61,7 +57,7 @@ struct YearOfLuckStampCardView: View {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 11, weight: .semibold))
                 }
-                .font(.system(size: 13, weight: .medium))
+                .bodyStyle(weight: .medium)
                 .foregroundStyle(palette.ink)
             }
             .buttonStyle(.plain)

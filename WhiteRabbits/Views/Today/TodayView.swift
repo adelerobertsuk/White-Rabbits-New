@@ -23,7 +23,7 @@ struct TodayView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
+                VStack(spacing: Layout.stackSpacing) {
                     ProgressRingView(
                         progress: store.progress,
                         isCelebratory: isCelebratory,
@@ -90,19 +90,14 @@ struct TodayView: View {
     // MARK: - Pieces
 
     private var header: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 6) {
             Text("White Rabbits")
-                .font(.system(size: 38, weight: .light))
-                .tracking(-2.1)
-                .foregroundStyle(palette.ink)
+                .displayTitleStyle()
             Text(store.greeting())
-                .font(.system(size: 14, weight: .regular))
-                .foregroundStyle(palette.muted)
+                .bodyStyle(muted: true)
                 .multilineTextAlignment(.center)
             Text(doneText)
-                .font(.system(size: 11, weight: .medium))
-                .textCase(.uppercase)
-                .tracking(0.9)
+                .kickerStyle()
                 .foregroundStyle(palette.faint)
         }
         .frame(maxWidth: .infinity)
@@ -115,12 +110,10 @@ struct TodayView: View {
             Text(store.monthLightKicker())
                 .kickerStyle()
             Text(inspiration.line)
-                .font(.system(size: 16, weight: .regular))
-                .foregroundStyle(palette.ink)
+                .readingStyle()
                 .multilineTextAlignment(.center)
             Text(inspiration.prompt)
-                .font(.system(size: 13))
-                .foregroundStyle(palette.muted)
+                .bodyStyle(muted: true)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
@@ -147,7 +140,7 @@ struct TodayView: View {
     }
 
     private var habitsCard: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 10) {
             Text(String(localized: "today.habits.title", defaultValue: "Today"))
                 .sectionHeaderStyle()
 
@@ -156,13 +149,12 @@ struct TodayView: View {
                     Haptics.light()
                     store.toggleHabit(habit.id)
                 } label: {
-                    HStack(spacing: 12) {
+                    HStack(spacing: 10) {
                         Image(systemName: store.isHabitDone(habit.id) ? "checkmark.circle.fill" : "circle")
-                            .font(.system(size: 20))
+                            .font(.system(size: 16))
                             .foregroundStyle(store.isHabitDone(habit.id) ? palette.accent : palette.faint)
                         Text(habit.name)
-                            .font(.system(size: 15))
-                            .foregroundStyle(palette.ink)
+                            .bodyStyle()
                         Spacer()
                     }
                 }

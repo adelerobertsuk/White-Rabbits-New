@@ -16,7 +16,7 @@ struct FriendsSparksView: View {
     @State private var showAddFriend = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
+        VStack(alignment: .leading, spacing: Layout.stackSpacing) {
             if store.circleJoined {
                 VStack(alignment: .leading, spacing: 10) {
                     HStack {
@@ -31,8 +31,7 @@ struct FriendsSparksView: View {
 
                     if store.circleMembers.isEmpty {
                         Text(String(localized: "circle.members.empty", defaultValue: "As soon as someone else in the circle sets an intention this month, their card appears here."))
-                            .font(.system(size: 14))
-                            .foregroundStyle(palette.muted)
+                            .bodyStyle(muted: true)
                     } else {
                         ForEach(store.circleMembers) { card in
                             SparkCardView(card: card, canRemove: false)
@@ -41,7 +40,7 @@ struct FriendsSparksView: View {
 
                     if let error = store.circleSyncError {
                         Text(error)
-                            .font(.system(size: 12))
+                            .captionStyle()
                             .foregroundStyle(palette.faint)
                     }
                 }
@@ -56,14 +55,13 @@ struct FriendsSparksView: View {
                         showAddFriend = true
                     } label: {
                         Label(String(localized: "circle.friends.add", defaultValue: "Add"), systemImage: "plus")
-                            .font(.system(size: 13, weight: .medium))
+                            .bodyStyle(weight: .medium)
                     }
                 }
 
                 if store.friends.isEmpty {
                     Text(String(localized: "circle.friends.empty", defaultValue: "Add a friend's name and their intention. You'll see their intention and stamp, nothing else."))
-                        .font(.system(size: 14))
-                        .foregroundStyle(palette.muted)
+                        .bodyStyle(muted: true)
                 } else {
                     ForEach(store.friends) { card in
                         SparkCardView(card: card, canRemove: true)
@@ -122,11 +120,9 @@ private struct SparkCardView: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(card.name)
-                    .font(.system(size: 15, weight: .medium))
-                    .foregroundStyle(palette.ink)
+                    .bodyStyle(weight: .medium)
                 Text(card.intention)
-                    .font(.system(size: 13))
-                    .foregroundStyle(palette.muted)
+                    .bodyStyle(muted: true)
                     .lineLimit(2)
             }
 
@@ -150,7 +146,7 @@ private struct SparkCardView: View {
                         Text(sent
                              ? String(localized: "circle.spark.sent", defaultValue: "Sent")
                              : String(localized: "circle.spark.send", defaultValue: "Send a spark"))
-                            .font(.system(size: 12, weight: .medium))
+                            .font(.system(size: 11, weight: .medium))
                             .foregroundStyle(sent ? palette.muted : palette.ink)
                     }
                     .padding(.horizontal, 12)

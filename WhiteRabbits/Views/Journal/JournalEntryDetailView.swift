@@ -3,9 +3,9 @@
 //  WhiteRabbits
 //
 //  View, edit, or share a single day's page. Reading mode uses the same
-//  editorial hierarchy as the compose sheet (title, lede, a soft card
-//  around the words) so a kept page feels just as considered as writing
-//  a new one, not like a stripped-down afterthought.
+//  editorial card as the story share: brand header, photo well with an
+//  overlapping bunny badge, serif body, and the Pause / Reflect / Intend
+//  / Begin footer.
 //
 
 import SwiftUI
@@ -41,34 +41,58 @@ struct JournalEntryDetailView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 10) {
-                    Text(dateLabel)
-                        .sectionHeaderStyle()
+                VStack(spacing: 20) {
+                    editorialCard
 
-                    Text(isToday ? String(localized: "journal.new.title.today", defaultValue: "Today’s page") : String(localized: "journal.new.title.kept", defaultValue: "A kept page"))
-                        .displayTitleStyle()
-                        .padding(.bottom, 6)
-
-                    if isEditing {
-                        editingContent
-                    } else {
-                        photoView
-                        viewingContent
+                    if !isEditing {
+                        Button(role: .destructive) {
+                            Haptics.light()
+                            showDeleteConfirm = true
+                        } label: {
+                            Text(String(localized: "journal.delete.action", defaultValue: "Delete Entry"))
+                                .captionStyle()
+                                .underline()
+                        }
                     }
                 }
-                .padding(20)
+                .padding(Layout.screenInset)
+                .padding(.bottom, 28)
             }
             .sanctuaryBackground()
+            .inlineNavigationTitle()
+            #if os(iOS)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            #endif
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(String(localized: "action.close", defaultValue: "Close")) { dismiss() }
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text(String(localized: "action.close", defaultValue: "Close"))
+                            .kickerStyle()
+                    }
+                    .buttonStyle(.plain)
                 }
-                ToolbarItemGroup(placement: .primaryAction) {
-                    if !isEditing {
-                        shareButton
-                        Button(String(localized: "action.edit", defaultValue: "Edit")) {
-                            Haptics.light()
-                            isEditing = true
+                ToolbarItem(placement: .topBarTrailing) {
+                    if isEditing {
+                        Button(action: saveEdits) {
+                            Text(String(localized: "action.keep", defaultValue: "Keep"))
+                                .kickerStyle()
+                                .foregroundStyle(palette.ink)
+                        }
+                        .buttonStyle(.plain)
+                    } else {
+                        HStack(spacing: 16) {
+                            shareButton
+                            Button {
+                                Haptics.light()
+                                isEditing = true
+                            } label: {
+                                Text(String(localized: "action.edit", defaultValue: "Edit"))
+                                    .kickerStyle()
+                                    .foregroundStyle(palette.ink)
+                            }
+                            .buttonStyle(.plain)
                         }
                     }
                 }
@@ -113,8 +137,252 @@ struct JournalEntryDetailView: View {
         }
     }
 
+    // MARK: - Editorial card
+
+    private var editorialCard: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            header
+
+            photoWell
+                .padding(.bottom, 36)
+
+            if isEditing {
+                editingBody
+            } else {
+                readingBody
+            }
+
+            Spacer(minLength: 24)
+
+            footer
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(palette.card)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .strokeBorder(palette.accent.opacity(0.3), lineWidth: 1)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .shadow(color: palette.ink.opacity(0.08), radius: 20, x: 0, y: 16)
+    }
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text("WHITE RABBITS")
+                .font(.system(size: 10, weight: .semibold))
+                .tracking(2.5)
+                .foregroundStyle(palette.accent)
+            Text(monthYearLabel)
+                .font(.system(size: 10, weight: .regular))
+                .tracking(2)
+                .foregroundStyle(palette.accent.opacity(0.8))
+        }
+        .padding(.horizontal, 24)
+        .padding(.top, 24)
+        .padding(.bottom, 16)
+    }
+
+    private var photoWell: some View {
+        ZStack(alignment: .bottom) {
+            Group {
+                if isEditing {
+                    JournalPhotoPickerView(
+                        photoItem: $photoItem,
+                        photo: $photo,
+                        removePhoto: $removePhoto,
+                        height: 210
+                    )
+                } else {
+                    readingPhoto
+                }
+            }
+            .padding(.horizontal, 24)
+
+            EditorialBunnyBadge(bunny: store.currentBunny(entry.date))
+                .offset(y: 32)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var readingPhoto: some View {
+        Color.clear
+            .frame(height: 210)
+            .overlay {
+                #if canImport(UIKit)
+                if let photo {
+                    Image(uiImage: photo)
+                        .resizable()
+                        .scaledToFill()
+                } else {
+                    palette.accent.opacity(0.1)
+                }
+                #else
+                palette.accent.opacity(0.1)
+                #endif
+            }
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    private var readingBody: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline, spacing: 10) {
+                Text(pageKicker)
+                    .kickerStyle()
+                if !mood.isEmpty {
+                    Text(mood)
+                        .font(.system(size: 9, weight: .semibold))
+                        .textCase(.uppercase)
+                        .tracking(2)
+                        .foregroundStyle(palette.accent)
+                }
+            }
+
+            Text(displayText)
+                .font(.system(size: 22, weight: .regular, design: .serif))
+                .lineSpacing(2)
+                .foregroundStyle(palette.ink)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text(InspirationData.signature(for: entry.date).line)
+                .font(.system(size: 13, weight: .regular, design: .serif))
+                .italic()
+                .foregroundStyle(palette.muted)
+                .padding(.top, 2)
+        }
+        .padding(.horizontal, 24)
+    }
+
+    private var editingBody: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text(pageKicker)
+                .kickerStyle()
+
+            ZStack(alignment: .bottomTrailing) {
+                TextField(
+                    String(localized: "journal.new.placeholder", defaultValue: "A few honest lines, whenever you like..."),
+                    text: $text,
+                    axis: .vertical
+                )
+                .font(.system(size: 18, weight: .regular, design: .serif))
+                .lineSpacing(3)
+                .foregroundStyle(palette.ink)
+                .lineLimit(4...12)
+                .padding(.trailing, 36)
+                .onChange(of: text) { _, newValue in
+                    if newValue.count > maxLength {
+                        text = String(newValue.prefix(maxLength))
+                    }
+                }
+
+                Text("\(text.count)/\(maxLength)")
+                    .captionStyle()
+                    .foregroundStyle(palette.faint)
+            }
+
+            voiceButton
+
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    ForEach(moods, id: \.self) { item in
+                        Button {
+                            Haptics.light()
+                            mood = (mood == item) ? "" : item
+                        } label: {
+                            Text(item)
+                                .font(.system(size: 9, weight: .semibold))
+                                .textCase(.uppercase)
+                                .tracking(1.8)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 7)
+                                .overlay(
+                                    Capsule()
+                                        .strokeBorder(
+                                            mood == item ? palette.accent : palette.line,
+                                            lineWidth: 1
+                                        )
+                                )
+                                .foregroundStyle(mood == item ? palette.accent : palette.muted)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+            }
+        }
+        .padding(.horizontal, 24)
+    }
+
+    private var footer: some View {
+        HStack {
+            Text("PAUSE")
+            Spacer()
+            Text("REFLECT")
+            Spacer()
+            Text("INTEND")
+            Spacer()
+            Text("BEGIN")
+        }
+        .font(.system(size: 9, weight: .semibold))
+        .tracking(2)
+        .foregroundStyle(palette.accent)
+        .padding(.horizontal, 24)
+        .padding(.bottom, 24)
+    }
+
+    private var voiceButton: some View {
+        Button {
+            Haptics.light()
+            if dictation.isListening {
+                dictation.stop()
+            } else {
+                dictationPrefix = text
+                dictation.start()
+            }
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: "mic.fill")
+                    .font(.system(size: 10, weight: .semibold))
+                Text(dictation.isListening
+                    ? String(localized: "journal.new.listening", defaultValue: "Listening…")
+                    : String(localized: "journal.new.voiceToText", defaultValue: "Voice to text"))
+                    .font(.system(size: 9, weight: .semibold))
+                    .tracking(1.6)
+                    .textCase(.uppercase)
+            }
+            .foregroundStyle(dictation.isListening ? palette.ink : palette.muted)
+        }
+        .buttonStyle(.plain)
+        .alert(String(localized: "journal.new.micDenied", defaultValue: "Microphone access is off"), isPresented: $dictation.authorizationDenied) {
+            Button(String(localized: "action.ok", defaultValue: "OK"), role: .cancel) {}
+        } message: {
+            Text(String(localized: "journal.new.micDenied.body", defaultValue: "Turn it on in Settings to use Voice to text."))
+        }
+    }
+
+    // MARK: - Actions
+
     private var isToday: Bool {
         Calendar.current.isDateInToday(entry.date)
+    }
+
+    private var pageKicker: String {
+        isToday
+            ? String(localized: "journal.new.title.today", defaultValue: "Today’s page")
+            : String(localized: "journal.new.title.kept", defaultValue: "A kept page")
+    }
+
+    private var displayText: String {
+        text.isEmpty
+            ? String(localized: "journal.detail.photoOnly", defaultValue: "A photograph for this day.")
+            : text
+    }
+
+    private var monthYearLabel: String {
+        let formatter = DateFormatter()
+        formatter.setLocalizedDateFormatFromTemplate("dMMMMyyyy")
+        return formatter.string(from: entry.date).uppercased()
     }
 
     @ViewBuilder
@@ -125,15 +393,20 @@ struct JournalEntryDetailView: View {
                 item: Image(uiImage: cardImage),
                 preview: SharePreview(dateLabel, image: Image(uiImage: cardImage))
             ) {
-                Image(systemName: "square.and.arrow.up")
+                Text(String(localized: "action.share", defaultValue: "Share"))
+                    .kickerStyle()
+                    .foregroundStyle(palette.accent)
             }
         } else {
-            Image(systemName: "square.and.arrow.up")
+            Text(String(localized: "action.share", defaultValue: "Share"))
+                .kickerStyle()
                 .foregroundStyle(palette.faint)
         }
         #else
         ShareLink(item: shareText) {
-            Image(systemName: "square.and.arrow.up")
+            Text(String(localized: "action.share", defaultValue: "Share"))
+                .kickerStyle()
+                .foregroundStyle(palette.accent)
         }
         #endif
     }
@@ -152,150 +425,11 @@ struct JournalEntryDetailView: View {
         #endif
     }
 
-    @ViewBuilder
-    private var photoView: some View {
-        #if canImport(UIKit)
-        if let photo {
-            Image(uiImage: photo)
-                .resizable()
-                .scaledToFill()
-                .frame(height: 200)
-                .frame(maxWidth: .infinity)
-                .clipShape(RoundedRectangle(cornerRadius: Layout.mediaRadiusLarge, style: .continuous))
-        }
-        #endif
-    }
-
-    private var viewingContent: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            if !mood.isEmpty {
-                Text(mood)
-                    .font(.system(size: 12, weight: .medium))
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(Capsule().fill(palette.accentGlow))
-                    .foregroundStyle(palette.ink)
-            }
-
-            Text(text.isEmpty ? String(localized: "journal.detail.photoOnly", defaultValue: "A photograph for this day.") : text)
-                .font(.system(size: 16, weight: .medium))
-                .lineSpacing(5)
-                .foregroundStyle(palette.ink)
-                .padding(16)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(palette.card)
-                .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .strokeBorder(palette.line, lineWidth: 1)
-                )
-
-            Button(role: .destructive) {
-                Haptics.light()
-                showDeleteConfirm = true
-            } label: {
-                Text(String(localized: "journal.delete.action", defaultValue: "Delete Entry"))
-                    .font(.system(size: 14))
-            }
-            .padding(.top, 4)
-        }
-    }
-
-    private var editingContent: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            JournalPhotoPickerView(photoItem: $photoItem, photo: $photo, removePhoto: $removePhoto, height: 200)
-
-            ZStack(alignment: .bottomTrailing) {
-                TextField(String(localized: "journal.new.placeholder", defaultValue: "A few honest lines, whenever you like..."), text: $text, axis: .vertical)
-                    .font(.system(size: 16, weight: .medium))
-                    .lineSpacing(4)
-                    .lineLimit(7...14)
-                    .padding(.trailing, 40)
-                    .onChange(of: text) { _, newValue in
-                        if newValue.count > maxLength {
-                            text = String(newValue.prefix(maxLength))
-                        }
-                    }
-
-                Text("\(text.count)/\(maxLength)")
-                    .font(.system(size: 11))
-                    .foregroundStyle(palette.faint)
-            }
-            .padding(14)
-            .frame(minHeight: 88)
-            .background(palette.card)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .strokeBorder(palette.line, lineWidth: 1)
-            )
-
-            voiceButton
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(moods, id: \.self) { item in
-                        Button {
-                            Haptics.light()
-                            mood = (mood == item) ? "" : item
-                        } label: {
-                            Text(item)
-                                .font(.system(size: 13, weight: .medium))
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 8)
-                                .background(Capsule().fill(mood == item ? palette.accent : Color.clear))
-                                .overlay(Capsule().strokeBorder(mood == item ? Color.clear : palette.line, lineWidth: 1))
-                                .foregroundStyle(mood == item ? palette.bg : palette.muted)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-                .padding(.vertical, 4)
-            }
-
-            Button {
-                Haptics.success()
-                dictation.stop()
-                store.saveJournalEntry(date: entry.date, text: text, mood: mood, photo: photo, removePhoto: removePhoto)
-                isEditing = false
-            } label: {
-                Text(String(localized: "journal.new.save", defaultValue: "Keep this page"))
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(PillButtonStyle())
-            .padding(.top, 6)
-        }
-    }
-
-    private var voiceButton: some View {
-        Button {
-            Haptics.light()
-            if dictation.isListening {
-                dictation.stop()
-            } else {
-                dictationPrefix = text
-                dictation.start()
-            }
-        } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "mic.fill")
-                    .font(.system(size: 13))
-                Text(dictation.isListening
-                    ? String(localized: "journal.new.listening", defaultValue: "Listening…")
-                    : String(localized: "journal.new.voiceToText", defaultValue: "Voice to text"))
-                    .font(.system(size: 13, weight: .medium))
-            }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 10)
-            .background(Capsule().fill(dictation.isListening ? palette.ink : palette.accentGlow))
-            .foregroundStyle(dictation.isListening ? palette.bg : palette.accent)
-        }
-        .buttonStyle(.plain)
-        .alert(String(localized: "journal.new.micDenied", defaultValue: "Microphone access is off"), isPresented: $dictation.authorizationDenied) {
-            Button(String(localized: "action.ok", defaultValue: "OK"), role: .cancel) {}
-        } message: {
-            Text(String(localized: "journal.new.micDenied.body", defaultValue: "Turn it on in Settings to use Voice to text."))
-        }
+    private func saveEdits() {
+        Haptics.success()
+        dictation.stop()
+        store.saveJournalEntry(date: entry.date, text: text, mood: mood, photo: photo, removePhoto: removePhoto)
+        isEditing = false
     }
 
     private var dateLabel: String {
@@ -306,5 +440,25 @@ struct JournalEntryDetailView: View {
 
     private var shareText: String {
         "\(dateLabel)\n\n\(text)"
+    }
+}
+
+private struct EditorialBunnyBadge: View {
+    let bunny: Bunny
+    @Environment(\.palette) private var palette
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .fill(palette.card)
+                .frame(width: 64, height: 64)
+                .shadow(color: palette.ink.opacity(0.08), radius: 6, x: 0, y: 3)
+            BunnyMarkView(bunny: bunny, style: .mark)
+                .frame(width: 32, height: 32)
+        }
+        .overlay(
+            Circle()
+                .strokeBorder(palette.accent.opacity(0.3), lineWidth: 1)
+        )
     }
 }

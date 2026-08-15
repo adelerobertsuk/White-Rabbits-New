@@ -21,12 +21,12 @@ struct JournalView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
+                VStack(alignment: .leading, spacing: Layout.stackSpacing) {
                     JournalInviteCardView(date: selectedDate ?? Date())
 
                     Text(monthTitle)
                         .sectionHeaderStyle()
-                        .padding(.top, 12)
+                        .padding(.top, 8)
 
                     CalendarStripView(
                         displayedMonth: .constant(currentMonth),
@@ -38,14 +38,13 @@ struct JournalView: View {
                     if selectedDate != nil {
                         HStack {
                             Text(filterLabel)
-                                .font(.system(size: 13, weight: .medium))
-                                .foregroundStyle(palette.muted)
+                                .bodyStyle(weight: .medium, muted: true)
                             Spacer()
                             Button(String(localized: "journal.showAll", defaultValue: "Show all")) {
                                 Haptics.light()
                                 selectedDate = nil
                             }
-                            .font(.system(size: 13, weight: .medium))
+                            .bodyStyle(weight: .medium)
                         }
                     }
 
@@ -96,42 +95,39 @@ struct JournalView: View {
                         .clipShape(RoundedRectangle(cornerRadius: Layout.mediaRadiusSmall, style: .continuous))
                 }
                 #endif
-                VStack(alignment: .leading, spacing: 3) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text(dayLabel(for: entry.date))
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(palette.muted)
+                        .kickerStyle()
                     Text(entry.text.isEmpty ? String(localized: "journal.detail.photoOnly", defaultValue: "A photograph for this day.") : entry.text)
-                        .font(.system(size: 15))
-                        .foregroundStyle(palette.ink)
+                        .bodyStyle()
                         .lineLimit(2)
                 }
                 Spacer()
                 if !entry.mood.isEmpty {
                     Text(entry.mood)
-                        .font(.system(size: 12, weight: .medium))
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 6)
+                        .captionStyle()
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 5)
                         .background(Capsule().fill(palette.accentGlow))
                         .foregroundStyle(palette.ink)
                 }
             }
-            .padding(.vertical, 12)
+            .padding(.vertical, 10)
         }
         .buttonStyle(.plain)
     }
 
     private var emptyState: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 8) {
             Image(systemName: "book.closed")
-                .font(.system(size: 22, weight: .light))
+                .font(.system(size: 18, weight: .light))
                 .foregroundStyle(palette.faint)
             Text(String(localized: "journal.empty", defaultValue: "This month will gather here, one page at a time."))
-                .font(.system(size: 14))
-                .foregroundStyle(palette.muted)
+                .bodyStyle(muted: true)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 32)
+        .padding(.vertical, 24)
     }
 
     private var filteredEntries: [JournalEntry] {

@@ -24,7 +24,7 @@ struct CalendarStripView: View {
     private let calendar = Calendar.current
 
     var body: some View {
-        VStack(spacing: 14) {
+        VStack(spacing: 12) {
             if allowsNavigation {
                 HStack {
                     Button { changeMonth(by: -1) } label: {
@@ -33,8 +33,7 @@ struct CalendarStripView: View {
                     }
                     Spacer()
                     Text(monthTitle)
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(palette.ink)
+                        .bodyStyle(weight: .medium)
                     Spacer()
                     Button { changeMonth(by: 1) } label: {
                         Image(systemName: "chevron.right")
@@ -49,7 +48,7 @@ struct CalendarStripView: View {
                     Text(symbol)
                         .font(.system(size: 9, weight: .semibold))
                         .textCase(.uppercase)
-                        .tracking(0.72)
+                        .tracking(2.0)
                         .foregroundStyle(palette.faint)
                         .frame(maxWidth: .infinity)
                 }
@@ -71,7 +70,7 @@ struct CalendarStripView: View {
                 }
             }
         }
-        .padding(18)
+        .padding(Layout.cardPadding)
         .cardBackground()
     }
 
@@ -92,7 +91,7 @@ struct CalendarStripView: View {
             // accent-glow fill; today gets a thin accent ring instead of
             // a fill, unless it's also selected.
             Text("\(calendar.component(.day, from: date))")
-                .font(.system(size: 14, weight: .regular))
+                .font(.system(size: 13, weight: .regular))
                 .foregroundStyle(isSelected ? palette.bg : palette.ink)
                 .frame(width: 32, height: 32)
                 .background(

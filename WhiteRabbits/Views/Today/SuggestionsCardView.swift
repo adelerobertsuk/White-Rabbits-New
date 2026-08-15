@@ -29,34 +29,32 @@ struct SuggestionsCardView: View {
                         .font(.system(size: 12, weight: .semibold))
                         .foregroundStyle(palette.muted)
                 }
-                .padding(.horizontal, 18)
-                .padding(.vertical, 14)
+                .padding(.horizontal, Layout.cardPadding)
+                .padding(.vertical, 12)
             }
             .buttonStyle(.plain)
 
             if !isCollapsed {
                 if suggestions.isEmpty {
                     Text(String(localized: "suggestions.empty", defaultValue: "You're all caught up. Nothing waiting for you here."))
-                        .font(.system(size: 14))
-                        .foregroundStyle(palette.muted)
-                        .padding(.horizontal, 18)
-                        .padding(.bottom, 16)
+                        .bodyStyle(muted: true)
+                        .padding(.horizontal, Layout.cardPadding)
+                        .padding(.bottom, 14)
                 } else {
-                    VStack(spacing: 10) {
+                    VStack(spacing: 8) {
                         ForEach(suggestions) { suggestion in
                             Button {
                                 Haptics.light()
                                 onTapSuggestion(suggestion)
                             } label: {
-                                HStack(spacing: 12) {
+                                HStack(spacing: 10) {
                                     Image(systemName: suggestion.systemImage)
-                                        .font(.system(size: 15, weight: .medium))
+                                        .font(.system(size: 13, weight: .medium))
                                         .foregroundStyle(palette.muted)
-                                        .frame(width: 28, height: 28)
+                                        .frame(width: 26, height: 26)
                                         .background(Circle().fill(palette.track))
                                     Text(suggestion.title)
-                                        .font(.system(size: 15))
-                                        .foregroundStyle(palette.ink)
+                                        .bodyStyle()
                                     Spacer()
                                     Image(systemName: "chevron.right")
                                         .font(.system(size: 12, weight: .semibold))
@@ -66,8 +64,8 @@ struct SuggestionsCardView: View {
                             .buttonStyle(.plain)
                         }
                     }
-                    .padding(.horizontal, 18)
-                    .padding(.bottom, 16)
+                    .padding(.horizontal, Layout.cardPadding)
+                    .padding(.bottom, 14)
                 }
             }
         }

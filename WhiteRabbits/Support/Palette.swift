@@ -80,9 +80,11 @@ struct PaletteProvider<Content: View>: View {
 /// same handful of numbers instead of inventing a new one each time.
 enum Layout {
     /// The gap from a screen's edge to its content.
-    static let screenInset: CGFloat = 20
+    static let screenInset: CGFloat = 18
     /// The gap between a card's border and what's inside it.
-    static let cardPadding: CGFloat = 18
+    static let cardPadding: CGFloat = 16
+    /// Vertical gap between stacked cards on a screen.
+    static let stackSpacing: CGFloat = 16
     /// Corner radius for cards (the app's primary "surface").
     static let cardRadius: CGFloat = 20
     /// Corner radius for buttons and other small controls.
@@ -96,39 +98,76 @@ enum Layout {
 
 /// The uppercase micro-label used for things like "AUGUST INTENTION" or
 /// "TODAY · AUGUST 2026": the smallest, quietest text in the hierarchy.
+/// Sized to the share card's 9pt wide-tracked labels.
 private struct KickerText: ViewModifier {
     @Environment(\.palette) private var palette
     func body(content: Content) -> some View {
         content
-            .font(.system(size: 10, weight: .medium))
+            .font(.system(size: 9, weight: .semibold))
             .textCase(.uppercase)
-            .tracking(2.2)
+            .tracking(2.4)
             .foregroundStyle(palette.muted)
     }
 }
 
 /// The uppercase label for a card or list section, e.g. "SUGGESTIONS",
-/// "FRIENDS": one step louder than a kicker.
+/// "FRIENDS": one step louder than a kicker, still delicate.
 private struct SectionHeaderText: ViewModifier {
     @Environment(\.palette) private var palette
     func body(content: Content) -> some View {
         content
-            .font(.system(size: 13, weight: .semibold))
+            .font(.system(size: 10, weight: .semibold))
             .textCase(.uppercase)
-            .tracking(1.56)
+            .tracking(2.0)
             .foregroundStyle(palette.muted)
     }
 }
 
-/// A screen's own title, e.g. "Charms", "Quiet settings."
+/// A screen's own title, e.g. "Charms", "Quiet settings." Light serif,
+/// matching the share card's 22pt headline rather than a heavy display.
 private struct DisplayTitleText: ViewModifier {
     @Environment(\.palette) private var palette
     var weight: Font.Weight = .light
     func body(content: Content) -> some View {
         content
-            .font(.system(size: 28, weight: weight))
-            .tracking(-1.0)
+            .font(.system(size: 22, weight: weight, design: .serif))
+            .tracking(0.2)
+            .lineSpacing(2)
             .foregroundStyle(palette.ink)
+    }
+}
+
+/// Everyday UI copy: list rows, greetings, captions on cards.
+private struct BodyText: ViewModifier {
+    @Environment(\.palette) private var palette
+    var weight: Font.Weight = .regular
+    var muted: Bool = false
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 13, weight: weight))
+            .foregroundStyle(muted ? palette.muted : palette.ink)
+    }
+}
+
+/// The smallest supporting line under a field or row.
+private struct CaptionText: ViewModifier {
+    @Environment(\.palette) private var palette
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 11, weight: .regular))
+            .foregroundStyle(palette.muted)
+    }
+}
+
+/// Longer editorial lines: journal pages, intention sentences, quotes.
+private struct ReadingText: ViewModifier {
+    @Environment(\.palette) private var palette
+    var muted: Bool = false
+    func body(content: Content) -> some View {
+        content
+            .font(.system(size: 14, weight: .regular, design: .serif))
+            .lineSpacing(3)
+            .foregroundStyle(muted ? palette.muted : palette.ink)
     }
 }
 
@@ -136,6 +175,9 @@ extension View {
     func kickerStyle() -> some View { modifier(KickerText()) }
     func sectionHeaderStyle() -> some View { modifier(SectionHeaderText()) }
     func displayTitleStyle(weight: Font.Weight = .light) -> some View { modifier(DisplayTitleText(weight: weight)) }
+    func bodyStyle(weight: Font.Weight = .regular, muted: Bool = false) -> some View { modifier(BodyText(weight: weight, muted: muted)) }
+    func captionStyle() -> some View { modifier(CaptionText()) }
+    func readingStyle(muted: Bool = false) -> some View { modifier(ReadingText(muted: muted)) }
 }
 
 /// The soft glow that sits behind every screen: a warm radial highlight

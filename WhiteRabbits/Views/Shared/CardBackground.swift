@@ -56,8 +56,8 @@ struct PillButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .font(.system(size: compact ? 12 : 13, weight: .semibold))
-            .tracking(0.26)
+            .font(.system(size: compact ? 11 : 12, weight: .semibold))
+            .tracking(compact ? 0.8 : 1.0)
             .frame(minHeight: compact ? 0 : 50)
             .padding(.horizontal, compact ? 14 : 18)
             .padding(.vertical, compact ? 8 : 0)

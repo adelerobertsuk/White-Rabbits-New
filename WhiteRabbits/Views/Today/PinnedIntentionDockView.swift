@@ -21,13 +21,9 @@ struct PinnedIntentionDockView: View {
                 thumbnail
                 VStack(alignment: .leading, spacing: 2) {
                     Text(String(localized: "pinned.label", defaultValue: "Pinned from Circle"))
-                        .font(.system(size: 11, weight: .semibold))
-                        .textCase(.uppercase)
-                        .tracking(0.8)
-                        .foregroundStyle(palette.muted)
+                        .kickerStyle()
                     Text(record.intention ?? "")
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(palette.ink)
+                        .bodyStyle(weight: .medium)
                         .lineLimit(1)
                 }
                 Spacer()
