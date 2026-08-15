@@ -43,22 +43,16 @@ struct JournalEntryDetailView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 10) {
                     Text(dateLabel)
-                        .font(.system(size: 13, weight: .semibold))
-                        .textCase(.uppercase)
-                        .tracking(1)
-                        .foregroundStyle(palette.muted)
+                        .sectionHeaderStyle()
 
                     Text(isToday ? String(localized: "journal.new.title.today", defaultValue: "Today’s page") : String(localized: "journal.new.title.kept", defaultValue: "A kept page"))
-                        .font(.system(size: 28, weight: .light))
-                        .tracking(-0.3)
-                        .foregroundStyle(palette.ink)
+                        .displayTitleStyle()
                         .padding(.bottom, 6)
-
-                    photoView
 
                     if isEditing {
                         editingContent
                     } else {
+                        photoView
                         viewingContent
                     }
                 }
@@ -165,7 +159,7 @@ struct JournalEntryDetailView: View {
                 .scaledToFill()
                 .frame(height: 200)
                 .frame(maxWidth: .infinity)
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: Layout.mediaRadiusLarge, style: .continuous))
         }
         #endif
     }
@@ -207,6 +201,8 @@ struct JournalEntryDetailView: View {
 
     private var editingContent: some View {
         VStack(alignment: .leading, spacing: 10) {
+            JournalPhotoPickerView(photoItem: $photoItem, photo: $photo, removePhoto: $removePhoto, height: 200)
+
             ZStack(alignment: .bottomTrailing) {
                 TextField(String(localized: "journal.new.placeholder", defaultValue: "A few honest lines, whenever you like..."), text: $text, axis: .vertical)
                     .font(.system(size: 16, weight: .medium))
@@ -254,13 +250,6 @@ struct JournalEntryDetailView: View {
                 }
                 .padding(.vertical, 4)
             }
-
-            PhotosPicker(selection: $photoItem, matching: .images) {
-                Text(photo == nil ? String(localized: "journal.new.addPhoto", defaultValue: "Add a photo") : String(localized: "journal.new.changePhoto", defaultValue: "Change photo"))
-                    .font(.system(size: 14))
-                    .foregroundStyle(palette.accent)
-            }
-            .padding(.top, 2)
 
             Button {
                 Haptics.success()

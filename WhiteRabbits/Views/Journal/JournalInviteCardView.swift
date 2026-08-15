@@ -21,10 +21,7 @@ struct JournalInviteCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(kickerText)
-                .font(.system(size: 10, weight: .medium))
-                .textCase(.uppercase)
-                .tracking(2.2)
-                .foregroundStyle(palette.muted)
+                .kickerStyle()
 
             Text(String(localized: "journal.invite.copy", defaultValue: "Whenever it feels right... write, drop a photo, or voice-note your thoughts."))
                 .font(.system(size: 14, weight: .regular))
@@ -50,7 +47,7 @@ struct JournalInviteCardView: View {
                                 .resizable()
                                 .scaledToFill()
                                 .frame(width: 52, height: 52)
-                                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                .clipShape(RoundedRectangle(cornerRadius: Layout.mediaRadiusSmall, style: .continuous))
                         }
                         #endif
                         Text(entry.text.isEmpty ? String(localized: "journal.detail.photoOnly", defaultValue: "A photograph for this day.") : entry.text)
@@ -60,17 +57,18 @@ struct JournalInviteCardView: View {
                             .multilineTextAlignment(.leading)
                         Spacer(minLength: 0)
                     }
-                    .padding(8)
+                    .padding(.vertical, 8)
                 }
                 .buttonStyle(.plain)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .strokeBorder(palette.line, lineWidth: 1)
-                )
+                .overlay(alignment: .top) {
+                    Rectangle()
+                        .fill(palette.line)
+                        .frame(height: 1)
+                }
                 .padding(.top, 12)
             }
         }
-        .padding(18)
+        .padding(Layout.cardPadding)
         .cardBackground()
         .sheet(isPresented: $showEntrySheet) {
             NewEntrySheet(date: date, focus: entryFocus)

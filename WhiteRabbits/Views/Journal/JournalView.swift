@@ -25,10 +25,7 @@ struct JournalView: View {
                     JournalInviteCardView(date: selectedDate ?? Date())
 
                     Text(monthTitle)
-                        .font(.system(size: 13, weight: .semibold))
-                        .textCase(.uppercase)
-                        .tracking(1.56)
-                        .foregroundStyle(palette.muted)
+                        .sectionHeaderStyle()
                         .padding(.top, 12)
 
                     CalendarStripView(
@@ -53,20 +50,21 @@ struct JournalView: View {
                     }
 
                     if filteredEntries.isEmpty {
-                        Text(String(localized: "journal.empty", defaultValue: "This month will gather here, one page at a time."))
-                            .font(.system(size: 14))
-                            .foregroundStyle(palette.muted)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.top, 4)
+                        emptyState
                     } else {
-                        VStack(spacing: 10) {
-                            ForEach(filteredEntries) { entry in
+                        VStack(spacing: 0) {
+                            ForEach(Array(filteredEntries.enumerated()), id: \.element.id) { index, entry in
                                 entryRow(entry)
+                                if index < filteredEntries.count - 1 {
+                                    Rectangle()
+                                        .fill(palette.line)
+                                        .frame(height: 1)
+                                }
                             }
                         }
                     }
                 }
-                .padding(20)
+                .padding(Layout.screenInset)
                 .padding(.bottom, 100)
             }
             .sanctuaryBackground()
@@ -74,10 +72,7 @@ struct JournalView: View {
             .toolbar {
                 ToolbarItem(placement: .principal) {
                     Text(store.todayKicker(String(localized: "tab.journal", defaultValue: "Journal")))
-                        .font(.system(size: 10, weight: .medium))
-                        .textCase(.uppercase)
-                        .tracking(2.2)
-                        .foregroundStyle(palette.muted)
+                        .kickerStyle()
                 }
             }
             .settingsButton()
@@ -98,7 +93,7 @@ struct JournalView: View {
                         .resizable()
                         .scaledToFill()
                         .frame(width: 48, height: 48)
-                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                        .clipShape(RoundedRectangle(cornerRadius: Layout.mediaRadiusSmall, style: .continuous))
                 }
                 #endif
                 VStack(alignment: .leading, spacing: 3) {
@@ -113,17 +108,30 @@ struct JournalView: View {
                 Spacer()
                 if !entry.mood.isEmpty {
                     Text(entry.mood)
-                        .font(.system(size: 11, weight: .medium))
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 5)
+                        .font(.system(size: 12, weight: .medium))
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
                         .background(Capsule().fill(palette.accentGlow))
                         .foregroundStyle(palette.ink)
                 }
             }
-            .padding(12)
-            .cardBackground(cornerRadius: 18)
+            .padding(.vertical, 12)
         }
         .buttonStyle(.plain)
+    }
+
+    private var emptyState: some View {
+        VStack(spacing: 10) {
+            Image(systemName: "book.closed")
+                .font(.system(size: 22, weight: .light))
+                .foregroundStyle(palette.faint)
+            Text(String(localized: "journal.empty", defaultValue: "This month will gather here, one page at a time."))
+                .font(.system(size: 14))
+                .foregroundStyle(palette.muted)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 32)
     }
 
     private var filteredEntries: [JournalEntry] {

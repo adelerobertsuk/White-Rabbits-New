@@ -43,15 +43,10 @@ struct NewEntrySheet: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 10) {
                     Text(dateLabel)
-                        .font(.system(size: 13, weight: .semibold))
-                        .textCase(.uppercase)
-                        .tracking(1)
-                        .foregroundStyle(palette.muted)
+                        .sectionHeaderStyle()
 
                     Text(isToday ? String(localized: "journal.new.title.today", defaultValue: "Today’s page") : String(localized: "journal.new.title.kept", defaultValue: "A kept page"))
-                        .font(.system(size: 28, weight: .light))
-                        .tracking(-0.3)
-                        .foregroundStyle(palette.ink)
+                        .displayTitleStyle()
                         .padding(.bottom, 2)
 
                     Text(lede)
@@ -59,7 +54,7 @@ struct NewEntrySheet: View {
                         .foregroundStyle(palette.muted)
                         .padding(.bottom, 4)
 
-                    photoButton
+                    JournalPhotoPickerView(photoItem: $photoItem, photo: $photo, removePhoto: $removePhoto)
 
                     textField
 
@@ -158,59 +153,6 @@ struct NewEntrySheet: View {
             ? String(localized: "journal.new.lede.today.named", defaultValue: "%@, this page stays on this phone, in your journal.")
             : String(localized: "journal.new.lede.kept.named", defaultValue: "%@, this page stays on this phone, in your journal.")
         return String(format: format, store.firstName)
-    }
-
-    private var photoButton: some View {
-        PhotosPicker(selection: $photoItem, matching: .images) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .fill(palette.card)
-                #if canImport(UIKit)
-                if let photo {
-                    Image(uiImage: photo)
-                        .resizable()
-                        .scaledToFill()
-                } else {
-                    photoEmptyLabel
-                }
-                #else
-                photoEmptyLabel
-                #endif
-            }
-            .frame(height: 170)
-            .frame(maxWidth: .infinity)
-            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 20, style: .continuous)
-                    .strokeBorder(palette.line, style: StrokeStyle(lineWidth: 1, dash: photo == nil ? [5, 5] : []))
-            )
-        }
-        .buttonStyle(.plain)
-        .overlay(alignment: .topTrailing) {
-            if photo != nil {
-                Button {
-                    Haptics.light()
-                    photo = nil
-                    removePhoto = true
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .font(.system(size: 20))
-                        .foregroundStyle(palette.ink)
-                        .background(Circle().fill(palette.bg))
-                }
-                .padding(8)
-            }
-        }
-    }
-
-    private var photoEmptyLabel: some View {
-        VStack(spacing: 6) {
-            Image(systemName: "camera")
-                .font(.system(size: 18))
-            Text(String(localized: "journal.new.addPhotograph", defaultValue: "Add a photograph"))
-                .font(.system(size: 14))
-        }
-        .foregroundStyle(palette.muted)
     }
 
     private var textField: some View {
