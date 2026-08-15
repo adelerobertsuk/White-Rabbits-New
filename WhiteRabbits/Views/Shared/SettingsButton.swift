@@ -20,9 +20,10 @@ private struct SettingsToolbarButton: View {
         } label: {
             BunnyMarkView(bunny: store.currentBunny(), style: .mark)
                 .frame(width: 22, height: 22)
+                .colorMultiply(palette.accent)
                 .frame(width: 40, height: 40)
                 .background(Circle().fill(.ultraThinMaterial))
-                .overlay(Circle().strokeBorder(palette.line, lineWidth: 1))
+                .overlay(Circle().strokeBorder(palette.accent.opacity(0.35), lineWidth: 1))
                 .shadow(color: palette.ink.opacity(0.08), radius: 20, x: 0, y: 16)
         }
         .buttonStyle(.plain)
