@@ -43,6 +43,7 @@
 		8A11E20E30304D3900138B9D /* Exceptions for "WhiteRabbits" folder in "WhiteRabbitsWidget" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				Models/Affirmations.swift,
 				Models/BunnyData.swift,
 				Models/Models.swift,
 				Support/Palette.swift,
