@@ -2,7 +2,8 @@
 //  WhiteRabbitsWidget.swift
 //  WhiteRabbitsWidget
 //
-//  Small is a charm. Medium is the charm plus today's line.
+//  Home Screen: small is a charm, medium is the charm plus today's line.
+//  Lock Screen: a circular bunny, and a rectangular daily line.
 //
 
 import SwiftUI
@@ -60,25 +61,61 @@ struct CharmWidgetView: View {
 
     private var palette: Palette { Palette.current(for: colorScheme) }
 
+    private var isLockScreen: Bool {
+        family == .accessoryCircular || family == .accessoryRectangular
+    }
+
     var body: some View {
         Group {
-            if family == .systemMedium {
+            switch family {
+            case .systemMedium:
                 medium
-            } else {
+            case .accessoryCircular:
+                lockCircular
+            case .accessoryRectangular:
+                lockRectangular
+            default:
                 CharmRingView(bunny: entry.bunny)
             }
         }
-        .environment(\.palette, palette)
+        .environment(\.palette, isLockScreen ? palette.withInk(.primary) : palette)
         .containerBackground(for: .widget) {
-            ZStack {
-                palette.bg
-                EllipticalGradient(
-                    gradient: Gradient(colors: [palette.accentGlow, Color.clear]),
-                    center: family == .systemMedium ? .leading : .center,
-                    startRadiusFraction: 0,
-                    endRadiusFraction: family == .systemMedium ? 0.9 : 0.72
-                )
+            if isLockScreen {
+                AccessoryWidgetBackground()
+            } else {
+                ZStack {
+                    palette.bg
+                    EllipticalGradient(
+                        gradient: Gradient(colors: [palette.accentGlow, Color.clear]),
+                        center: family == .systemMedium ? .leading : .center,
+                        startRadiusFraction: 0,
+                        endRadiusFraction: family == .systemMedium ? 0.9 : 0.72
+                    )
+                }
             }
+        }
+    }
+
+    private var lockCircular: some View {
+        BunnyMarkView(bunny: entry.bunny, style: .mark)
+            .padding(8)
+            .widgetAccentable()
+    }
+
+    private var lockRectangular: some View {
+        HStack(alignment: .center, spacing: 10) {
+            BunnyMarkView(bunny: entry.bunny, style: .mark)
+                .frame(width: 28, height: 28)
+                .widgetAccentable()
+            Text(entry.line)
+                .font(.system(size: 13, weight: .light))
+                .tracking(-0.2)
+                .lineSpacing(2)
+                .foregroundStyle(.primary)
+                .multilineTextAlignment(.leading)
+                .lineLimit(3)
+                .minimumScaleFactor(0.8)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
@@ -136,8 +173,8 @@ struct WhiteRabbitsWidget: Widget {
             CharmWidgetView(entry: entry)
         }
         .configurationDisplayName("Lucky bunny")
-        .description("A little luck on your Home Screen. The larger size keeps today's line beside the bunny.")
-        .supportedFamilies([.systemSmall, .systemMedium])
+        .description("A little luck on your Home Screen and Lock Screen. The larger Home Screen size keeps today's line beside the bunny.")
+        .supportedFamilies([.systemSmall, .systemMedium, .accessoryCircular, .accessoryRectangular])
     }
 }
 
