@@ -19,7 +19,7 @@ struct HomeView: View {
 
     private var canSayIt: Bool { store.isFirstOfMonth() && !store.ritualCompleted() }
     private var ringProgress: CGFloat {
-        (store.ritualCompleted() || didCelebrate) ? 1 : 0
+        CGFloat(store.unlockedCharmIds.count) / 12
     }
 
     var body: some View {
@@ -200,6 +200,7 @@ private struct HeroRingView: View {
                 .stroke(palette.accent, style: StrokeStyle(lineWidth: 3.2, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .padding(10)
+                .animation(.easeOut(duration: 0.8), value: progress)
 
             Circle()
                 .fill(palette.card)

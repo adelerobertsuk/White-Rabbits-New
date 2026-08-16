@@ -13,32 +13,36 @@ struct AlarmCardView: View {
     @Environment(\.palette) private var palette
     @Environment(\.openURL) private var openURL
 
+    @State private var showTimePicker = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(String(localized: "alarm.kicker", defaultValue: "Charm alarm"))
                         .kickerStyle()
-                    ZStack(alignment: .leading) {
-                        Text(timeLabel)
-                            .font(.system(size: 28, weight: .light))
-                            .tracking(-0.8)
-                            .foregroundStyle(palette.ink)
-                        DatePicker(
-                            String(localized: "alarm.time", defaultValue: "Time"),
-                            selection: Binding(
-                                get: { store.alarmTime },
-                                set: { store.setAlarmTime($0) }
-                            ),
-                            displayedComponents: .hourAndMinute
-                        )
-                        .labelsHidden()
-                        .tint(palette.accent)
-                        .scaleEffect(x: 1.6, y: 1.3, anchor: .leading)
-                        .opacity(0.02)
-                        .frame(width: 128, height: 36, alignment: .leading)
-                        .clipped()
+                    Button {
+                        Haptics.light()
+                        withAnimation(.easeInOut(duration: 0.22)) {
+                            showTimePicker.toggle()
+                        }
+                    } label: {
+                        HStack(spacing: 8) {
+                            Text(timeLabel)
+                                .font(.system(size: 28, weight: .light))
+                                .tracking(-0.8)
+                                .foregroundStyle(palette.ink)
+                                .contentTransition(.numericText())
+                            Image(systemName: "chevron.down")
+                                .font(.system(size: 11, weight: .semibold))
+                                .foregroundStyle(palette.muted)
+                                .rotationEffect(.degrees(showTimePicker ? 180 : 0))
+                        }
                     }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(String(localized: "alarm.time", defaultValue: "Time"))
+                    .accessibilityValue(timeLabel)
+                    .accessibilityHint(String(localized: "alarm.time.hint", defaultValue: "Changes when White Rabbits rings on the first of the month."))
                 }
                 Spacer()
                 SanctuaryToggle(
@@ -47,6 +51,22 @@ struct AlarmCardView: View {
                         set: { store.setAlarmEnabled($0) }
                     )
                 )
+            }
+
+            if showTimePicker {
+                DatePicker(
+                    String(localized: "alarm.time", defaultValue: "Time"),
+                    selection: Binding(
+                        get: { store.alarmTime },
+                        set: { store.setAlarmTime($0) }
+                    ),
+                    displayedComponents: .hourAndMinute
+                )
+                .datePickerStyle(.wheel)
+                .labelsHidden()
+                .tint(palette.accent)
+                .frame(maxWidth: .infinity)
+                .transition(.opacity.combined(with: .move(edge: .top)))
             }
 
             Text(statusLine)
@@ -91,7 +111,7 @@ struct AlarmCardView: View {
             return String(localized: "alarm.denied", defaultValue: "Alarms are off for White Rabbits. Turn them on in Settings so the first of the month can break through Silent and Focus.")
         }
         if !store.alarmEnabled {
-            return String(localized: "alarm.off", defaultValue: "Set it. Forget it. The phone surprises you.")
+            return String(localized: "alarm.off", defaultValue: "Pick a time. Forget it. The phone surprises you.")
         }
         if let next = store.nextAlarmDate {
             return String(format: String(localized: "alarm.next", defaultValue: "Next rings %@."), formattedNext(next))
@@ -99,7 +119,7 @@ struct AlarmCardView: View {
         if store.isSchedulingAlarm {
             return String(localized: "alarm.scheduling", defaultValue: "Setting the alarm.")
         }
-        return String(localized: "alarm.on", defaultValue: "The first of every month. Breaks Silent and Focus.")
+        return String(localized: "alarm.on", defaultValue: "The first of every month, at this time. Breaks Silent and Focus.")
     }
 
     private func formattedNext(_ date: Date) -> String {

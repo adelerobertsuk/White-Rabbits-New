@@ -2,7 +2,7 @@
 //  WhiteRabbitsWidget.swift
 //  WhiteRabbitsWidget
 //
-//  This month's lucky charm. Small, magical, no homework.
+//  The same paper and ink bunny as Home. A little luck, no homework.
 //
 
 import SwiftUI
@@ -36,34 +36,42 @@ struct CharmProvider: TimelineProvider {
 struct CharmWidgetView: View {
     var entry: CharmEntry
     @Environment(\.colorScheme) private var colorScheme
-    @Environment(\.widgetFamily) private var family
 
     private var palette: Palette { Palette.current(for: colorScheme) }
-    private var bunny: Bunny { entry.bunny }
-    private var charmSize: CGFloat { family == .systemSmall ? 92 : 128 }
 
     var body: some View {
-        ZStack {
-            Circle()
-                .fill(Color(hex: bunny.accentHex).opacity(0.22))
-                .frame(width: charmSize + 36, height: charmSize + 36)
-                .blur(radius: 16)
+        GeometryReader { geo in
+            let side = min(geo.size.width, geo.size.height)
+            let scale = side / 248
 
             ZStack {
                 Circle()
-                    .fill(Color(hex: bunny.fillHex).opacity(0.45))
+                    .stroke(palette.track, lineWidth: max(2.2, 3.2 * scale))
+                    .padding(10 * scale)
+
                 Circle()
-                    .strokeBorder(Color(hex: bunny.strokeHex).opacity(0.4), lineWidth: 1.2)
-                BunnyMarkView(bunny: bunny, style: .charm)
-                    .padding(charmSize * 0.14)
+                    .fill(palette.card)
+                    .padding(26 * scale)
+                    .shadow(color: palette.ink.opacity(0.08), radius: 12 * scale, y: 10 * scale)
+
+                BunnyMarkView(bunny: entry.bunny, style: .asset)
+                    .padding(50 * scale)
             }
-            .frame(width: charmSize, height: charmSize)
-            .shadow(color: Color(hex: bunny.accentHex).opacity(0.55), radius: family == .systemSmall ? 14 : 22)
+            .frame(width: side, height: side)
+            .shadow(color: palette.accentGlow, radius: 16 * scale, y: 12 * scale)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .environment(\.palette, palette)
         .containerBackground(for: .widget) {
-            palette.bg
+            ZStack {
+                palette.bg
+                EllipticalGradient(
+                    gradient: Gradient(colors: [palette.accentGlow, Color.clear]),
+                    center: .center,
+                    startRadiusFraction: 0,
+                    endRadiusFraction: 0.72
+                )
+            }
         }
     }
 }
@@ -74,7 +82,7 @@ struct WhiteRabbitsWidget: Widget {
             CharmWidgetView(entry: entry)
         }
         .configurationDisplayName("Lucky bunny")
-        .description("This month's charm. A little luck, on your Home Screen.")
+        .description("A little luck, on your Home Screen.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }
