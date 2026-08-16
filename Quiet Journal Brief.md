@@ -1,46 +1,41 @@
-# White Rabbit: The Quiet Journal Brief
+# White Rabbits
 
-Saved 15 Aug 2026 for tomorrow. Do not start this until Adele opens a new chat and asks to begin.
+16 Aug 2026. Adele, late. This is the real product. The journal brief below this date was overbuilt. ChatGPT got in its feelings about an alarm. Ignore that.
 
-## Role
+## What it is
 
-Senior UI/UX Engineer & Minimalist Designer
+**Charm alarm.** That is the App Store line.
 
-## Task
+A monthly alarm. On the first of the month it sings, it gets your attention, and it says: say White Rabbits.
 
-Refactor the existing White Rabbit prototype back into a pristine, ultra-minimalist, private journal. Strip away all community sharing, social network features, and backend complexity that caused previous design clutter.
+Rabbits are lucky in a lot of cultures. The bunny can sit on the lock screen or a widget all year. A new charm each month. The alarm arrives out of nowhere. Oh. I forgot to say it.
 
-## Core constraints
+The rabbits already designed, including the loyalty-stamp pack on the back, are the app. Not a habit tracker. Not a journal. Adele currently uses a rubbish Apple alarm with a rabbit emoji, and then has to remember to remember. This is a bit of fun and a nice surprise for the family.
 
-### The layout
+No circle. No sanctuary. No friends. No “don’t disturb people” lecture. The alarm is the point.
 
-A strict, clean, native-feeling 3-tab layout with generous whitespace, crisp typography, and zero heavy containers, excessive padding, or clunky buttons.
+## Ship first
 
-### The core mechanic (one entry a day)
+1. First-of-month alarm, with the song.
+2. The White Rabbits moment on screen. Pretty. The bunny.
+3. One charm unlocked that month. Kids can see the ones they have.
 
-The journal feature must be strictly limited to one entry per calendar day, stored locally on the device (using local storage). Once a daily entry is logged, it can be viewed or edited, but no additional new entries can be created until the next day.
+## Keep
 
-### Design aesthetic
+The existing bunnies, Palette, type, radii. Same app folder. Branch `swiftui-ios-app`. Do not start a second White Rabbits.
 
-Quiet, distraction-free, analog feel. Focus entirely on local styling, serene typography, and a peaceful user experience.
+## Strip, when we next open this folder
 
-## Punch list for the next chat
+Journal tabs, Circle, Supabase, share cards, streaks-as-guilt, anything that is not the monthly ritual and the charms.
 
-This is the same app in `Studio/White Rabbits New/`. Stay on branch `swiftui-ios-app`. Do not start a new product or folder.
+## Craft
 
-What to strip
-- Circle tab and all social / sanctuary sharing
-- Supabase, `CircleSyncService`, `SupabaseConfig`, join/leave circle
-- Share button and share-card render on journal pages
-- Shared Sanctuary toggle in Settings
-- Friends, sparks, fellows, remote members
+World class, quiet, collectible. If a kid would not want that bunny on their Home Screen, it is not done.
 
-What to keep and quieten
-- Today, Journal, Charms as the 3 tabs (confirm with Adele if she wants a different third tab)
-- On-device JSON store and photos (`Persistence.swift`)
-- One page per calendar day (the store already keys entries by `yyyy-MM-dd`)
-- First-of-month ritual, charms, habits, settings, export/import
+## Date
 
-UI bar
-- World class only. Reuse the existing Palette, type styles, and radii. No one-off hex. No em dashes in copy.
-- Once today's page exists, the invite must become view / edit, never a second new page.
+Adele just wants it. Charm alarm on the phone, and on the store by **1 September 2026**. That morning is her mum’s birthday. Her mum passed not long ago. This is for her. A way to show her that her baby did something good. Feature-small. World-class polish. A place you want to spend a precious minute, not a habit tracker.
+
+## How to start
+
+File → Open Folder on `Studio/White Rabbits New`. Fresh chat. Paste: "Read the brief. Charm alarm. App Store by 1 September if we can. That is all."
