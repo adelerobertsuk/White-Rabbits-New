@@ -2,8 +2,8 @@
 //  RitualSheetView.swift
 //  WhiteRabbits
 //
-//  The first-of-the-month ritual. Tap to say the words, watch the
-//  month's charm arrive, then (optionally) set an intention.
+//  The first-of-the-month moment. Tap to say the words, watch this
+//  month's charm arrive.
 //
 
 import SwiftUI
@@ -14,7 +14,6 @@ struct RitualSheetView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var didCelebrate = false
-    @State private var showIntentionEditor = false
     @State private var dustPhase = false
 
     private var bunny: Bunny { store.currentBunny() }
@@ -48,8 +47,10 @@ struct RitualSheetView: View {
                         Image(systemName: "sparkle")
                             .font(.system(size: CGFloat.random(in: 8...14)))
                             .foregroundStyle(palette.accent)
-                            .offset(x: cos(Double(i)) * 90 * (dustPhase ? 1 : 0.4),
-                                    y: sin(Double(i) * 1.3) * 90 * (dustPhase ? 1 : 0.4) - (dustPhase ? 30 : 0))
+                            .offset(
+                                x: cos(Double(i)) * 90 * (dustPhase ? 1 : 0.4),
+                                y: sin(Double(i) * 1.3) * 90 * (dustPhase ? 1 : 0.4) - (dustPhase ? 30 : 0)
+                            )
                             .opacity(dustPhase ? 0 : 1)
                     }
                 }
@@ -71,7 +72,9 @@ struct RitualSheetView: View {
                 .padding(.horizontal, 24)
             } else {
                 VStack(spacing: 8) {
-                    Text(store.firstName.isEmpty ? String(localized: "ritual.welcome.unnamed", defaultValue: "Welcome.") : String(format: String(localized: "ritual.welcome.named", defaultValue: "Welcome, %@."), store.firstName))
+                    Text(store.firstName.isEmpty
+                         ? String(localized: "ritual.welcome.unnamed", defaultValue: "Welcome.")
+                         : String(format: String(localized: "ritual.welcome.named", defaultValue: "Welcome, %@."), store.firstName))
                         .font(.system(size: 18, weight: .medium))
                         .foregroundStyle(palette.ink)
                     Text(bunny.line)
@@ -86,14 +89,6 @@ struct RitualSheetView: View {
 
             VStack(spacing: 12) {
                 if didCelebrate {
-                    Button {
-                        showIntentionEditor = true
-                    } label: {
-                        Text(String(localized: "ritual.setIntention", defaultValue: "Set this month's intention"))
-                            .frame(maxWidth: .infinity)
-                    }
-                    .buttonStyle(PillButtonStyle())
-
                     Button(String(localized: "action.close", defaultValue: "Close")) { dismiss() }
                         .font(.system(size: 14))
                         .foregroundStyle(palette.muted)
@@ -115,9 +110,6 @@ struct RitualSheetView: View {
             .padding(.bottom, 24)
         }
         .sanctuaryBackground()
-        .sheet(isPresented: $showIntentionEditor) {
-            IntentionEditorView()
-        }
     }
 
     private func sayTheWords() {

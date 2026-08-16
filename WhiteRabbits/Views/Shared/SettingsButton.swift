@@ -2,13 +2,12 @@
 //  SettingsButton.swift
 //  WhiteRabbits
 //
-//  The small bunny-mark circle in the top-right corner of every tab,
-//  matching the web app's global `.icon-btn` "Open settings" button.
+//  The small bunny-mark circle in the top-right corner.
 //
 
 import SwiftUI
 
-private struct SettingsToolbarButton: View {
+struct SettingsMarkButton: View {
     @Binding var isPresented: Bool
     @EnvironmentObject private var store: AppStore
     @Environment(\.palette) private var palette
@@ -18,15 +17,15 @@ private struct SettingsToolbarButton: View {
             Haptics.light()
             isPresented = true
         } label: {
-            BunnyMarkView(bunny: store.currentBunny(), style: .mark)
-                .frame(width: 22, height: 22)
-                .colorMultiply(palette.accent)
+            BunnyMarkView(bunny: store.currentBunny(), style: .asset)
+                .frame(width: 24, height: 24)
                 .frame(width: 40, height: 40)
-                .background(Circle().fill(.ultraThinMaterial))
-                .overlay(Circle().strokeBorder(palette.accent.opacity(0.35), lineWidth: 1))
+                .background(Circle().fill(palette.card))
+                .overlay(Circle().strokeBorder(palette.line, lineWidth: 1))
                 .shadow(color: palette.ink.opacity(0.08), radius: 20, x: 0, y: 16)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(String(localized: "settings.open", defaultValue: "Open settings"))
     }
 }
 
@@ -37,7 +36,7 @@ private struct SettingsSheetModifier: ViewModifier {
         content
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    SettingsToolbarButton(isPresented: $showSettings)
+                    SettingsMarkButton(isPresented: $showSettings)
                 }
             }
             .sheet(isPresented: $showSettings) {

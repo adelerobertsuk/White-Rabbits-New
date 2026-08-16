@@ -46,6 +46,21 @@ struct Palette {
     static func current(for scheme: ColorScheme) -> Palette {
         scheme == .dark ? .dark : .light
     }
+
+    /// Recolours the ink, used by faint stamps that still draw as line-art.
+    func withInk(_ color: Color) -> Palette {
+        Palette(
+            bg: bg,
+            card: card,
+            ink: color,
+            muted: muted,
+            faint: faint,
+            line: line,
+            track: track,
+            accent: accent,
+            accentGlow: accentGlow
+        )
+    }
 }
 
 private struct PaletteKey: EnvironmentKey {
@@ -56,23 +71,6 @@ extension EnvironmentValues {
     var palette: Palette {
         get { self[PaletteKey.self] }
         set { self[PaletteKey.self] = newValue }
-    }
-}
-
-/// Reads the system color scheme and hands every child view a matching
-/// `Palette` through the environment. Put this once near the root.
-///
-/// Settings' "Dark evening" toggle can force dark mode on regardless of
-/// the system setting, matching the web app's manual theme override.
-struct PaletteProvider<Content: View>: View {
-    @Environment(\.colorScheme) private var colorScheme
-    @EnvironmentObject private var store: AppStore
-    @ViewBuilder var content: () -> Content
-
-    var body: some View {
-        content()
-            .environment(\.palette, store.forceDarkMode ? .dark : Palette.current(for: colorScheme))
-            .preferredColorScheme(store.forceDarkMode ? .dark : nil)
     }
 }
 
@@ -188,7 +186,10 @@ struct SanctuaryBackground: View {
             palette.bg
             GeometryReader { geo in
                 EllipticalGradient(
-                    gradient: Gradient(colors: [palette.accentGlow, palette.accentGlow.opacity(0)]),
+                    gradient: Gradient(colors: [
+                        palette.accentGlow,
+                        Color.clear
+                    ]),
                     center: .center,
                     startRadiusFraction: 0,
                     endRadiusFraction: 0.52

@@ -45,14 +45,18 @@ struct BunnyMarkView: View {
         return unlocked ? Color(hex: bunny.fillHex) : Color.clear
     }
     private var strokeColor: Color {
-        guard style == .charm else { return palette.ink }
-        return unlocked ? Color(hex: bunny.strokeHex) : palette.faint
+        switch style {
+        case .mark, .asset:
+            return palette.ink
+        case .charm:
+            return unlocked ? Color(hex: bunny.strokeHex) : palette.muted
+        }
     }
-    private var accentColor: Color { unlocked ? Color(hex: bunny.accentHex) : palette.faint }
+    private var accentColor: Color { unlocked ? Color(hex: bunny.accentHex) : palette.muted }
 
-    /// `.mark` stays tailless at small sizes. `.asset` adds the round tail
-    /// so the Today ring matches the brand line-art. `.charm` adds tail
-    /// and the month's seasonal prop.
+    /// `.mark` is a head-and-ears logomark for tiny chrome.
+    /// `.asset` is the seated brand bunny with its round tail.
+    /// `.charm` adds the month's seasonal prop.
     private var extraOps: [BunnyDraw] {
         switch style {
         case .mark:
@@ -79,20 +83,20 @@ struct BunnyMarkView: View {
                 )
             }
 
-            for op in bodyOps() + extraOps {
+            let ops = style == .mark ? markOps() : bodyOps() + extraOps
+            for op in ops {
                 let scaled = op.path.applying(transform)
                 if let fill = op.fill {
                     context.fill(scaled, with: .color(fill.opacity(op.opacity)))
                 }
                 if let stroke = op.stroke {
-                    // Below about 0.75pt a stroke starts to look fuzzy and
-                    // broken rather than thin, which is what made this look
-                    // "messy" at small sizes like the settings button. Floor
-                    // it so the drawing stays crisp even when tiny.
+                    // Tiny marks need a steady logo stroke. Floor higher so
+                    // ears never hairline or blob into the head.
+                    let floor: CGFloat = style == .mark ? 1.15 : 0.75
                     context.stroke(
                         scaled,
                         with: .color(stroke.opacity(op.opacity)),
-                        style: StrokeStyle(lineWidth: max(op.lineWidth * scale, 0.75), lineCap: .round, lineJoin: .round)
+                        style: StrokeStyle(lineWidth: max(op.lineWidth * scale, floor), lineCap: .round, lineJoin: .round)
                     )
                 }
             }
@@ -109,6 +113,18 @@ struct BunnyMarkView: View {
             BunnyDraw(path: svgEllipse(37.5, 39, 12.2, 11), fill: fillColor, stroke: strokeColor, lineWidth: 1.6),
             BunnyDraw(path: svgCircle(33.2, 38.2, 1.35), fill: strokeColor, stroke: nil),
             BunnyDraw(path: svgPath("M28.5 41.5c2.2 2.4 5.4 2.6 7.8.4"), fill: nil, stroke: strokeColor, lineWidth: 1.15),
+        ]
+    }
+
+    /// Head and ears only, scaled to fill the canvas. The seated body
+    /// turns to noise at 22pt, so the settings mark is a logomark.
+    private func markOps() -> [BunnyDraw] {
+        [
+            BunnyDraw(path: svgEllipse(40, 50, 16.5, 15), fill: nil, stroke: strokeColor, lineWidth: 2.4),
+            BunnyDraw(path: svgPath("M30 40C27.2 14 36.5 5 40.5 30"), fill: nil, stroke: strokeColor, lineWidth: 2.4),
+            BunnyDraw(path: svgPath("M44 38C53 12 63 16 51.5 40"), fill: nil, stroke: strokeColor, lineWidth: 2.4),
+            BunnyDraw(path: svgCircle(34.2, 48.2, 1.9), fill: strokeColor, stroke: nil),
+            BunnyDraw(path: svgPath("M28.5 53.2c3.2 3.4 8.4 3.6 12 .5"), fill: nil, stroke: strokeColor, lineWidth: 1.8),
         ]
     }
 

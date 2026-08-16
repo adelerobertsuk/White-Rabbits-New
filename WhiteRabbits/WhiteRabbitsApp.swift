@@ -15,8 +15,10 @@ struct WhiteRabbitsApp: App {
 
     var body: some Scene {
         WindowGroup {
-            RootTabView()
-                .environmentObject(store)
+            PaletteProvider {
+                HomeView()
+            }
+            .environmentObject(store)
         }
     }
 }

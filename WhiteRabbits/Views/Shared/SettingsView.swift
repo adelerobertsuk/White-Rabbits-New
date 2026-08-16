@@ -2,10 +2,7 @@
 //  SettingsView.swift
 //  WhiteRabbits
 //
-//  "Preferences": quiet, on-device settings, opened from the bunny mark
-//  in the top-right corner of Today. Matches the web app's settings
-//  sheet exactly: name, haptics, dark evening, preview-first toggle,
-//  Shared Sanctuary, and this phone's data.
+//  Quiet on-device settings, opened from the bunny mark.
 //
 
 import SwiftUI
@@ -17,6 +14,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var name: String = ""
+    @State private var intention: String = ""
     @State private var showImporter = false
     @State private var exportURL: URL?
     @State private var showResetConfirm = false
@@ -25,66 +23,17 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(String(localized: "settings.kicker", defaultValue: "Preferences"))
-                        .kickerStyle()
-
-                    Text(title)
-                        .displayTitleStyle()
-                        .padding(.top, 6)
-
-                    Text(String(localized: "settings.lede", defaultValue: "Quiet settings. Everything stays on this device."))
-                        .font(.system(size: 15, weight: .medium))
-                        .foregroundStyle(palette.muted)
-                        .padding(.top, 4)
-
-                    nameField
-                        .padding(.top, 14)
-
-                    VStack(spacing: 0) {
-                        settingRow(
-                            title: String(localized: "settings.haptics.title", defaultValue: "Haptics"),
-                            caption: String(localized: "settings.haptics.caption", defaultValue: "A small pulse when luck arrives"),
-                            isOn: Binding(get: { store.hapticsEnabled }, set: { store.setHapticsEnabled($0) }),
-                            isFirst: true
-                        )
-                        settingRow(
-                            title: String(localized: "settings.darkEvening.title", defaultValue: "Dark evening"),
-                            caption: String(localized: "settings.darkEvening.caption", defaultValue: "Softer light after dusk"),
-                            isOn: Binding(get: { store.forceDarkMode }, set: { store.setForceDarkMode($0) })
-                        )
-                        settingRow(
-                            title: String(localized: "settings.previewFirst.title", defaultValue: "Preview the first of the month"),
-                            caption: String(localized: "settings.previewFirst.caption", defaultValue: "Open today’s greeting as if it were the 1st"),
-                            isOn: Binding(get: { store.previewFirstOfMonth }, set: { store.setPreviewFirstOfMonth($0) })
-                        )
-                        settingRow(
-                            title: String(localized: "settings.sharedSanctuary.title", defaultValue: "Shared Sanctuary"),
-                            caption: String(localized: "settings.sharedSanctuary.caption", defaultValue: "Intentions and stamps, never journal pages"),
-                            isOn: Binding(
-                                get: { store.circleJoined },
-                                set: { $0 ? store.joinCircle() : store.leaveCircle() }
-                            )
-                        )
-
-                        dataRow
-                    }
-                    .padding(.horizontal, Layout.cardPadding)
-                    .cardBackground()
-                    .padding(.top, 14)
-
-                    Button {
-                        showResetConfirm = true
-                    } label: {
-                        Text(String(localized: "settings.reset", defaultValue: "Clear this device"))
-                            .font(.system(size: 12))
-                            .underline()
-                            .foregroundStyle(palette.muted)
-                    }
-                    .padding(.top, 8)
+                VStack(alignment: .leading, spacing: Layout.stackSpacing) {
+                    header
+                    youCard
+                    AlarmCardView()
+                    phoneCard
+                    footer
                 }
                 .padding(Layout.screenInset)
+                .padding(.bottom, 12)
             }
+            .scrollBounceBehavior(.basedOnSize)
             .sanctuaryBackground()
             .inlineNavigationTitle()
             .toolbar {
@@ -93,7 +42,10 @@ struct SettingsView: View {
                 }
             }
         }
-        .onAppear { name = store.firstName }
+        .onAppear {
+            name = store.firstName
+            intention = store.intention
+        }
         .fileImporter(isPresented: $showImporter, allowedContentTypes: [.json]) { result in
             guard case .success(let url) = result,
                   let data = try? Data(contentsOf: url),
@@ -117,8 +69,21 @@ struct SettingsView: View {
             }
             Button(String(localized: "settings.cancel", defaultValue: "Cancel"), role: .cancel) {}
         } message: {
-            Text(String(localized: "settings.resetConfirm.body", defaultValue: "Journal pages, stamps, and settings will be gone for good."))
+            Text(String(localized: "settings.resetConfirm.body", defaultValue: "Stamps and settings will be gone for good."))
         }
+    }
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(String(localized: "settings.kicker", defaultValue: "Preferences"))
+                .kickerStyle()
+            Text(title)
+                .displayTitleStyle()
+            Text(String(localized: "settings.lede", defaultValue: "Quiet settings. Everything stays on this device."))
+                .font(.system(size: 15, weight: .medium))
+                .foregroundStyle(palette.muted)
+        }
+        .padding(.top, 4)
     }
 
     private var title: String {
@@ -127,29 +92,116 @@ struct SettingsView: View {
             : String(format: String(localized: "settings.title.named", defaultValue: "This is yours, %@."), store.firstName)
     }
 
-    private var nameField: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            TextField(String(localized: "settings.name.placeholder", defaultValue: "Your name"), text: $name)
+    private var youCard: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            field(
+                label: String(localized: "settings.name.label", defaultValue: "Your name"),
+                caption: String(localized: "settings.name.caption", defaultValue: "How White Rabbits greets you")
+            ) {
+                TextField(String(localized: "settings.name.placeholder", defaultValue: "Your name"), text: $name)
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundStyle(palette.ink)
+                    .onSubmit { store.setName(name) }
+                    .onChange(of: name) { _, newValue in
+                        store.setName(newValue)
+                    }
+            }
+
+            Rectangle().fill(palette.line).frame(height: 1)
+
+            field(
+                label: String(localized: "settings.intention.label", defaultValue: "This month"),
+                caption: String(localized: "settings.intention.caption", defaultValue: "Optional. A note from you, to you. It will find you again this month.")
+            ) {
+                TextField(
+                    String(localized: "settings.intention.placeholder", defaultValue: "This month's intention"),
+                    text: $intention,
+                    axis: .vertical
+                )
                 .font(.system(size: 17, weight: .medium))
                 .foregroundStyle(palette.ink)
-                .onSubmit { store.setName(name) }
-            Text(String(localized: "settings.name.caption", defaultValue: "How the sanctuary greets you"))
-                .font(.system(size: 11))
-                .foregroundStyle(palette.faint)
-                .frame(maxWidth: .infinity, alignment: .trailing)
+                .lineLimit(1...3)
+                .onSubmit { store.setIntention(intention) }
+                .onChange(of: intention) { _, newValue in
+                    store.setIntention(newValue)
+                }
+            }
         }
-        .padding(14)
-        .frame(minHeight: 88, alignment: .top)
-        .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(palette.card)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .strokeBorder(palette.line, lineWidth: 1)
-        )
-        .onChange(of: name) { _, newValue in
-            store.setName(newValue)
+        .padding(Layout.cardPadding)
+        .cardBackground()
+    }
+
+    private var phoneCard: some View {
+        VStack(spacing: 0) {
+            settingRow(
+                title: String(localized: "settings.haptics.title", defaultValue: "Haptics"),
+                caption: String(localized: "settings.haptics.caption", defaultValue: "A small pulse when luck arrives"),
+                isOn: Binding(get: { store.hapticsEnabled }, set: { store.setHapticsEnabled($0) }),
+                isFirst: true
+            )
+            settingRow(
+                title: String(localized: "settings.darkEvening.title", defaultValue: "Dark evening"),
+                caption: String(localized: "settings.darkEvening.caption", defaultValue: "Softer light after dusk"),
+                isOn: Binding(get: { store.forceDarkMode }, set: { store.setForceDarkMode($0) })
+            )
+            settingRow(
+                title: String(localized: "settings.previewFirst.title", defaultValue: "Preview the first of the month"),
+                caption: String(localized: "settings.previewFirst.caption", defaultValue: "Open today’s greeting as if it were the 1st"),
+                isOn: Binding(get: { store.previewFirstOfMonth }, set: { store.setPreviewFirstOfMonth($0) })
+            )
+        }
+        .padding(.horizontal, Layout.cardPadding)
+        .cardBackground()
+    }
+
+    private var footer: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 16) {
+                if let exportURL {
+                    ShareLink(item: exportURL) {
+                        Text(String(localized: "settings.data.export", defaultValue: "Export"))
+                    }
+                    .font(.system(size: 12))
+                    .foregroundStyle(palette.muted)
+                } else {
+                    Button {
+                        exportURL = writeSnapshotToTempFile()
+                    } label: {
+                        Text(String(localized: "settings.data.export", defaultValue: "Export"))
+                    }
+                    .font(.system(size: 12))
+                    .foregroundStyle(palette.muted)
+                }
+
+                Button {
+                    showImporter = true
+                } label: {
+                    Text(String(localized: "settings.data.import", defaultValue: "Import"))
+                }
+                .font(.system(size: 12))
+                .foregroundStyle(palette.muted)
+            }
+
+            Button {
+                showResetConfirm = true
+            } label: {
+                Text(String(localized: "settings.reset", defaultValue: "Clear this device"))
+                    .font(.system(size: 12))
+                    .foregroundStyle(palette.muted)
+            }
+        }
+        .padding(.top, 4)
+        .buttonStyle(.plain)
+    }
+
+    private func field<Content: View>(label: String, caption: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(label)
+                .kickerStyle()
+            content()
+            Text(caption)
+                .font(.system(size: 12))
+                .foregroundStyle(palette.muted)
         }
     }
 
@@ -174,46 +226,6 @@ struct SettingsView: View {
         }
     }
 
-    private var dataRow: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(String(localized: "settings.data.title", defaultValue: "This phone’s data"))
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(palette.ink)
-                Text(String(localized: "settings.data.caption", defaultValue: "Journal pages, check-ins, and stamps as a JSON file"))
-                    .font(.system(size: 12))
-                    .foregroundStyle(palette.muted)
-            }
-
-            HStack(spacing: 8) {
-                if let exportURL {
-                    ShareLink(item: exportURL) {
-                        Text(String(localized: "settings.data.export", defaultValue: "Export Data"))
-                    }
-                    .buttonStyle(PillButtonStyle(filled: false, compact: true))
-                } else {
-                    Button {
-                        exportURL = writeSnapshotToTempFile()
-                    } label: {
-                        Text(String(localized: "settings.data.export", defaultValue: "Export Data"))
-                    }
-                    .buttonStyle(PillButtonStyle(filled: false, compact: true))
-                }
-
-                Button {
-                    showImporter = true
-                } label: {
-                    Text(String(localized: "settings.data.import", defaultValue: "Import"))
-                }
-                .buttonStyle(PillButtonStyle(filled: false, compact: true))
-            }
-        }
-        .padding(.vertical, 16)
-        .overlay(alignment: .top) {
-            Rectangle().fill(palette.line).frame(height: 1)
-        }
-    }
-
     private func writeSnapshotToTempFile() -> URL? {
         guard let data = store.exportSnapshot() else { return nil }
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("white-rabbits-data.json")
@@ -223,34 +235,6 @@ struct SettingsView: View {
         } catch {
             return nil
         }
-    }
-}
-
-/// A little switch matching the web app's `.toggle`: a 48x30 capsule
-/// track that turns ink-colored when on, with a sliding card-colored knob.
-private struct SanctuaryToggle: View {
-    @Binding var isOn: Bool
-    @Environment(\.palette) private var palette
-
-    var body: some View {
-        Button {
-            Haptics.light()
-            isOn.toggle()
-        } label: {
-            Capsule()
-                .fill(isOn ? palette.ink : palette.track)
-                .frame(width: 48, height: 30)
-                .overlay(
-                    Circle()
-                        .fill(palette.card)
-                        .frame(width: 24, height: 24)
-                        .padding(3)
-                        .offset(x: isOn ? 18 : 0),
-                    alignment: .leading
-                )
-                .animation(.easeOut(duration: 0.2), value: isOn)
-        }
-        .buttonStyle(.plain)
     }
 }
 

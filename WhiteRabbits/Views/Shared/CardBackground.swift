@@ -11,6 +11,7 @@ import SwiftUI
 struct CardBackground: ViewModifier {
     @Environment(\.palette) private var palette
     var cornerRadius: CGFloat = 20
+    var dashed: Bool = false
 
     func body(content: Content) -> some View {
         content
@@ -21,7 +22,10 @@ struct CardBackground: ViewModifier {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .strokeBorder(palette.line, lineWidth: 1)
+                    .strokeBorder(
+                        palette.line,
+                        style: StrokeStyle(lineWidth: 1, dash: dashed ? [5, 4] : [])
+                    )
             )
             // Matches the web app's `box-shadow: 0 16px 40px rgba(42,38,34,0.08)`.
             .shadow(color: palette.ink.opacity(0.08), radius: 20, x: 0, y: 16)
@@ -29,8 +33,8 @@ struct CardBackground: ViewModifier {
 }
 
 extension View {
-    func cardBackground(cornerRadius: CGFloat = 20) -> some View {
-        modifier(CardBackground(cornerRadius: cornerRadius))
+    func cardBackground(cornerRadius: CGFloat = 20, dashed: Bool = false) -> some View {
+        modifier(CardBackground(cornerRadius: cornerRadius, dashed: dashed))
     }
 
     /// A small helper so the same code compiles on iOS and macOS: this
@@ -77,5 +81,33 @@ struct PillButtonStyle: ButtonStyle {
             .contentShape(Rectangle())
             .scaleEffect(configuration.isPressed ? 0.975 : 1)
             .animation(.easeOut(duration: 0.18), value: configuration.isPressed)
+    }
+}
+
+/// A little switch: a 48x30 capsule track that turns ink-colored when on,
+/// with a sliding card-colored knob.
+struct SanctuaryToggle: View {
+    @Binding var isOn: Bool
+    @Environment(\.palette) private var palette
+
+    var body: some View {
+        Button {
+            Haptics.light()
+            isOn.toggle()
+        } label: {
+            Capsule()
+                .fill(isOn ? palette.ink : palette.track)
+                .frame(width: 48, height: 30)
+                .overlay(
+                    Circle()
+                        .fill(palette.card)
+                        .frame(width: 24, height: 24)
+                        .padding(3)
+                        .offset(x: isOn ? 18 : 0),
+                    alignment: .leading
+                )
+                .animation(.easeOut(duration: 0.2), value: isOn)
+        }
+        .buttonStyle(.plain)
     }
 }

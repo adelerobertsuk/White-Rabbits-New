@@ -7,17 +7,82 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		AFB44D21734A802C943DBBF1 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = D67D03889A1F307B837723BD /* Supabase */; };
+		8A11E20B30304D3900138B9D /* WhiteRabbitsWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8A11E20130304D3900138B9D /* WhiteRabbitsWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8A11E20C30304D3900138B9D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7FF37E0E30304D3900138B9D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8A11E20230304D3900138B9D;
+			remoteInfo = WhiteRabbitsWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8A11E20A30304D3900138B9D /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				8A11E20B30304D3900138B9D /* WhiteRabbitsWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		7FF37E1630304D3900138B9D /* WhiteRabbits.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhiteRabbits.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8A11E20130304D3900138B9D /* WhiteRabbitsWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WhiteRabbitsWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		8A11E20E30304D3900138B9D /* Exceptions for "WhiteRabbits" folder in "WhiteRabbitsWidget" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Models/BunnyData.swift,
+				Models/Models.swift,
+				Support/Palette.swift,
+				Views/Shared/BunnyMarkView.swift,
+				Views/Shared/SVGPath.swift,
+			);
+			target = 8A11E20230304D3900138B9D /* WhiteRabbitsWidget */;
+		};
+		8A11E21030304D3900138B9D /* Exceptions for "WhiteRabbitsWidget" folder in "WhiteRabbitsWidget" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 8A11E20230304D3900138B9D /* WhiteRabbitsWidget */;
+		};
+		8A11E21130304D3900138B9D /* Exceptions for "WhiteRabbits" folder in "WhiteRabbits" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 7FF37E1530304D3900138B9D /* WhiteRabbits */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		7FF37E1830304D3900138B9D /* WhiteRabbits */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8A11E21130304D3900138B9D /* Exceptions for "WhiteRabbits" folder in "WhiteRabbits" target */,
+				8A11E20E30304D3900138B9D /* Exceptions for "WhiteRabbits" folder in "WhiteRabbitsWidget" target */,
+			);
 			path = WhiteRabbits;
+			sourceTree = "<group>";
+		};
+		8A11E20330304D3900138B9D /* WhiteRabbitsWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				8A11E21030304D3900138B9D /* Exceptions for "WhiteRabbitsWidget" folder in "WhiteRabbitsWidget" target */,
+			);
+			path = WhiteRabbitsWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -27,7 +92,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AFB44D21734A802C943DBBF1 /* Supabase in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8A11E20430304D3900138B9D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -38,6 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				7FF37E1830304D3900138B9D /* WhiteRabbits */,
+				8A11E20330304D3900138B9D /* WhiteRabbitsWidget */,
 				7FF37E1730304D3900138B9D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -46,6 +118,7 @@
 			isa = PBXGroup;
 			children = (
 				7FF37E1630304D3900138B9D /* WhiteRabbits.app */,
+				8A11E20130304D3900138B9D /* WhiteRabbitsWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -60,21 +133,42 @@
 				7FF37E1230304D3900138B9D /* Sources */,
 				7FF37E1330304D3900138B9D /* Frameworks */,
 				7FF37E1430304D3900138B9D /* Resources */,
+				8A11E20A30304D3900138B9D /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				8A11E20D30304D3900138B9D /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				7FF37E1830304D3900138B9D /* WhiteRabbits */,
 			);
 			name = WhiteRabbits;
 			packageProductDependencies = (
-				D67D03889A1F307B837723BD /* Supabase */,
 			);
 			productName = WhiteRabbits;
 			productReference = 7FF37E1630304D3900138B9D /* WhiteRabbits.app */;
 			productType = "com.apple.product-type.application";
+		};
+		8A11E20230304D3900138B9D /* WhiteRabbitsWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8A11E20930304D3900138B9D /* Build configuration list for PBXNativeTarget "WhiteRabbitsWidget" */;
+			buildPhases = (
+				8A11E20530304D3900138B9D /* Sources */,
+				8A11E20430304D3900138B9D /* Frameworks */,
+				8A11E20630304D3900138B9D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				8A11E20330304D3900138B9D /* WhiteRabbitsWidget */,
+			);
+			name = WhiteRabbitsWidget;
+			productName = WhiteRabbitsWidget;
+			productReference = 8A11E20130304D3900138B9D /* WhiteRabbitsWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -87,6 +181,9 @@
 				LastUpgradeCheck = 2660;
 				TargetAttributes = {
 					7FF37E1530304D3900138B9D = {
+						CreatedOnToolsVersion = 26.6;
+					};
+					8A11E20230304D3900138B9D = {
 						CreatedOnToolsVersion = 26.6;
 					};
 				};
@@ -102,21 +199,26 @@
 			);
 			mainGroup = 7FF37E0D30304D3900138B9D;
 			minimizedProjectReferenceProxies = 1;
-			packageReferences = (
-				BFB223A465229EC1F4D17141 /* XCRemoteSwiftPackageReference "supabase-swift" */,
-			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 7FF37E1730304D3900138B9D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
 				7FF37E1530304D3900138B9D /* WhiteRabbits */,
+				8A11E20230304D3900138B9D /* WhiteRabbitsWidget */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		7FF37E1430304D3900138B9D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8A11E20630304D3900138B9D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -133,7 +235,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8A11E20530304D3900138B9D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		8A11E20D30304D3900138B9D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8A11E20230304D3900138B9D /* WhiteRabbitsWidget */;
+			targetProxy = 8A11E20C30304D3900138B9D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		7FF37E1F30304D3A00138B9D /* Debug */ = {
@@ -189,10 +306,12 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
@@ -245,10 +364,13 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
@@ -260,42 +382,35 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FVJG2288UR;
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Used only for the \"Voice to text\" button in your journal, to turn your spoken words into a page. Nothing is recorded or sent anywhere.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Used only when you choose \"Save Image\" on a story card, so it can be added to your camera roll.";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Used only for the \"Voice to text\" button in your journal, to turn your spoken words into text on this phone.";
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_FILE = WhiteRabbits/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "White Rabbits";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSAlarmKitUsageDescription = "White Rabbits rings on the first of every month, even if the phone is silent, so you remember to say it.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.whiterabbits.WhiteRabbits;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				XROS_DEPLOYMENT_TARGET = 26.5;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -307,42 +422,101 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = FVJG2288UR;
-				ENABLE_APP_SANDBOX = YES;
-				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Used only for the \"Voice to text\" button in your journal, to turn your spoken words into a page. Nothing is recorded or sent anywhere.";
-				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Used only when you choose \"Save Image\" on a story card, so it can be added to your camera roll.";
-				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Used only for the \"Voice to text\" button in your journal, to turn your spoken words into text on this phone.";
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphoneos*]" = YES;
-				"INFOPLIST_KEY_UILaunchScreen_Generation[sdk=iphonesimulator*]" = YES;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphoneos*]" = UIStatusBarStyleDefault;
-				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
+				INFOPLIST_FILE = WhiteRabbits/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "White Rabbits";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				INFOPLIST_KEY_NSAlarmKitUsageDescription = "White Rabbits rings on the first of every month, even if the phone is silent, so you remember to say it.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
-				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
-				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 26.5;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.whiterabbits.WhiteRabbits;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				REGISTER_APP_GROUPS = YES;
-				SDKROOT = auto;
+				SDKROOT = iphoneos;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
-				XROS_DEPLOYMENT_TARGET = 26.5;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		8A11E20730304D3900138B9D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FVJG2288UR;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WhiteRabbitsWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "White Rabbits";
+				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.whiterabbits.WhiteRabbits.Widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		8A11E20830304D3900138B9D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = FVJG2288UR;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WhiteRabbitsWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "White Rabbits";
+				INFOPLIST_KEY_NSExtension_NSExtensionPointIdentifier = "com.apple.widgetkit-extension";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.whiterabbits.WhiteRabbits.Widget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -367,26 +541,16 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		8A11E20930304D3900138B9D /* Build configuration list for PBXNativeTarget "WhiteRabbitsWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8A11E20730304D3900138B9D /* Debug */,
+				8A11E20830304D3900138B9D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		BFB223A465229EC1F4D17141 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/supabase/supabase-swift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		D67D03889A1F307B837723BD /* Supabase */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = BFB223A465229EC1F4D17141 /* XCRemoteSwiftPackageReference "supabase-swift" */;
-			productName = Supabase;
-		};
-/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7FF37E0E30304D3900138B9D /* Project object */;
 }
