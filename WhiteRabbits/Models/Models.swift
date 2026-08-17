@@ -40,6 +40,10 @@ struct AppData: Codable {
     var alarmHour: Int = 6
     var alarmMinute: Int = 30
     var alarmEnabled: Bool = false
+    var luckyHourEnabled: Bool = false
+    var firstOpenedAt: Date?
+    var openCount: Int = 0
+    var reviewPromptedAt: Date?
 
     init() {}
 
@@ -50,7 +54,8 @@ struct AppData: Codable {
 
     enum CodingKeys: String, CodingKey {
         case name, months, hapticsEnabled, forceDarkMode, previewFirstOfMonth
-        case alarmHour, alarmMinute, alarmEnabled
+        case alarmHour, alarmMinute, alarmEnabled, luckyHourEnabled
+        case firstOpenedAt, openCount, reviewPromptedAt
     }
 
     init(from decoder: Decoder) throws {
@@ -63,6 +68,10 @@ struct AppData: Codable {
         alarmHour = try container.decodeIfPresent(Int.self, forKey: .alarmHour) ?? 6
         alarmMinute = try container.decodeIfPresent(Int.self, forKey: .alarmMinute) ?? 30
         alarmEnabled = try container.decodeIfPresent(Bool.self, forKey: .alarmEnabled) ?? false
+        luckyHourEnabled = try container.decodeIfPresent(Bool.self, forKey: .luckyHourEnabled) ?? false
+        firstOpenedAt = try container.decodeIfPresent(Date.self, forKey: .firstOpenedAt)
+        openCount = try container.decodeIfPresent(Int.self, forKey: .openCount) ?? 0
+        reviewPromptedAt = try container.decodeIfPresent(Date.self, forKey: .reviewPromptedAt)
     }
 
     func encode(to encoder: Encoder) throws {
@@ -75,5 +84,9 @@ struct AppData: Codable {
         try container.encode(alarmHour, forKey: .alarmHour)
         try container.encode(alarmMinute, forKey: .alarmMinute)
         try container.encode(alarmEnabled, forKey: .alarmEnabled)
+        try container.encode(luckyHourEnabled, forKey: .luckyHourEnabled)
+        try container.encodeIfPresent(firstOpenedAt, forKey: .firstOpenedAt)
+        try container.encode(openCount, forKey: .openCount)
+        try container.encodeIfPresent(reviewPromptedAt, forKey: .reviewPromptedAt)
     }
 }

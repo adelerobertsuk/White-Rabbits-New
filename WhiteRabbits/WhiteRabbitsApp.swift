@@ -13,6 +13,10 @@ import SwiftUI
 struct WhiteRabbitsApp: App {
     @StateObject private var store = AppStore()
 
+    init() {
+        LuckyHourScheduler.shared.prepare()
+    }
+
     var body: some Scene {
         WindowGroup {
             PaletteProvider {

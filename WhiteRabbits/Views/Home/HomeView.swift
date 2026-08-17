@@ -8,11 +8,13 @@
 //
 
 import SwiftUI
+import StoreKit
 
 struct HomeView: View {
     @EnvironmentObject private var store: AppStore
     @Environment(\.palette) private var palette
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.requestReview) private var requestReview
 
     @State private var didCelebrate = false
     @State private var showSettings = false
@@ -39,11 +41,20 @@ struct HomeView: View {
             .sheet(isPresented: $showSettings) {
                 SettingsView()
             }
-            .task { await store.refreshAlarms() }
+            .task {
+                await store.refreshScheduledItems()
+                store.noteOpened()
+                offerReviewIfReady()
+            }
             .onChange(of: scenePhase) { _, phase in
                 if phase == .active {
-                    Task { await store.refreshAlarms() }
+                    Task { await store.refreshScheduledItems() }
+                    store.noteOpened()
+                    offerReviewIfReady()
                 }
+            }
+            .onChange(of: showSettings) { _, open in
+                if !open { offerReviewIfReady() }
             }
         }
     }
@@ -101,6 +112,8 @@ struct HomeView: View {
                 .buttonStyle(PillButtonStyle())
                 .padding(.top, 8)
             }
+
+            luckyShare
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 8)
@@ -147,7 +160,6 @@ struct HomeView: View {
     }
 
     /// A daily treat under the bunny. Your own note surfaces a few times a month.
-    /// No extra alarms. The 1st is the only time we come and find you.
     private var giftLine: String {
         if canSayIt {
             return String(localized: "greeting.ritual", defaultValue: "White Rabbits, White Rabbits!")
@@ -156,6 +168,20 @@ struct HomeView: View {
             return store.intention
         }
         return Affirmations.line()
+    }
+
+    private var luckyShare: some View {
+        TimelineView(.periodic(from: .now, by: 20)) { context in
+            if store.shouldOfferLuckyShare(at: context.date) {
+                LuckyHourShareLink(bunny: store.currentBunny()) {
+                    Text(String(localized: "luckyHour.share.action", defaultValue: "Send 11:11"))
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(PillButtonStyle(filled: false))
+                .tint(palette.ink)
+                .padding(.top, 12)
+            }
+        }
     }
 
     /// Past-you, a few times a month: the 1st after you say it, then every week.
@@ -170,6 +196,18 @@ struct HomeView: View {
         store.completeRitual()
         withAnimation(.easeOut(duration: 0.7)) {
             didCelebrate = true
+        }
+        offerReviewIfReady(delay: 2.4)
+    }
+
+    /// Apple's own stars sheet. Once, after a week of coming back.
+    /// Never on top of saying White Rabbits.
+    private func offerReviewIfReady(delay: Double = 1.2) {
+        guard !canSayIt, !showSettings, store.isEligibleForReview else { return }
+        store.markReviewPrompted()
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(delay))
+            requestReview()
         }
     }
 }

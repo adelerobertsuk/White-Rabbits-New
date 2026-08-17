@@ -27,6 +27,7 @@ struct SettingsView: View {
                     header
                     youCard
                     AlarmCardView()
+                    LuckyHourCardView()
                     phoneCard
                     footer
                 }

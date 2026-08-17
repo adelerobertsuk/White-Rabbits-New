@@ -15,7 +15,10 @@ final class AppStore: ObservableObject {
     @Published private(set) var alarmAuthorizationDenied = false
     @Published private(set) var nextAlarmDate: Date?
     @Published private(set) var isSchedulingAlarm = false
+    @Published private(set) var luckyHourAuthorizationDenied = false
+    @Published private(set) var offerLuckyShare = false
 
+    private var cancellables = Set<AnyCancellable>()
     private let monthFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM"
@@ -26,11 +29,24 @@ final class AppStore: ObservableObject {
     init() {
         self.data = Persistence.load()
         Haptics.isEnabled = data.hapticsEnabled
+        LuckyHourScheduler.shared.prepare()
+        NotificationCenter.default.publisher(for: .didOpenLuckyHour)
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                self?.offerLuckyShare = true
+            }
+            .store(in: &cancellables)
+        if data.firstOpenedAt == nil {
+            data.firstOpenedAt = Date()
+            persist(reloadWidgets: false)
+        }
     }
 
-    private func persist() {
+    private func persist(reloadWidgets: Bool = true) {
         Persistence.save(data)
-        WidgetCenter.shared.reloadAllTimelines()
+        if reloadWidgets {
+            WidgetCenter.shared.reloadAllTimelines()
+        }
     }
 
     func monthKey(_ date: Date = Date()) -> String { monthFormatter.string(from: date) }
@@ -46,6 +62,7 @@ final class AppStore: ObservableObject {
     func setName(_ name: String) {
         data.name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         persist()
+        Task { await refreshLuckyHour() }
     }
 
     func monthName(_ date: Date = Date()) -> String {
@@ -174,6 +191,72 @@ final class AppStore: ObservableObject {
         try? await MonthAlarmScheduler.shared.scheduleTest()
     }
 
+    var luckyHourEnabled: Bool { data.luckyHourEnabled }
+
+    /// 11:11, and a little while after, so there is time to send it on.
+    func isLuckyShareWindow(_ date: Date = Date()) -> Bool {
+        let parts = Calendar.current.dateComponents([.hour, .minute], from: date)
+        guard parts.hour == 11 else { return false }
+        let minute = parts.minute ?? 0
+        return minute >= 11 && minute < 21
+    }
+
+    func shouldOfferLuckyShare(at date: Date = Date()) -> Bool {
+        luckyHourEnabled && (offerLuckyShare || isLuckyShareWindow(date))
+    }
+
+    func setLuckyHourEnabled(_ on: Bool) {
+        data.luckyHourEnabled = on
+        persist()
+        Task { await refreshLuckyHour() }
+    }
+
+    func scheduleTestLuckyHour() async {
+        try? await LuckyHourScheduler.shared.scheduleTest(firstName: firstName)
+    }
+
+    /// Asks for notification permission if needed, then sets the daily 11:11 tap.
+    func refreshLuckyHour() async {
+        do {
+            let result = try await LuckyHourScheduler.shared.sync(
+                enabled: data.luckyHourEnabled,
+                firstName: firstName
+            )
+            luckyHourAuthorizationDenied = result.denied
+            if result.denied, data.luckyHourEnabled {
+                data.luckyHourEnabled = false
+                persist()
+            }
+        } catch {
+            luckyHourAuthorizationDenied = false
+        }
+    }
+
+    /// Keeps both the monthly alarm and the optional 11:11 tap in sync.
+    func refreshScheduledItems() async {
+        await refreshAlarms()
+        await refreshLuckyHour()
+    }
+
+    /// A quiet count of real visits, so we do not ask for a review on day one.
+    func noteOpened() {
+        data.openCount += 1
+        persist(reloadWidgets: false)
+    }
+
+    /// A week of coming back, at least a few visits, and we have not asked yet.
+    var isEligibleForReview: Bool {
+        guard data.reviewPromptedAt == nil else { return false }
+        guard let firstOpenedAt = data.firstOpenedAt else { return false }
+        let days = Calendar.current.dateComponents([.day], from: firstOpenedAt, to: Date()).day ?? 0
+        return days >= 7 && data.openCount >= 3
+    }
+
+    func markReviewPrompted() {
+        data.reviewPromptedAt = Date()
+        persist(reloadWidgets: false)
+    }
+
     func exportSnapshot() -> Data? {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
@@ -187,8 +270,11 @@ final class AppStore: ObservableObject {
         guard let imported = try? decoder.decode(AppData.self, from: fileData) else { return false }
         data = imported
         Haptics.isEnabled = data.hapticsEnabled
+        if data.firstOpenedAt == nil {
+            data.firstOpenedAt = Date()
+        }
         persist()
-        Task { await refreshAlarms() }
+        Task { await refreshScheduledItems() }
         return true
     }
 
@@ -196,6 +282,6 @@ final class AppStore: ObservableObject {
         data = AppData(name: "")
         Haptics.isEnabled = true
         persist()
-        Task { await refreshAlarms() }
+        Task { await refreshScheduledItems() }
     }
 }
