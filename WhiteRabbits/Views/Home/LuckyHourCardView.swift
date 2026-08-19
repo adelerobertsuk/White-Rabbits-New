@@ -50,7 +50,7 @@ struct LuckyHourCardView: View {
                     }
                     .buttonStyle(.plain)
 
-                    LuckyHourShareLink(bunny: store.currentBunny()) {
+                    LuckyHourShareLink {
                         Text(String(localized: "luckyHour.share.action", defaultValue: "Send 11:11"))
                             .font(.system(size: 13, weight: .medium))
                             .foregroundStyle(palette.ink)

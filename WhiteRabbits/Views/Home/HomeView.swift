@@ -173,7 +173,7 @@ struct HomeView: View {
     private var luckyShare: some View {
         TimelineView(.periodic(from: .now, by: 20)) { context in
             if store.shouldOfferLuckyShare(at: context.date) {
-                LuckyHourShareLink(bunny: store.currentBunny()) {
+                LuckyHourShareLink {
                     Text(String(localized: "luckyHour.share.action", defaultValue: "Send 11:11"))
                         .frame(maxWidth: .infinity)
                 }

@@ -2,8 +2,7 @@
 //  LuckyHourShareCardView.swift
 //  WhiteRabbits
 //
-//  A little postcard of 11:11. The bunny, the numbers, the name.
-//  People send it on. That is how luck travels.
+//  A small wink. The app bunny and the sparkles. The picture is the gift.
 //
 
 import SwiftUI
@@ -11,91 +10,78 @@ import SwiftUI
 import UIKit
 #endif
 
+enum LuckyMinuteCopy {
+    static let sparkle = "✨11:11✨"
+
+    static func whisper(for date: Date = Date()) -> String {
+        let day = Calendar.current.ordinality(of: .day, in: .year, for: date) ?? 1
+        let lines = [
+            String(localized: "luckyHour.whisper.1", defaultValue: "Make a wish."),
+            String(localized: "luckyHour.whisper.2", defaultValue: "Something has your back."),
+            String(localized: "luckyHour.whisper.3", defaultValue: "Luck likes you today."),
+            String(localized: "luckyHour.whisper.4", defaultValue: "The numbers lined up."),
+            String(localized: "luckyHour.whisper.5", defaultValue: "A little gift, for you."),
+            String(localized: "luckyHour.whisper.6", defaultValue: "Keep this luck."),
+            String(localized: "luckyHour.whisper.7", defaultValue: "On your side."),
+            String(localized: "luckyHour.whisper.8", defaultValue: "A little wink."),
+            String(localized: "luckyHour.whisper.9", defaultValue: "You are not alone in this hour."),
+            String(localized: "luckyHour.whisper.10", defaultValue: "The day is still on your side."),
+            String(localized: "luckyHour.whisper.11", defaultValue: "A quiet kind of luck."),
+            String(localized: "luckyHour.whisper.12", defaultValue: "Hold this thought.")
+        ]
+        return lines[(day - 1) % lines.count]
+    }
+}
+
 struct LuckyHourShareCardView: View {
-    let bunny: Bunny
     private let palette = Palette.light
+    private let bunny = BunnyData.bunny(forMonth: 1)
+
+    static let cardSize = CGSize(width: 240, height: 280)
 
     var body: some View {
-        ZStack {
-            palette.bg
-            EllipticalGradient(
-                gradient: Gradient(colors: [palette.accentGlow, Color.clear]),
-                center: .center,
-                startRadiusFraction: 0,
-                endRadiusFraction: 0.52
-            )
-            .frame(width: 432, height: 252)
-            .offset(y: -96)
+        VStack(spacing: 0) {
+            Spacer(minLength: 0)
 
-            VStack(spacing: 0) {
-                Spacer(minLength: 0)
-
-                ZStack {
-                    Circle()
-                        .stroke(palette.track, lineWidth: 2.4)
-                        .padding(8)
-
-                    Circle()
-                        .fill(palette.card)
-                        .padding(20)
-                        .shadow(color: palette.ink.opacity(0.08), radius: 16, y: 12)
-
-                    BunnyMarkView(bunny: bunny, style: .asset)
-                        .padding(40)
-                }
-                .frame(width: 188, height: 188)
-                .shadow(color: palette.accentGlow, radius: 14, y: 16)
+            BunnyMarkView(bunny: bunny, style: .mark)
+                .frame(width: 56, height: 56)
                 .environment(\.palette, palette)
 
-                Text("11:11")
-                    .font(.system(size: 52, weight: .light))
-                    .tracking(-1.6)
-                    .foregroundStyle(palette.ink)
-                    .padding(.top, 28)
+            Text(LuckyMinuteCopy.sparkle)
+                .font(.system(size: 28, weight: .light))
+                .tracking(-0.6)
+                .foregroundStyle(palette.ink)
+                .padding(.top, 18)
 
-                Text("White Rabbits")
-                    .font(.system(size: 20, weight: .light))
-                    .tracking(-0.7)
-                    .foregroundStyle(palette.ink)
-                    .padding(.top, 8)
+            Text(LuckyMinuteCopy.whisper())
+                .font(.system(size: 14, weight: .medium))
+                .foregroundStyle(palette.muted)
+                .multilineTextAlignment(.center)
+                .padding(.top, 10)
 
-                Text(String(localized: "luckyHour.share.wish", defaultValue: "Make a wish."))
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(palette.muted)
-                    .padding(.top, 16)
-
-                Spacer(minLength: 0)
-            }
-            .padding(.horizontal, 32)
-            .padding(.vertical, 36)
+            Spacer(minLength: 0)
         }
-        .frame(width: 360, height: 480)
+        .frame(width: Self.cardSize.width, height: Self.cardSize.height)
+        .background(palette.bg)
         .environment(\.colorScheme, .light)
         .environment(\.palette, palette)
     }
 }
 
-/// One tap opens the system share sheet with the postcard and a quiet line of copy.
+/// One tap. The postcard only. No extra words in the message box.
 struct LuckyHourShareLink<Label: View>: View {
-    let bunny: Bunny
     @ViewBuilder var label: () -> Label
 
     @State private var image: PlatformImage?
     @State private var fileURL: URL?
-
-    private var message: String {
-        String(localized: "luckyHour.share.message", defaultValue: "11:11. Make a wish. White Rabbits.")
-    }
 
     var body: some View {
         Group {
             if let fileURL, let image {
                 ShareLink(
                     item: fileURL,
-                    subject: Text("11:11"),
-                    message: Text(message),
                     preview: SharePreview(
-                        String(localized: "luckyHour.share.preview", defaultValue: "White Rabbits"),
+                        "\u{200B}",
                         image: Image(platformImage: image)
                     )
                 ) {
@@ -117,9 +103,10 @@ struct LuckyHourShareLink<Label: View>: View {
     private func prepare() {
         guard image == nil else { return }
         #if canImport(UIKit)
-        let renderer = ImageRenderer(content: LuckyHourShareCardView(bunny: bunny))
+        let size = LuckyHourShareCardView.cardSize
+        let renderer = ImageRenderer(content: LuckyHourShareCardView())
         renderer.scale = 3
-        renderer.proposedSize = ProposedViewSize(width: 360, height: 480)
+        renderer.proposedSize = ProposedViewSize(width: size.width, height: size.height)
         renderer.isOpaque = true
         guard let rendered = renderer.uiImage, let data = rendered.pngData() else { return }
         let url = FileManager.default.temporaryDirectory.appendingPathComponent("white-rabbits-1111.png")
@@ -151,5 +138,5 @@ private typealias PlatformImage = NSImage
 #endif
 
 #Preview {
-    LuckyHourShareCardView(bunny: BunnyData.bunny(forMonth: 8))
+    LuckyHourShareCardView()
 }

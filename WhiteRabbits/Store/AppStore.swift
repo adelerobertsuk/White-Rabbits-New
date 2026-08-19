@@ -212,16 +212,13 @@ final class AppStore: ObservableObject {
     }
 
     func scheduleTestLuckyHour() async {
-        try? await LuckyHourScheduler.shared.scheduleTest(firstName: firstName)
+        try? await LuckyHourScheduler.shared.scheduleTest()
     }
 
     /// Asks for notification permission if needed, then sets the daily 11:11 tap.
     func refreshLuckyHour() async {
         do {
-            let result = try await LuckyHourScheduler.shared.sync(
-                enabled: data.luckyHourEnabled,
-                firstName: firstName
-            )
+            let result = try await LuckyHourScheduler.shared.sync(enabled: data.luckyHourEnabled)
             luckyHourAuthorizationDenied = result.denied
             if result.denied, data.luckyHourEnabled {
                 data.luckyHourEnabled = false

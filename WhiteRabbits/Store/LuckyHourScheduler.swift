@@ -27,7 +27,7 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
         UNUserNotificationCenter.current().delegate = self
     }
 
-    func sync(enabled: Bool, firstName: String) async throws -> LuckyHourSyncResult {
+    func sync(enabled: Bool) async throws -> LuckyHourSyncResult {
         let center = UNUserNotificationCenter.current()
         center.removePendingNotificationRequests(withIdentifiers: [Self.requestID])
 
@@ -48,7 +48,7 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
             break
         }
 
-        let content = Self.message(firstName: firstName)
+        let content = Self.message()
 
         var components = DateComponents()
         components.hour = 11
@@ -60,7 +60,7 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
         return LuckyHourSyncResult(denied: false)
     }
 
-    func scheduleTest(firstName: String) async throws {
+    func scheduleTest() async throws {
         let center = UNUserNotificationCenter.current()
         let settings = await center.notificationSettings()
         switch settings.authorizationStatus {
@@ -73,7 +73,7 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
             break
         }
 
-        let content = Self.message(firstName: firstName)
+        let content = Self.message()
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)
         let request = UNNotificationRequest(
             identifier: Self.requestID + ".test",
@@ -107,13 +107,10 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
         return request.content.userInfo["kind"] as? String == "luckyHour"
     }
 
-    private static func message(firstName: String) -> UNMutableNotificationContent {
+    private static func message() -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
-        content.title = String(localized: "luckyHour.notification.title", defaultValue: "✨11:11✨")
-        let name = firstName.trimmingCharacters(in: .whitespacesAndNewlines)
-        content.body = name.isEmpty
-            ? String(localized: "luckyHour.notification.body", defaultValue: "Make a wish.")
-            : String(format: String(localized: "luckyHour.notification.body.named", defaultValue: "Make a wish, %@."), name)
+        content.title = LuckyMinuteCopy.sparkle
+        content.body = LuckyMinuteCopy.whisper()
         content.sound = .default
         content.userInfo = ["kind": "luckyHour"]
         return content
