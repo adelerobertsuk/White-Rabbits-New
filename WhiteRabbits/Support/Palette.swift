@@ -18,29 +18,32 @@ struct Palette {
     let track: Color
     let accent: Color
     let accentGlow: Color
+    let danger: Color
 
     static let light = Palette(
         bg: Color(hex: "F6F1EA"),
         card: Color(hex: "FFFCF8").opacity(0.78),
         ink: Color(hex: "2A2622"),
-        muted: Color(hex: "7A736B"),
-        faint: Color(hex: "B7AEA4"),
+        muted: Color(hex: "5F5850"),
+        faint: Color(hex: "9A9188"),
         line: Color(hex: "2A2622").opacity(0.1),
         track: Color(hex: "2A2622").opacity(0.08),
         accent: Color(hex: "C4A36A"),
-        accentGlow: Color(hex: "C4A36A").opacity(0.3)
+        accentGlow: Color(hex: "C4A36A").opacity(0.3),
+        danger: Color(hex: "A33B2B")
     )
 
     static let dark = Palette(
         bg: Color(hex: "161412"),
         card: Color(hex: "241C1C").opacity(0.78),
         ink: Color(hex: "F3ECE4"),
-        muted: Color(hex: "A39A90"),
-        faint: Color(hex: "6E675F"),
+        muted: Color(hex: "B8AFA5"),
+        faint: Color(hex: "8A8278"),
         line: Color(hex: "F3ECE4").opacity(0.1),
         track: Color(hex: "F3ECE4").opacity(0.1),
         accent: Color(hex: "D4B57A"),
-        accentGlow: Color(hex: "D4B57A").opacity(0.24)
+        accentGlow: Color(hex: "D4B57A").opacity(0.24),
+        danger: Color(hex: "E07A6A")
     )
 
     static func current(for scheme: ColorScheme) -> Palette {
@@ -58,7 +61,8 @@ struct Palette {
             line: line,
             track: track,
             accent: accent,
-            accentGlow: accentGlow
+            accentGlow: accentGlow,
+            danger: danger
         )
     }
 }

@@ -3,7 +3,7 @@
 //  WhiteRabbits
 //
 //  A quiet daily tap at 11:11, local to this phone. Not an alarm.
-//  The first of the month still uses AlarmKit. This is a wish.
+//  The first of the month still uses AlarmKit. This is the optional 11:11 nod.
 //
 
 import Foundation

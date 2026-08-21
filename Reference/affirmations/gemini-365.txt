@@ -1,0 +1,372 @@
+# Gemini — 365 line-of-day candidates
+# Saved 20 Aug 2026. Full raw list for White Rabbits / future apps.
+# Note: many lines are combinatorial (subject + verb + suffix) and read oddly.
+# Curated picks used in-app live in WhiteRabbits/Models/Affirmations.swift
+#
+# Generator script also saved as gemini-generator.py
+
+1. A good break is finding its way to you.
+2. A gentle push is keeping an eye out for you.
+3. Tomorrow's luck wants to say hello step by step.
+4. A little magic is keeping an eye out for you.
+5. A perfect moment is coming.
+6. A little win is in your corner somehow.
+7. A kind word is taking care of you.
+8. A little win is in your corner just for you.
+9. The day is on your side quietly.
+10. A small joy is taking care of you right now.
+11. You are right on time.
+12. Luck is looking for you soon.
+13. Something beautiful is right here for you.
+14. Something has your back.
+15. Today is finding its way to you.
+16. The whole day is working in your favour.
+17. A fresh start is heading your way in the background.
+18. A fresh start is gathering around you all day.
+19. A stroke of luck is in your corner somehow.
+20. A stroke of luck is right here for you.
+21. A small joy is looking for you.
+22. A gentle push is in your corner step by step.
+23. The day is looking for you.
+24. A good break is in your corner today.
+25. A little win is right here for you gently.
+26. Today is whispering your name.
+27. A small joy is quietly cheering for you somehow.
+28. A small joy is ready for you already.
+29. A quiet kind of luck has your back.
+30. Something special belongs to you in the background.
+31. A small joy is finding its way to you.
+32. A little magic has your back soon.
+33. Something good is wrapping around you.
+34. A stroke of luck is finding its way to you.
+35. Something good is heading your way all day.
+36. A lovely surprise is meant for you.
+37. Something brilliant has your back.
+38. The day is ready for you soon.
+39. The timing is perfect.
+40. Luck is heading your way quietly.
+41. Tomorrow's luck wants to say hello out there.
+42. This moment wants to say hello in the background.
+43. Keep your eyes peeled for good things.
+44. A stroke of luck is unfolding for you.
+45. Something brilliant is keeping an eye out for you today.
+46. This moment is smiling at you.
+47. Good energy has your back quietly.
+48. A little magic is rooting for you in the background.
+49. A little win is finding its way to you.
+50. A good break is rooting for you right now.
+51. A kind word is ready for you this week.
+52. Something beautiful is working in your favour today.
+53. This moment is right here for you all day.
+54. Something good is keeping an eye out for you gently.
+55. A gentle push is lining up for you right now.
+56. The whole day is smiling at you.
+57. A good break belongs to you in the background.
+58. The day is ready for you out there.
+59. The whole day is ready for you.
+60. This moment is looking for you just for you.
+61. Tomorrow's luck is rooting for you gently.
+62. A stroke of luck is lining up for you.
+63. This moment is wrapping around you in the background.
+64. Something brilliant is keeping an eye out for you already.
+65. Something nice is in your corner.
+66. The morning is lining up for you right now.
+67. A lovely surprise has your back already.
+68. A good break is gathering around you.
+69. The day is meant for you this week.
+70. A tiny victory is on your side today.
+71. A gentle push is rooting for you step by step.
+72. Something beautiful is wrapping around you somehow.
+73. Something nice is in your corner all day.
+74. Something nice is smiling at you.
+75. A small joy wants to say hello.
+76. A lovely surprise is looking for you gently.
+77. This moment is lining up for you.
+78. Today is in your corner in the background.
+79. Luck is on your side.
+80. A good feeling is meant for you gently.
+81. A little spark is rooting for you this week.
+82. A fresh start is wrapping around you all day.
+83. A little win is right here for you right now.
+84. A good break is heading your way.
+85. Something brilliant is waiting for you already.
+86. A stroke of luck belongs to you already.
+87. Good energy is taking care of you.
+88. A good feeling is lining up for you all day.
+89. The morning is unfolding for you step by step.
+90. Tomorrow's luck is taking care of you.
+91. Something brilliant wants to say hello gently.
+92. Good energy is wrapping around you soon.
+93. A little spark is wrapping around you somehow.
+94. Today is keeping an eye out for you out there.
+95. A small joy is waiting for you.
+96. Breathe easy today.
+97. A quiet kind of luck is lining up for you.
+98. A fresh start is working in your favour.
+99. Good energy is wrapping around you.
+100. A quiet kind of luck is right here for you.
+101. A lovely surprise is lining up for you.
+102. A little win is looking for you.
+103. The day is unfolding for you step by step.
+104. You have got this.
+105. A good feeling has your back just for you.
+106. A little magic is wrapping around you out there.
+107. The whole day is ready for you quietly.
+108. The day is waiting for you.
+109. Good energy is in your corner already.
+110. A small joy is looking for you already.
+111. Something special is right here for you today.
+112. A stroke of luck has your back somehow.
+113. This moment is unfolding for you somehow.
+114. Luck is right here for you out there.
+115. The whole day is rooting for you somehow.
+116. Good energy is rooting for you all day.
+117. Something good belongs to you somehow.
+118. Something good is brewing.
+119. Something brilliant is in your corner already.
+120. A small joy is keeping an eye out for you.
+121. A little spark is meant for you.
+122. A tiny victory is right here for you.
+123. A little win is lining up for you.
+124. A gentle push belongs to you out there.
+125. A fresh start is finding its way to you.
+126. The day is gathering around you.
+127. Good energy is right here for you right now.
+128. A tiny victory is wrapping around you right now.
+129. A fresh start is unfolding for you already.
+130. A small joy is in your corner already.
+131. Something good is unfolding for you.
+132. A lucky break is due.
+133. You are in the right place.
+134. A good break is ready for you step by step.
+135. Something brilliant is gathering around you in the background.
+136. Tomorrow's luck is gathering around you gently.
+137. A fresh start is meant for you.
+138. A stroke of luck wants to say hello soon.
+139. A good feeling is on your side.
+140. Something good is looking for you just for you.
+141. A kind word is lining up for you today.
+142. This moment is keeping an eye out for you.
+143. Something special is looking for you.
+144. A lovely surprise belongs to you somehow.
+145. Something special is in your corner.
+146. The day is on your side somehow.
+147. Good energy is gathering around you.
+148. A tiny victory is rooting for you.
+149. Today is rooting for you step by step.
+150. Something good is meant for you.
+151. On your side.
+152. The morning has your back when you need it.
+153. Today is waiting for you out there.
+154. Tomorrow's luck is lining up for you this week.
+155. A little win is unfolding for you soon.
+156. A little magic is on your side.
+157. A lovely surprise is keeping an eye out for you.
+158. A kind word is gathering around you this week.
+159. The morning is taking care of you step by step.
+160. Something brilliant belongs to you.
+161. A good feeling is heading your way.
+162. A little spark belongs to you today.
+163. Today wants to say hello quietly.
+164. Something good is working in your favour somehow.
+165. The day is right here for you in the background.
+166. Something special belongs to you this week.
+167. The whole day is keeping an eye out for you.
+168. Tomorrow's luck is on your side.
+169. A fresh start is heading your way out there.
+170. Something beautiful is waiting for you.
+171. A good break is wrapping around you.
+172. Something nice is rooting for you.
+173. Luck is in your corner all day.
+174. The whole day is smiling at you gently.
+175. A good feeling has your back out there.
+176. This moment wants to say hello somehow.
+177. A gentle push is smiling at you.
+178. The morning is working in your favour quietly.
+179. A good break is on your side already.
+180. A lovely surprise is working in your favour quietly.
+181. A tiny victory is whispering your name somehow.
+182. The day wants to say hello when you need it.
+183. Something brilliant has your back gently.
+184. The day is wrapping around you.
+185. Something nice is working in your favour.
+186. A good break is finding its way to you soon.
+187. This moment is in your corner.
+188. Something special is looking for you quietly.
+189. The day is in your corner gently.
+190. Something special is keeping an eye out for you.
+191. Luck is quietly cheering for you.
+192. Luck likes you today.
+193. A kind word is unfolding for you somehow.
+194. A gentle day ahead.
+195. The day is smiling at you out there.
+196. Take the win.
+197. Something good is unfolding for you just for you.
+198. A little magic is in your corner.
+199. The morning is on your side quietly.
+200. Good energy is in your corner.
+201. This moment is taking care of you right now.
+202. Tomorrow's luck wants to say hello somehow.
+203. A little spark is quietly cheering for you right now.
+204. The day is gathering around you when you need it.
+205. Something beautiful is on your side right now.
+206. Something beautiful is finding its way to you quietly.
+207. Something nice is whispering your name out there.
+208. A fresh start is waiting for you.
+209. Something special has your back step by step.
+210. Something beautiful belongs to you.
+211. A little spark is working in your favour gently.
+212. Something special is right here for you.
+213. You deserve this good luck.
+214. Something brilliant is gathering around you right now.
+215. Tomorrow's luck is on your side when you need it.
+216. A good break is heading your way this week.
+217. A good break has your back.
+218. A gentle push is heading your way.
+219. Expect a lovely surprise.
+220. A quiet kind of luck is gathering around you.
+221. Good energy is heading your way.
+222. This moment is rooting for you quietly.
+223. A little spark is waiting for you today.
+224. The morning belongs to you.
+225. Today is smiling at you.
+226. Today is waiting for you.
+227. A little win is whispering your name quietly.
+228. A quiet kind of luck is whispering your name.
+229. Luck is unfolding for you.
+230. Something brilliant has your back all day.
+231. A lovely surprise is whispering your name right now.
+232. This moment is lining up for you right now.
+233. A gentle push is wrapping around you.
+234. A stroke of luck is working in your favour gently.
+235. This moment is wrapping around you just for you.
+236. Something good is finding its way to you.
+237. Things are looking up.
+238. The morning is finding its way to you.
+239. Something special is meant for you right now.
+240. A good break is meant for you just for you.
+241. Luck is finding its way to you today.
+242. A tiny victory is quietly cheering for you somehow.
+243. A stroke of luck is whispering your name.
+244. A little win is heading your way this week.
+245. Something brilliant is finding its way to you soon.
+246. The day is gathering around you somehow.
+247. A fresh start is whispering your name in the background.
+248. The whole day is quietly cheering for you this week.
+249. A good feeling is lining up for you.
+250. Something nice is waiting for you already.
+251. A fresh start is whispering your name.
+252. It is all going to click.
+253. A lovely surprise is lining up for you right now.
+254. The morning is keeping an eye out for you.
+255. A gentle push is whispering your name soon.
+256. A good feeling is in your corner soon.
+257. A little spark is right here for you out there.
+258. A kind word is in your corner just for you.
+259. A kind word is smiling at you soon.
+260. The morning is in your corner.
+261. A little magic is quietly cheering for you soon.
+262. The day is unfolding for you when you need it.
+263. A good feeling is heading your way out there.
+264. Tomorrow's luck is gathering around you today.
+265. A little spark is meant for you all day.
+266. The morning is unfolding for you.
+267. Tomorrow's luck is lining up for you out there.
+268. A fresh start is heading your way.
+269. Something beautiful is unfolding for you.
+270. This moment is working in your favour.
+271. Good energy is looking for you this week.
+272. A lovely surprise is looking for you in the background.
+273. The wind is at your back.
+274. Just for you.
+275. A kind word is on your side out there.
+276. Something special is wrapping around you this week.
+277. Something special is heading your way.
+278. A kind word is finding its way to you.
+279. A small joy is rooting for you.
+280. A tiny victory is looking for you somehow.
+281. The morning is lining up for you somehow.
+282. A kind word is lining up for you already.
+283. A little spark is whispering your name step by step.
+284. The whole day is working in your favour right now.
+285. The day is working in your favour.
+286. A good feeling is unfolding for you.
+287. Everything is lining up.
+288. Something brilliant is wrapping around you.
+289. The morning wants to say hello.
+290. Something brilliant is unfolding for you already.
+291. Good energy is waiting for you step by step.
+292. A fresh start is lining up for you.
+293. A fresh start is looking for you gently.
+294. A tiny victory is on your side soon.
+295. Luck is right here for you.
+296. A little magic is in your corner all day.
+297. A gentle push is unfolding for you just for you.
+298. The whole day is ready for you in the background.
+299. A good feeling is gathering around you somehow.
+300. Good energy is taking care of you just for you.
+301. Something beautiful is meant for you.
+302. A good break is on your side this week.
+303. The whole day is rooting for you.
+304. This moment is quietly cheering for you.
+305. A stroke of luck is wrapping around you.
+306. A stroke of luck is right here for you soon.
+307. Make a wish.
+308. This moment is meant for you.
+309. A lovely surprise is working in your favour.
+310. Luck is keeping an eye out for you quietly.
+311. A small joy is in your corner.
+312. A lovely surprise is rooting for you this week.
+313. Something nice is looking for you today.
+314. A little magic is looking for you quietly.
+315. This moment is finding its way to you.
+316. A lovely surprise is on your side.
+317. You are doing beautifully.
+318. Today is in your corner.
+319. A gentle push is working in your favour soon.
+320. The whole day is whispering your name.
+321. A tiny victory is in your corner right now.
+322. The morning is on your side today.
+323. A quiet kind of luck is on your side.
+324. A little win wants to say hello in the background.
+325. Tomorrow's luck has your back.
+326. A lovely surprise is wrapping around you quietly.
+327. Something beautiful is whispering your name just for you.
+328. A good break is looking for you.
+329. Luck is right here for you right now.
+330. A lovely surprise is heading your way gently.
+331. A small joy has your back.
+332. A good feeling is quietly cheering for you this week.
+333. Something special is gathering around you.
+334. A kind word is quietly cheering for you.
+335. The day is wrapping around you when you need it.
+336. The morning is waiting for you.
+337. Something nice is lining up for you out there.
+338. A good break is whispering your name today.
+339. A tiny victory is on your side just for you.
+340. A fresh start belongs to you somehow.
+341. A kind word is in your corner this week.
+342. Something beautiful is unfolding for you right now.
+343. Good things are arriving.
+344. A kind word is waiting for you quietly.
+345. This moment is looking for you right now.
+346. The day is looking for you this week.
+347. Tomorrow's luck is unfolding for you this week.
+348. Tomorrow's luck is wrapping around you.
+349. A little gift, for you.
+350. A little spark is on your side all day.
+351. A stroke of luck is gathering around you all day.
+352. A good break is ready for you.
+353. Something good is quietly cheering for you already.
+354. The morning is on your side just for you.
+355. Something nice is quietly cheering for you in the background.
+356. A tiny victory wants to say hello right now.
+357. Something special is waiting for you just for you.
+358. Tomorrow's luck belongs to you.
+359. Something special is on your side gently.
+360. The morning is lining up for you step by step.
+361. This moment is waiting for you this week.
+362. A kind word is waiting for you gently.
+363. Today belongs to you out there.
+364. Today is looking for you all day.
+365. Something brilliant is quietly cheering for you step by step.

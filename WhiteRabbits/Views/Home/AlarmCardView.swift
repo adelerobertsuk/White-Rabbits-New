@@ -111,15 +111,21 @@ struct AlarmCardView: View {
             return String(localized: "alarm.denied", defaultValue: "Alarms are off for White Rabbits. Turn them on in Settings so the first of the month can break through Silent and Focus.")
         }
         if !store.alarmEnabled {
-            return String(localized: "alarm.off", defaultValue: "Pick a time. Forget it. The phone surprises you.")
-        }
-        if let next = store.nextAlarmDate {
-            return String(format: String(localized: "alarm.next", defaultValue: "Next rings %@."), formattedNext(next))
+            return String(localized: "alarm.off", defaultValue: "Pick a time. Forget it. The phone reminds you to say White Rabbits.")
         }
         if store.isSchedulingAlarm {
             return String(localized: "alarm.scheduling", defaultValue: "Setting the alarm.")
         }
-        return String(localized: "alarm.on", defaultValue: "The first of every month, at this time. Breaks Silent and Focus.")
+        if let next = store.nextAlarmDate {
+            return String(
+                format: String(
+                    localized: "alarm.next",
+                    defaultValue: "Rings on the first of every month. Next: %@."
+                ),
+                formattedNext(next)
+            )
+        }
+        return String(localized: "alarm.on", defaultValue: "Rings on the first of every month so you can say White Rabbits. Breaks Silent and Focus.")
     }
 
     private func formattedNext(_ date: Date) -> String {

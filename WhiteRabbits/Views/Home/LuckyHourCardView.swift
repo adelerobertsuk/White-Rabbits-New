@@ -51,7 +51,7 @@ struct LuckyHourCardView: View {
                     .buttonStyle(.plain)
 
                     LuckyHourShareLink {
-                        Text(String(localized: "luckyHour.share.action", defaultValue: "Send 11:11"))
+                        Text(String(localized: "luckyHour.share.action", defaultValue: "Share today's luck"))
                             .font(.system(size: 13, weight: .medium))
                             .foregroundStyle(palette.ink)
                     }
@@ -81,9 +81,9 @@ struct LuckyHourCardView: View {
             return String(localized: "luckyHour.denied", defaultValue: "Notifications are off for White Rabbits. Turn them on in Settings so 11:11 can find you.")
         }
         if store.luckyHourEnabled {
-            return String(localized: "luckyHour.on", defaultValue: "Every day, exactly 11:11, on this phone. A little wish from the bunny.")
+            return String(localized: "luckyHour.on", defaultValue: "Every day, exactly 11:11, on this phone. A little nod from the universe.")
         }
-        return String(localized: "luckyHour.off", defaultValue: "A little ritual. Turn it on, and the bunny will tap you when the numbers line up.")
+        return String(localized: "luckyHour.off", defaultValue: "A little daily nod. Turn it on, and the bunny will tap you when the numbers line up.")
     }
 }
 

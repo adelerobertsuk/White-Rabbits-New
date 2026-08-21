@@ -29,17 +29,29 @@ struct SettingsView: View {
                     AlarmCardView()
                     LuckyHourCardView()
                     phoneCard
+                    aboutCard
+                    supportCard
                     footer
                 }
                 .padding(Layout.screenInset)
                 .padding(.bottom, 12)
             }
             .scrollBounceBehavior(.basedOnSize)
+            .scrollIndicators(.hidden)
             .sanctuaryBackground()
             .inlineNavigationTitle()
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button(String(localized: "settings.close", defaultValue: "Close")) { dismiss() }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(palette.muted)
+                            .frame(width: 30, height: 30)
+                            .background(Circle().fill(palette.track))
+                    }
+                    .accessibilityLabel(String(localized: "settings.close", defaultValue: "Close"))
                 }
             }
         }
@@ -111,11 +123,11 @@ struct SettingsView: View {
             Rectangle().fill(palette.line).frame(height: 1)
 
             field(
-                label: String(localized: "settings.intention.label", defaultValue: "This month"),
-                caption: String(localized: "settings.intention.caption", defaultValue: "Optional. A note from you, to you. It will find you again this month.")
+                label: String(localized: "settings.intention.label", defaultValue: "This month's intention"),
+                caption: String(localized: "settings.intention.caption", defaultValue: "Your good intention for the month ahead. Optional, and it will find you again.")
             ) {
                 TextField(
-                    String(localized: "settings.intention.placeholder", defaultValue: "This month's intention"),
+                    String(localized: "settings.intention.placeholder", defaultValue: "What are you carrying into this month?"),
                     text: $intention,
                     axis: .vertical
                 )
@@ -155,8 +167,67 @@ struct SettingsView: View {
         .cardBackground()
     }
 
+    private var aboutCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(String(localized: "settings.about.kicker", defaultValue: "Why White Rabbits"))
+                .kickerStyle()
+            Text(String(
+                localized: "settings.about.body",
+                defaultValue: """
+                Okay, so this is actually a thing.
+
+                On the first morning of every month, you say “White Rabbits” before you say anything else. Good luck for the month ahead. Then set a little intention, and start with a positive spin.
+
+                That’s basically it. Cute, slightly random, and very easy to forget.
+
+                So White Rabbits remembers for you.
+
+                And if you’re an 11:11 person, there’s a little daily nod too.
+                """
+            ))
+            .font(.system(size: 14, weight: .medium))
+            .foregroundStyle(palette.muted)
+            .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(Layout.cardPadding)
+        .cardBackground()
+    }
+
+    private var supportCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(String(localized: "settings.support.kicker", defaultValue: "Support"))
+                .kickerStyle()
+            Text(String(
+                localized: "settings.support.body",
+                defaultValue: "Need a hand, found something odd, or just want to say hello?"
+            ))
+            .font(.system(size: 14, weight: .medium))
+            .foregroundStyle(palette.muted)
+            .fixedSize(horizontal: false, vertical: true)
+
+            Link(destination: StudioContact.supportMailtoURL) {
+                Text(String(localized: "settings.support.email", defaultValue: "Email AKA Studio"))
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(palette.ink)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(Layout.cardPadding)
+        .cardBackground()
+    }
+
     private var footer: some View {
         VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 8) {
+                Link(String(localized: "settings.footer.privacy", defaultValue: "Privacy"), destination: StudioContact.privacyURL)
+                Text("·")
+                    .foregroundStyle(palette.faint)
+                Link(String(localized: "settings.footer.studio", defaultValue: "AKA Studio"), destination: StudioContact.studioURL)
+            }
+            .font(.system(size: 12, weight: .medium))
+            .foregroundStyle(palette.muted)
+
             HStack(spacing: 16) {
                 if let exportURL {
                     ShareLink(item: exportURL) {
@@ -186,9 +257,9 @@ struct SettingsView: View {
             Button {
                 showResetConfirm = true
             } label: {
-                Text(String(localized: "settings.reset", defaultValue: "Clear this device"))
-                    .font(.system(size: 12))
-                    .foregroundStyle(palette.muted)
+                Text(String(localized: "settings.reset", defaultValue: "Clear all White Rabbits data"))
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundStyle(palette.danger)
             }
         }
         .padding(.top, 4)

@@ -36,10 +36,15 @@ struct HomeView: View {
                 .padding(.bottom, 28)
             }
             .scrollBounceBehavior(.basedOnSize)
+            .scrollIndicators(.hidden)
             .sanctuaryBackground()
             .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $showSettings) {
                 SettingsView()
+                    .presentationDragIndicator(.visible)
+                    .presentationBackground {
+                        SanctuaryBackground()
+                    }
             }
             .task {
                 await store.refreshScheduledItems()
@@ -127,16 +132,16 @@ struct HomeView: View {
             .tracking(-2.09)
             .lineSpacing(-1.9)
             .multilineTextAlignment(.center)
-            .foregroundStyle(palette.ink.opacity(lit ? 1 : 0.11))
+            .foregroundStyle(palette.ink.opacity(lit ? 1 : 0.28))
             .shadow(color: lit ? .clear : palette.bg.opacity(0.95), radius: 0, y: 0.8)
-            .shadow(color: lit ? .clear : palette.ink.opacity(0.12), radius: 0, y: -0.5)
+            .shadow(color: lit ? .clear : palette.ink.opacity(0.1), radius: 0, y: -0.5)
             .animation(.easeOut(duration: 0.7), value: lit)
             .accessibilityHidden(!lit)
     }
 
     private var dateKicker: String {
         let formatter = DateFormatter()
-        formatter.setLocalizedDateFormatFromTemplate("MMMM yyyy")
+        formatter.setLocalizedDateFormatFromTemplate("d MMMM yyyy")
         return String(format: String(localized: "home.dateKicker", defaultValue: "Today  ·  %@"), formatter.string(from: Date()))
     }
 
@@ -174,7 +179,7 @@ struct HomeView: View {
         TimelineView(.periodic(from: .now, by: 20)) { context in
             if store.shouldOfferLuckyShare(at: context.date) {
                 LuckyHourShareLink {
-                    Text(String(localized: "luckyHour.share.action", defaultValue: "Send 11:11"))
+                    Text(String(localized: "luckyHour.share.action", defaultValue: "Share today's luck"))
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(PillButtonStyle(filled: false))

@@ -2,7 +2,7 @@
 //  LuckyHourShareCardView.swift
 //  WhiteRabbits
 //
-//  A small wink. The app bunny and the sparkles. The picture is the gift.
+//  A small wink. The app bunny and the sparkles. A little nod to pass on.
 //
 
 import SwiftUI
@@ -16,11 +16,11 @@ enum LuckyMinuteCopy {
     static func whisper(for date: Date = Date()) -> String {
         let day = Calendar.current.ordinality(of: .day, in: .year, for: date) ?? 1
         let lines = [
-            String(localized: "luckyHour.whisper.1", defaultValue: "Make a wish."),
+            String(localized: "luckyHour.whisper.1", defaultValue: "A little nod."),
             String(localized: "luckyHour.whisper.2", defaultValue: "Something has your back."),
             String(localized: "luckyHour.whisper.3", defaultValue: "Luck likes you today."),
             String(localized: "luckyHour.whisper.4", defaultValue: "The numbers lined up."),
-            String(localized: "luckyHour.whisper.5", defaultValue: "A little gift, for you."),
+            String(localized: "luckyHour.whisper.5", defaultValue: "Luck is on your side."),
             String(localized: "luckyHour.whisper.6", defaultValue: "Keep this luck."),
             String(localized: "luckyHour.whisper.7", defaultValue: "On your side."),
             String(localized: "luckyHour.whisper.8", defaultValue: "A little wink."),

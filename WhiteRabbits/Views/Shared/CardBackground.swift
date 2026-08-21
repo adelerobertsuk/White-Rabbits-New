@@ -96,12 +96,13 @@ struct SanctuaryToggle: View {
             isOn.toggle()
         } label: {
             Capsule()
-                .fill(isOn ? palette.ink : palette.track)
+                .fill(isOn ? palette.accent : palette.track)
                 .frame(width: 48, height: 30)
                 .overlay(
                     Circle()
                         .fill(palette.card)
                         .frame(width: 24, height: 24)
+                        .shadow(color: palette.ink.opacity(isOn ? 0.12 : 0.06), radius: 2, y: 1)
                         .padding(3)
                         .offset(x: isOn ? 18 : 0),
                     alignment: .leading
