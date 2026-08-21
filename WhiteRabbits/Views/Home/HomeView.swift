@@ -189,11 +189,11 @@ struct HomeView: View {
         }
     }
 
-    /// Past-you, a few times a month: the 1st after you say it, then every week.
+    /// Past-you, three times a month: the 1st, 11th and 21st.
     private var shouldShowIntention: Bool {
         guard !store.intention.isEmpty else { return false }
         let day = Calendar.current.component(.day, from: Date())
-        return day == 1 || day % 7 == 0
+        return day == 1 || day == 11 || day == 21
     }
 
     private func sayTheWords() {

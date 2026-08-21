@@ -17,17 +17,17 @@ enum LuckyMinuteCopy {
         let day = Calendar.current.ordinality(of: .day, in: .year, for: date) ?? 1
         let lines = [
             String(localized: "luckyHour.whisper.1", defaultValue: "A little nod."),
-            String(localized: "luckyHour.whisper.2", defaultValue: "Something has your back."),
+            String(localized: "luckyHour.whisper.2", defaultValue: "A little wink."),
             String(localized: "luckyHour.whisper.3", defaultValue: "Luck likes you today."),
-            String(localized: "luckyHour.whisper.4", defaultValue: "The numbers lined up."),
-            String(localized: "luckyHour.whisper.5", defaultValue: "Luck is on your side."),
-            String(localized: "luckyHour.whisper.6", defaultValue: "Keep this luck."),
-            String(localized: "luckyHour.whisper.7", defaultValue: "On your side."),
-            String(localized: "luckyHour.whisper.8", defaultValue: "A little wink."),
-            String(localized: "luckyHour.whisper.9", defaultValue: "You are not alone in this hour."),
-            String(localized: "luckyHour.whisper.10", defaultValue: "The day is still on your side."),
-            String(localized: "luckyHour.whisper.11", defaultValue: "A quiet kind of luck."),
-            String(localized: "luckyHour.whisper.12", defaultValue: "Hold this thought.")
+            String(localized: "luckyHour.whisper.4", defaultValue: "Luck is on your side."),
+            String(localized: "luckyHour.whisper.5", defaultValue: "A quiet kind of luck."),
+            String(localized: "luckyHour.whisper.6", defaultValue: "Something has your back."),
+            String(localized: "luckyHour.whisper.7", defaultValue: "The day is still on your side."),
+            String(localized: "luckyHour.whisper.8", defaultValue: "Right on time."),
+            String(localized: "luckyHour.whisper.9", defaultValue: "A little moment for you."),
+            String(localized: "luckyHour.whisper.10", defaultValue: "A tiny bit of luck."),
+            String(localized: "luckyHour.whisper.11", defaultValue: "Keep this moment."),
+            String(localized: "luckyHour.whisper.12", defaultValue: "Just because.")
         ]
         return lines[(day - 1) % lines.count]
     }

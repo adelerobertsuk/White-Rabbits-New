@@ -1,6 +1,6 @@
 # White Rabbits — Current Save Point
 
-**Updated:** 21 August 2026 (Settings copy/hierarchy pass complete)
+**Updated:** 21 August 2026 (Settings pass, 500-line affirmation bank, and intention cadence all complete)
 **Status:** Shipping priority. Continue toward TestFlight QA and App Store submission.
 
 ## Product truth
@@ -9,7 +9,7 @@ White Rabbits is a tiny first-of-the-month ritual for good luck, good intentions
 
 - Say **“White Rabbits!”** first thing on the first of the month.
 - The app's charm alarm makes sure the user remembers.
-- The user can set a **monthly intention**.
+- The user can set a **monthly intention**, which lives in Settings and reappears gently on the Home screen exactly three times a month (**1st, 11th, 21st**) — never a streak, journal or productivity mechanic.
 - **11:11 is not a wish feature.** It is a small daily moment: **“a little nod from the universe.”**
 - Do not label 11:11 as “angel numbers”; keep it open and inclusive.
 - Bunny, seasonal stamps and widgets are charm, not productivity mechanics.
@@ -85,10 +85,20 @@ What shipped, against the agreed direction above:
 
 **Implementation lesson worth keeping for next time:** in this codebase, `String(localized: "key", defaultValue: "...")` calls fall back to the Swift-source `defaultValue:` literal at runtime whenever the matching `.xcstrings` entry's `extractionState` is `"extracted_with_value"` (i.e. auto-extracted, state `"new"`, never marked `"translated"`) — Xcode does not compile those entries into the bundled `.strings` resource at all. Only entries with `extractionState: "manual"` / state `"translated"` (e.g. `settings.about.body`) get compiled and would win over a stale source default. **Practical implication: editing `Localizable.xcstrings` alone is not sufficient for most of the strings in this app — the Swift-source `defaultValue:` must be edited too, or the change silently won't show up.** This caused one round of stale copy (Haptics/Dark evening/Preview/11:11) in this pass, caught in visual review and fixed by editing both.
 
+## Completed — Affirmation bank, 11:11 whispers, and intention cadence (21 August 2026)
+
+Status: **done, built/tested, committed and pushed.** This pass is closed; do not reopen without a new agreed brief.
+
+- **500 curated daily lines.** [Affirmations.swift](WhiteRabbits/Models/Affirmations.swift) now holds 500 unique lines (curated by GG from the original 365-line export, removing 33 weaker entries and adding new material for variety). Source of truth for provenance/curation notes: `Reference/affirmations/curation-notes.md` and the original editorial export at `Reference/affirmations/WHITE-RABBITS-AFFIRMATIONS-FOR-GG.txt`.
+- **Continuous 500-line rotation.** The old selection logic picked a line by day-of-year (`(day - 1) % count`), which cleanly cycled exactly 365 lines but would have left ~134 of the new 500 permanently unreachable. Selection now uses a continuous day-counter — days since a fixed epoch (1 Jan 2025), mod 500 — so the whole bank rotates through once every ~16.5 months instead of resetting every January 1st. Verified: on 21 Aug 2026 the app correctly showed the line at array index 97, matching the day-counter math exactly.
+- **Cleaned 11:11 whisper set.** The 12 `luckyHour.whisper.*` lines (used by the Lock Screen/share card at [LuckyHourShareCardView.swift](WhiteRabbits/Views/Home/LuckyHourShareCardView.swift)) were replaced with GG's cleaned set — kept light and ambiguous, no "angel number"/religious drift. Selection there is still day-of-year mod 12, unchanged and fine at that small scale (cycles many times a year, no dead lines).
+- **Intention reminder cadence: 1st / 11th / 21st.** [HomeView.swift](WhiteRabbits/Views/Home/HomeView.swift)'s `shouldShowIntention` changed from "day 1 + every 7th day" (~weekly, 4–5×/month) to exactly three fixed dates a month. Verified exhaustively across all 31 possible day values — fires only on 1, 11, 21. No new UI, no notifications, no streak/journal mechanics added; the intention still lives in Settings and this is purely a display-condition change on the existing Home "gift line."
+- Both the Swift `defaultValue:` literals and the `Localizable.xcstrings` catalog were kept in sync for every changed key, per the lesson recorded in the Settings pass above.
+
 ## Next outstanding task
 
 **Whole-app customer-facing language audit.** Settings is now done, but the wider string catalog still carries a large population of stale copy from earlier product concepts — `circle.*`, `journal.*`, `tab.journal`, `milestone.*`, `today.journal.*`, and similar — left over from the old journal/friends-circle/streak direction. `CURRENT.md`'s standing instruction not to infer product requirements from stale keys still applies. This audit was explicitly deferred, not started, in this session — needs its own agreed brief/scope before any Claude session touches it, per the working method above (one app, one contained task per session).
 
 ## Next-chat starter
 
-> We are continuing White Rabbits. Read `AKA-CURRENT.md`, then this White Rabbits `CURRENT.md`, then the app's authoritative Studio docs. Cursor is unavailable until 13 September, Claude is temporarily implementing, and GG is holding continuity/product/copy/QA. The Settings copy/hierarchy pass is complete and shipped. The next agreed task is a whole-app customer-facing language audit (stale journal/circle/streak-era strings) — this needs a contained brief before work starts. First tell me what is already complete according to the files and what remains before making any new changes.
+> We are continuing White Rabbits. Read `AKA-CURRENT.md`, then this White Rabbits `CURRENT.md`, then the app's authoritative Studio docs. Cursor is unavailable until 13 September, Claude is temporarily implementing, and GG is holding continuity/product/copy/QA. The Settings copy/hierarchy pass, the 500-line affirmation bank swap, the cleaned 11:11 whispers, and the intention-reminder cadence (1st/11th/21st) are all complete and shipped. The next agreed task is a whole-app customer-facing language audit (stale journal/circle/streak-era strings) — this needs a contained brief before work starts. First tell me what is already complete according to the files and what remains before making any new changes.
