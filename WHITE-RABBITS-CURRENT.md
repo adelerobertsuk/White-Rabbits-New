@@ -1,6 +1,6 @@
 # White Rabbits — Current Save Point
 
-**Updated:** 21 August 2026 (Settings pass, 500-line affirmation bank, intention cadence, and whole-app language audit all complete)
+**Updated:** 21 August 2026 (Settings pass, 500-line affirmation bank, intention cadence, whole-app language audit, and release-readiness fixes all complete)
 **Status:** Shipping priority. Continue toward TestFlight QA and App Store submission.
 
 ## Product truth
@@ -109,10 +109,27 @@ Judgement calls explicitly resolved as "keep, no change":
 - No pre-permission explainer screen added — out of scope for this pass.
 - The ~95 dead/internal catalog keys (`circle.*`, `journal.*`, `tab.*`, `milestone.*`, old `intention.*`, etc.) and the entirely-unreferenced `RitualSheetView.swift` were confirmed genuinely unreachable by any customer — left untouched, not renamed or cleaned up.
 
+## Completed — Release-readiness fixes (21 August 2026)
+
+Status: **done, verified, committed and pushed.** This pass is closed; do not reopen without a new agreed brief.
+
+Following the release-health inspection (read-only report, no changes made in that pass), GG/Adele made four calls and this pass implemented them:
+
+1. **iPhone only.** `TARGETED_DEVICE_FAMILY` changed from `"1,2"` to `1` for both targets (all Debug/Release configs). Verified in a real-device archive: `UIDeviceFamily` is now `[1]` only. iPad was never designed or tested for — this is intentional and not a regression.
+2. **Privacy manifest added.** Searched the actual source for every Apple "required-reason API" category (UserDefaults, file-timestamp APIs, disk-space APIs, system-boot-time APIs) — zero matches anywhere in either target, and the project has zero third-party/SPM dependencies. `WhiteRabbits/PrivacyInfo.xcprivacy` and `WhiteRabbitsWidget/PrivacyInfo.xcprivacy` were added declaring `NSPrivacyTracking: false`, empty tracking domains, empty collected-data types, and an empty required-reason API list — an accurate "we don't do any of this" declaration, not a speculative one. Both validated with `plutil -lint` and confirmed present in a real-device archive.
+3. **Deployment target — tested, not just assumed.** Tried building/archiving at iOS 26.0: it genuinely fails. `AlarmPresentation.Alert.init(title:secondaryButton:secondaryButtonBehavior:)` in [MonthAlarmScheduler.swift:107](WhiteRabbits/Store/MonthAlarmScheduler.swift:107) — the alarm's "Say it" secondary button — is iOS 26.1+ only. Per instruction, left the deployment target at **26.1** rather than rewriting that functionality to force 26.0 compatibility.
+4. **English-only for this release.** Removing `ja`/`ko` from the project's `knownRegions` alone turned out to be insufficient — Xcode's String Catalog compiler ships a `.lproj` for every locale that has *any* translated content inside `Localizable.xcstrings`, regardless of `knownRegions`. Verified this empirically (still shipped `ja.lproj`/`ko.lproj` in a real archive even after the `knownRegions` edit, confirmed not a caching artifact via a full DerivedData wipe). The actual fix: the 104 keys carrying `ja`/`ko` translations were backed up verbatim to [Reference/ja-ko-translations-backup.json](Reference/ja-ko-translations-backup.json) (nothing lost — fully recoverable), then those `ja`/`ko` blocks were surgically stripped from the live catalog. Re-verified in a fresh archive: only `en.lproj` ships now.
+
+**Verification performed:** clean Debug build (simulator), clean Release build (simulator, 0 warnings/0 errors), real-device Release archive with Apple's `-validate-for-store` check — all green on the final settings.
+
+**Remaining genuine release blocker:** none found. The paid Apple Developer Program membership question from the release-health report (needed for actual TestFlight/App Store distribution, distinct from the working "Apple Development" signing already confirmed) still needs a human check in developer.apple.com — that's an account-status fact only Adele can confirm, not something inspectable from this repo.
+
+**Still open from the release-health report, deliberately not touched this pass:** no launch-screen project, no accessibility expansion, no widget deep-link change, no new permission explainer — all explicitly deferred. The live website's "11:11 wishes" wording is being handled separately outside this repo.
+
 ## Next outstanding task
 
-None currently agreed. The Settings pass, affirmation-bank swap, intention cadence, and language audit are all closed. Await a new brief before starting further work.
+None currently agreed. Settings pass, affirmation-bank swap, intention cadence, language audit, and release-readiness fixes are all closed. Next up (per Adele/GG, not yet started): App Store screenshot capture, once GG art-directs the six exact states. Await that brief before starting.
 
 ## Next-chat starter
 
-> We are continuing White Rabbits. Read `AKA-CURRENT.md`, then this White Rabbits `CURRENT.md`, then the app's authoritative Studio docs. Cursor is unavailable until 13 September, Claude is temporarily implementing, and GG is holding continuity/product/copy/QA. The Settings copy/hierarchy pass, the 500-line affirmation bank swap, the cleaned 11:11 whispers, the intention-reminder cadence (1st/11th/21st), and the whole-app customer-facing language audit are all complete and shipped. There is no agreed next task yet — first tell me what is already complete according to the files, then wait for a new contained brief before making any changes.
+> We are continuing White Rabbits. Read `AKA-CURRENT.md`, then this White Rabbits `CURRENT.md`, then the app's authoritative Studio docs. Cursor is unavailable until 13 September, Claude is temporarily implementing, and GG is holding continuity/product/copy/QA. The Settings copy/hierarchy pass, the 500-line affirmation bank swap, the cleaned 11:11 whispers, the intention-reminder cadence (1st/11th/21st), the whole-app customer-facing language audit, and the release-readiness fixes (iPhone-only, privacy manifest, deployment target confirmed at 26.1, English-only for this release) are all complete and shipped. Next up is App Store screenshot capture, once GG art-directs the six exact states — first tell me what is already complete according to the files, then wait for that brief before making any changes.

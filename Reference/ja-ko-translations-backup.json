@@ -1,0 +1,418 @@
+{
+  "action.cancel": {
+    "ja": "キャンセル",
+    "ko": "취소"
+  },
+  "action.close": {
+    "ja": "閉じる",
+    "ko": "닫기"
+  },
+  "action.edit": {
+    "ja": "編集",
+    "ko": "편집"
+  },
+  "action.save": {
+    "ja": "保存",
+    "ko": "저장"
+  },
+  "audio.paused": {
+    "ja": "アンビエントサウンド",
+    "ko": "앰비언트 사운드"
+  },
+  "audio.playing": {
+    "ja": "やさしいローファイ",
+    "ko": "부드러운 로파이"
+  },
+  "charms.header.complete": {
+    "ja": "一年間完了",
+    "ko": "한 해를 완성했어요"
+  },
+  "charms.header.count": {
+    "ja": "12個中%d個",
+    "ko": "12개 중 %d개"
+  },
+  "charms.header.gathering": {
+    "ja": "集めています",
+    "ko": "모으고 있어요"
+  },
+  "charms.milestones.title": {
+    "ja": "マイルストーン",
+    "ko": "마일스톤"
+  },
+  "charms.seasonal.title": {
+    "ja": "季節のチャーム",
+    "ko": "계절 차밍"
+  },
+  "circle.aFriend": {
+    "ja": "フレンド",
+    "ko": "친구"
+  },
+  "circle.addFriend.footer": {
+    "ja": "これはあなたの端末だけに保存されます。相手が目指していることを、やさしく思い出すためのものです。",
+    "ko": "이 정보는 이 기기에만 저장돼요. 친구가 향하고 있는 목표를 다정하게 떠올리기 위한 것이에요."
+  },
+  "circle.addFriend.intention": {
+    "ja": "相手の意図",
+    "ko": "친구의 의도"
+  },
+  "circle.addFriend.name": {
+    "ja": "相手の名前",
+    "ko": "친구 이름"
+  },
+  "circle.addFriend.title": {
+    "ja": "フレンドを追加",
+    "ko": "친구 추가"
+  },
+  "circle.fellows.title": {
+    "ja": "仲間たちの意図",
+    "ko": "동료들의 의도"
+  },
+  "circle.friends.add": {
+    "ja": "追加",
+    "ko": "추가"
+  },
+  "circle.friends.empty": {
+    "ja": "フレンドの名前と意図を追加しましょう。表示されるのは意図とスタンプだけです。",
+    "ko": "친구의 이름과 의도를 추가해 보세요. 의도와 스탬프만 보여요."
+  },
+  "circle.friends.title": {
+    "ja": "フレンド",
+    "ko": "친구"
+  },
+  "circle.header.named": {
+    "ja": "%@さん、ここはインスピレーションのための場所です。リセットを応援するだけ。決して測ったりしません。",
+    "ko": "%@님, 여기는 오직 영감을 위한 공간이에요. 리셋을 응원할 뿐, 절대 평가하지 않아요."
+  },
+  "circle.header.unnamed": {
+    "ja": "ここはインスピレーションのための場所です。リセットを応援するだけ。決して測ったりしません。",
+    "ko": "여기는 오직 영감을 위한 공간이에요. 리셋을 응원할 뿐, 절대 평가하지 않아요."
+  },
+  "circle.leave": {
+    "ja": "サークルから抜ける",
+    "ko": "서클에서 나가기"
+  },
+  "circle.members.empty": {
+    "ja": "サークルの誰かが今月の意図を設定すると、ここにカードが表示されます。",
+    "ko": "서클의 다른 사람이 이번 달 의도를 설정하면 여기에 카드가 나타나요."
+  },
+  "circle.members.title": {
+    "ja": "サークルのメンバー",
+    "ko": "내 서클"
+  },
+  "circle.onboarding.body": {
+    "ja": "毎月のリセットのための、やさしいサークルです。スコアも、連続記録も、比較もありません。",
+    "ko": "매달 새로 시작하는, 부드러운 서클이에요. 점수도, 연속 기록도, 비교도 없어요."
+  },
+  "circle.onboarding.heading": {
+    "ja": "共有の聖域",
+    "ko": "공유된 안식처"
+  },
+  "circle.onboarding.join": {
+    "ja": "サークルに入る",
+    "ko": "서클에 들어가기"
+  },
+  "circle.onboarding.private": {
+    "ja": "日記のメモ、写真、音声の書き起こし、習慣は、この端末だけに残ります。",
+    "ko": "저널 기록, 사진, 음성 기록, 습관은 이 기기에만 남아요."
+  },
+  "circle.onboarding.private.title": {
+    "ja": "共有されないもの",
+    "ko": "공유되지 않는 것"
+  },
+  "circle.onboarding.shared": {
+    "ja": "名前、今月の意図、季節のスタンプ。",
+    "ko": "이름, 이번 달의 의도, 계절 스탬프."
+  },
+  "circle.onboarding.shared.title": {
+    "ja": "参加すると共有されるもの",
+    "ko": "참여하면 공유되는 것"
+  },
+  "circle.onboarding.title": {
+    "ja": "いつでも、参加できます",
+    "ko": "언제든 원할 때 참여하세요"
+  },
+  "circle.spark.send": {
+    "ja": "スパークを送る",
+    "ko": "스파크 보내기"
+  },
+  "circle.spark.sent": {
+    "ja": "送信済み",
+    "ko": "보냄"
+  },
+  "circle.stampCard.count": {
+    "ja": "12個中%d個収集済み",
+    "ko": "12개 중 %d개 모음"
+  },
+  "circle.stampCard.countShort": {
+    "ja": "%d / 12",
+    "ko": "%d / 12"
+  },
+  "circle.stampCard.title": {
+    "ja": "幸運の一年",
+    "ko": "행운의 한 해"
+  },
+  "greeting.afternoon.named": {
+    "ja": "こんにちは、%1$@さん。%2$@はあなたのものです。",
+    "ko": "좋은 오후예요, %1$@님. %2$@은 당신의 것입니다."
+  },
+  "greeting.afternoon.unnamed": {
+    "ja": "こんにちは。%1$@はあなたのものです。",
+    "ko": "좋은 오후예요. %1$@은 당신의 것입니다."
+  },
+  "greeting.evening.named": {
+    "ja": "こんばんは、%1$@さん。%2$@はあなたのものです。",
+    "ko": "좋은 저녁이에요, %1$@님. %2$@은 당신의 것입니다."
+  },
+  "greeting.evening.unnamed": {
+    "ja": "こんばんは。%1$@はあなたのものです。",
+    "ko": "좋은 저녁이에요. %1$@은 당신의 것입니다."
+  },
+  "greeting.morning.named": {
+    "ja": "おはようございます、%1$@さん。%2$@はあなたのものです。",
+    "ko": "좋은 아침이에요, %1$@님. %2$@은 당신의 것입니다."
+  },
+  "greeting.morning.unnamed": {
+    "ja": "おはようございます。%1$@はあなたのものです。",
+    "ko": "좋은 아침이에요. %1$@은 당신의 것입니다."
+  },
+  "greeting.ritual": {
+    "ja": "White Rabbits, White Rabbits!",
+    "ko": "White Rabbits, White Rabbits!"
+  },
+  "intention.addPhoto": {
+    "ja": "写真を追加",
+    "ko": "사진 추가"
+  },
+  "intention.card.empty": {
+    "ja": "準備ができたら設定しましょう。サークルはいつまでも待っています。日記は聞かれることはありません。",
+    "ko": "준비되면 설정해 보세요. 서클은 기다릴 수 있어요. 당신의 저널은 절대 묻지 않아요."
+  },
+  "intention.card.pin": {
+    "ja": "今日のページにピン留め",
+    "ko": "오늘 페이지에 고정"
+  },
+  "intention.card.title": {
+    "ja": "私の意図",
+    "ko": "나의 의도"
+  },
+  "intention.placeholder": {
+    "ja": "ここに書いてください",
+    "ko": "여기에 적어보세요"
+  },
+  "intention.save": {
+    "ja": "意図を保存",
+    "ko": "의도 저장"
+  },
+  "intention.subtitle.named": {
+    "ja": "%@さん、今月のための、ひとつの本当の言葉。",
+    "ko": "%@님, 이번 달을 위한 진심 한 문장."
+  },
+  "intention.subtitle.unnamed": {
+    "ja": "今月のための、ひとつの本当の言葉。",
+    "ko": "이번 달을 위한, 진심 한 문장."
+  },
+  "intention.title": {
+    "ja": "%@の意図",
+    "ko": "%@의 의도"
+  },
+  "journal.delete.action": {
+    "ja": "記録を削除",
+    "ko": "기록 삭제"
+  },
+  "journal.delete.confirm": {
+    "ja": "この記録を削除しますか？",
+    "ko": "이 기록을 삭제할까요?"
+  },
+  "journal.detail.photoOnly": {
+    "ja": "この日の一枚の写真。",
+    "ko": "이 날의 사진 한 장."
+  },
+  "journal.empty": {
+    "ja": "今月のページは、ここに少しずつ集まっていきます。",
+    "ko": "이번 달의 기록이 한 페이지씩 여기에 모일 거예요."
+  },
+  "journal.new.addPhoto": {
+    "ja": "写真を追加",
+    "ko": "사진 추가"
+  },
+  "journal.new.changePhoto": {
+    "ja": "写真を変更",
+    "ko": "사진 변경"
+  },
+  "journal.new.placeholder": {
+    "ja": "ここに書いてください…",
+    "ko": "여기에 적어보세요..."
+  },
+  "journal.new.save": {
+    "ja": "記録を保存",
+    "ko": "기록 저장"
+  },
+  "journal.new.subtitle": {
+    "ja": "気が向いたときに、少し書いたり写真を追加してみましょう。",
+    "ko": "마음이 내킬 때, 몇 줄 적거나 사진을 추가해 보세요."
+  },
+  "journal.showAll": {
+    "ja": "すべて表示",
+    "ko": "전체 보기"
+  },
+  "milestone.firstCharm.caption": {
+    "ja": "最初の月間チャームを獲得しました",
+    "ko": "첫 월간 차밍을 얻었어요"
+  },
+  "milestone.firstCharm.title": {
+    "ja": "最初のチャーム",
+    "ko": "첫 차밍"
+  },
+  "milestone.firstEntry.caption": {
+    "ja": "最初の日記を書きました",
+    "ko": "첫 저널을 기록했어요"
+  },
+  "milestone.firstEntry.title": {
+    "ja": "最初のページ",
+    "ko": "첫 페이지"
+  },
+  "milestone.firstSpark.caption": {
+    "ja": "誰かに、小さな励ましを送りました",
+    "ko": "누군가에게 작은 응원을 보냈어요"
+  },
+  "milestone.firstSpark.title": {
+    "ja": "最初のスパーク",
+    "ko": "첫 스파크"
+  },
+  "milestone.fullYear.caption": {
+    "ja": "12個すべてのチャームを収集",
+    "ko": "열두 개의 차밍을 모두 모았어요"
+  },
+  "milestone.fullYear.title": {
+    "ja": "満一年",
+    "ko": "꽉 채운 한 해"
+  },
+  "pinned.label": {
+    "ja": "サークルからピン留め",
+    "ko": "서클에서 고정됨"
+  },
+  "ritual.celebrate.caption": {
+    "ja": "%@は今月のチャームです。これからの日々に、少しの幸運を。",
+    "ko": "%@은 이번 달의 차밍이에요. 앞으로의 날들에 작은 행운을 담아."
+  },
+  "ritual.celebrate.named": {
+    "ja": "%@はあなたのものです、%@さん。",
+    "ko": "%@은 당신의 것입니다, %@님."
+  },
+  "ritual.celebrate.unnamed": {
+    "ja": "%@はあなたのものです。",
+    "ko": "%@은 당신의 것입니다."
+  },
+  "ritual.header": {
+    "ja": "%@の最初の日",
+    "ko": "%@의 첫날"
+  },
+  "ritual.later": {
+    "ja": "あとで始めます",
+    "ko": "나중에 시작할게요"
+  },
+  "ritual.sayIt": {
+    "ja": "「White Rabbits」と言う",
+    "ko": "\"White Rabbits\" 라고 말해보세요"
+  },
+  "ritual.setIntention": {
+    "ja": "今月の意図を決める",
+    "ko": "이번 달의 의도 정하기"
+  },
+  "ritual.welcome.named": {
+    "ja": "ようこそ、%@さん。",
+    "ko": "환영해요, %@님."
+  },
+  "ritual.welcome.unnamed": {
+    "ja": "ようこそ。",
+    "ko": "환영해요."
+  },
+  "suggestion.beginMonth": {
+    "ja": "月を始める",
+    "ko": "이번 달을 시작하기"
+  },
+  "suggestion.setIntention": {
+    "ja": "今月の意図を決める",
+    "ko": "이번 달의 의도 정하기"
+  },
+  "suggestion.writeToday": {
+    "ja": "今日は少し書いてみましょう",
+    "ko": "오늘 몇 줄 적어보세요"
+  },
+  "suggestions.empty": {
+    "ja": "今のところ、やることはありません。",
+    "ko": "지금은 기다리는 일이 없어요."
+  },
+  "suggestions.title": {
+    "ja": "提案",
+    "ko": "제안"
+  },
+  "tab.charms": {
+    "ja": "チャーム",
+    "ko": "차밍"
+  },
+  "tab.circle": {
+    "ja": "サークル",
+    "ko": "서클"
+  },
+  "tab.journal": {
+    "ja": "日記",
+    "ko": "저널"
+  },
+  "tab.today": {
+    "ja": "今日",
+    "ko": "오늘"
+  },
+  "today.addHabit": {
+    "ja": "習慣を追加して始めましょう",
+    "ko": "습관을 추가해서 시작해 보세요"
+  },
+  "today.beginMonth": {
+    "ja": "月を始める",
+    "ko": "이번 달을 시작하기"
+  },
+  "today.complete": {
+    "ja": "今日は完了しました",
+    "ko": "오늘을 모두 마쳤어요"
+  },
+  "today.gentleBeginning": {
+    "ja": "静かな始まり",
+    "ko": "고요한 시작"
+  },
+  "today.habits.title": {
+    "ja": "今日",
+    "ko": "오늘"
+  },
+  "today.inspiration.kicker": {
+    "ja": "%@の光",
+    "ko": "%@의 빛"
+  },
+  "today.intention.kicker": {
+    "ja": "%@の意図",
+    "ko": "%@의 의도"
+  },
+  "today.intention.share": {
+    "ja": "ストーリーカードを共有",
+    "ko": "스토리 카드 공유"
+  },
+  "today.journal.empty": {
+    "ja": "気が向いたときに、少し書いたり写真を追加してみましょう。",
+    "ko": "마음이 내킬 때, 몇 줄 적거나 사진을 추가해 보세요."
+  },
+  "today.journal.newEntry": {
+    "ja": "新しい記録",
+    "ko": "새 기록"
+  },
+  "today.journal.photoOnly": {
+    "ja": "今日の一枚の写真。",
+    "ko": "오늘의 사진 한 장."
+  },
+  "today.journal.title": {
+    "ja": "日記",
+    "ko": "저널"
+  },
+  "today.keptCount": {
+    "ja": "今日は%d件達成",
+    "ko": "오늘 %d개 완료"
+  }
+}
