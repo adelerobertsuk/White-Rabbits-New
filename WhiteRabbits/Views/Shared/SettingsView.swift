@@ -92,7 +92,7 @@ struct SettingsView: View {
                 .kickerStyle()
             Text(title)
                 .displayTitleStyle()
-            Text(String(localized: "settings.lede", defaultValue: "Quiet settings. Everything stays on this device."))
+            Text(String(localized: "settings.lede", defaultValue: "Everything stays on this device."))
                 .font(.system(size: 15, weight: .medium))
                 .foregroundStyle(palette.muted)
         }
@@ -108,8 +108,7 @@ struct SettingsView: View {
     private var youCard: some View {
         VStack(alignment: .leading, spacing: 18) {
             field(
-                label: String(localized: "settings.name.label", defaultValue: "Your name"),
-                caption: String(localized: "settings.name.caption", defaultValue: "How White Rabbits greets you")
+                label: String(localized: "settings.name.label", defaultValue: "Your name")
             ) {
                 TextField(String(localized: "settings.name.placeholder", defaultValue: "Your name"), text: $name)
                     .font(.system(size: 17, weight: .medium))
@@ -123,8 +122,8 @@ struct SettingsView: View {
             Rectangle().fill(palette.line).frame(height: 1)
 
             field(
-                label: String(localized: "settings.intention.label", defaultValue: "This month's intention"),
-                caption: String(localized: "settings.intention.caption", defaultValue: "Your good intention for the month ahead. Optional, and it will find you again.")
+                label: String(localized: "settings.intention.label", defaultValue: "Set an intention"),
+                caption: String(localized: "settings.intention.caption", defaultValue: "A little note from you, to you.")
             ) {
                 TextField(
                     String(localized: "settings.intention.placeholder", defaultValue: "What are you carrying into this month?"),
@@ -148,18 +147,18 @@ struct SettingsView: View {
         VStack(spacing: 0) {
             settingRow(
                 title: String(localized: "settings.haptics.title", defaultValue: "Haptics"),
-                caption: String(localized: "settings.haptics.caption", defaultValue: "A small pulse when luck arrives"),
+                caption: String(localized: "settings.haptics.caption", defaultValue: "A little tap for luck."),
                 isOn: Binding(get: { store.hapticsEnabled }, set: { store.setHapticsEnabled($0) }),
                 isFirst: true
             )
             settingRow(
                 title: String(localized: "settings.darkEvening.title", defaultValue: "Dark evening"),
-                caption: String(localized: "settings.darkEvening.caption", defaultValue: "Softer light after dusk"),
+                caption: String(localized: "settings.darkEvening.caption", defaultValue: "Softer after dusk."),
                 isOn: Binding(get: { store.forceDarkMode }, set: { store.setForceDarkMode($0) })
             )
             settingRow(
-                title: String(localized: "settings.previewFirst.title", defaultValue: "Preview the first of the month"),
-                caption: String(localized: "settings.previewFirst.caption", defaultValue: "Open today’s greeting as if it were the 1st"),
+                title: String(localized: "settings.previewFirst.title", defaultValue: "Preview the 1st"),
+                caption: String(localized: "settings.previewFirst.caption", defaultValue: "See what happens."),
                 isOn: Binding(get: { store.previewFirstOfMonth }, set: { store.setPreviewFirstOfMonth($0) })
             )
         }
@@ -174,15 +173,11 @@ struct SettingsView: View {
             Text(String(
                 localized: "settings.about.body",
                 defaultValue: """
-                Okay, so this is actually a thing.
+                An old British ritual for good luck.
 
-                On the first morning of every month, you say “White Rabbits” before you say anything else. Good luck for the month ahead. Then set a little intention, and start with a positive spin.
+                Say “White Rabbits” first thing on the first of the month. Set an intention. Start the month with good vibes.
 
-                That’s basically it. Cute, slightly random, and very easy to forget.
-
-                So White Rabbits remembers for you.
-
-                And if you’re an 11:11 person, there’s a little daily nod too.
+                We just make sure you remember. 🐇
                 """
             ))
             .font(.system(size: 14, weight: .medium))
@@ -198,13 +193,6 @@ struct SettingsView: View {
         VStack(alignment: .leading, spacing: 10) {
             Text(String(localized: "settings.support.kicker", defaultValue: "Support"))
                 .kickerStyle()
-            Text(String(
-                localized: "settings.support.body",
-                defaultValue: "Need a hand, found something odd, or just want to say hello?"
-            ))
-            .font(.system(size: 14, weight: .medium))
-            .foregroundStyle(palette.muted)
-            .fixedSize(horizontal: false, vertical: true)
 
             Link(destination: StudioContact.supportMailtoURL) {
                 Text(String(localized: "settings.support.email", defaultValue: "Email AKA Studio"))
@@ -266,14 +254,16 @@ struct SettingsView: View {
         .buttonStyle(.plain)
     }
 
-    private func field<Content: View>(label: String, caption: String, @ViewBuilder content: () -> Content) -> some View {
+    private func field<Content: View>(label: String, caption: String? = nil, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(label)
                 .kickerStyle()
             content()
-            Text(caption)
-                .font(.system(size: 12))
-                .foregroundStyle(palette.muted)
+            if let caption {
+                Text(caption)
+                    .font(.system(size: 12))
+                    .foregroundStyle(palette.muted)
+            }
         }
     }
 

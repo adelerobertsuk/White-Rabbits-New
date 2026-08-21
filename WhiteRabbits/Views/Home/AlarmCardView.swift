@@ -78,7 +78,7 @@ struct AlarmCardView: View {
                 Haptics.medium()
                 Task { await store.scheduleTestAlarm() }
             } label: {
-                Text(String(localized: "settings.tryAlarm.action", defaultValue: "Ring a test"))
+                Text(String(localized: "settings.tryAlarm.action", defaultValue: "Test alarm"))
                     .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(palette.ink)
             }
@@ -111,7 +111,7 @@ struct AlarmCardView: View {
             return String(localized: "alarm.denied", defaultValue: "Alarms are off for White Rabbits. Turn them on in Settings so the first of the month can break through Silent and Focus.")
         }
         if !store.alarmEnabled {
-            return String(localized: "alarm.off", defaultValue: "Pick a time. Forget it. The phone reminds you to say White Rabbits.")
+            return String(localized: "alarm.off", defaultValue: "First of every month. Pick a time, and we'll remind you.")
         }
         if store.isSchedulingAlarm {
             return String(localized: "alarm.scheduling", defaultValue: "Setting the alarm.")
@@ -120,12 +120,12 @@ struct AlarmCardView: View {
             return String(
                 format: String(
                     localized: "alarm.next",
-                    defaultValue: "Rings on the first of every month. Next: %@."
+                    defaultValue: "First of every month. Next: %@."
                 ),
                 formattedNext(next)
             )
         }
-        return String(localized: "alarm.on", defaultValue: "Rings on the first of every month so you can say White Rabbits. Breaks Silent and Focus.")
+        return String(localized: "alarm.on", defaultValue: "First of every month.")
     }
 
     private func formattedNext(_ date: Date) -> String {

@@ -16,14 +16,10 @@ struct LuckyHourCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .center) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(String(localized: "luckyHour.kicker", defaultValue: "Lucky minute"))
-                        .kickerStyle()
-                    Text("11:11")
-                        .font(.system(size: 28, weight: .light))
-                        .tracking(-0.8)
-                        .foregroundStyle(palette.ink)
-                }
+                Text("11:11")
+                    .font(.system(size: 28, weight: .light))
+                    .tracking(-0.8)
+                    .foregroundStyle(palette.ink)
                 Spacer()
                 SanctuaryToggle(
                     isOn: Binding(
@@ -44,7 +40,7 @@ struct LuckyHourCardView: View {
                         Haptics.medium()
                         Task { await store.scheduleTestLuckyHour() }
                     } label: {
-                        Text(String(localized: "luckyHour.try.action", defaultValue: "Send a test"))
+                        Text(String(localized: "luckyHour.try.action", defaultValue: "Test reminder"))
                             .font(.system(size: 13, weight: .medium))
                             .foregroundStyle(palette.ink)
                     }
@@ -81,9 +77,9 @@ struct LuckyHourCardView: View {
             return String(localized: "luckyHour.denied", defaultValue: "Notifications are off for White Rabbits. Turn them on in Settings so 11:11 can find you.")
         }
         if store.luckyHourEnabled {
-            return String(localized: "luckyHour.on", defaultValue: "Every day, exactly 11:11, on this phone. A little nod from the universe.")
+            return String(localized: "luckyHour.on", defaultValue: "A little nod from the universe.")
         }
-        return String(localized: "luckyHour.off", defaultValue: "A little daily nod. Turn it on, and the bunny will tap you when the numbers line up.")
+        return String(localized: "luckyHour.off", defaultValue: "A little nod from the universe.")
     }
 }
 
