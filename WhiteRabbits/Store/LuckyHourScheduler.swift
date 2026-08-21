@@ -109,7 +109,7 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
 
     private static func message() -> UNMutableNotificationContent {
         let content = UNMutableNotificationContent()
-        content.title = LuckyMinuteCopy.sparkle
+        content.title = LuckyMinuteCopy.notificationTitle
         content.body = LuckyMinuteCopy.whisper()
         content.sound = .default
         content.userInfo = ["kind": "luckyHour"]

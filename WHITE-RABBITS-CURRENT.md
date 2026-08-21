@@ -1,6 +1,6 @@
 # White Rabbits — Current Save Point
 
-**Updated:** 21 August 2026 (Settings pass, 500-line affirmation bank, and intention cadence all complete)
+**Updated:** 21 August 2026 (Settings pass, 500-line affirmation bank, intention cadence, and whole-app language audit all complete)
 **Status:** Shipping priority. Continue toward TestFlight QA and App Store submission.
 
 ## Product truth
@@ -95,10 +95,24 @@ Status: **done, built/tested, committed and pushed.** This pass is closed; do no
 - **Intention reminder cadence: 1st / 11th / 21st.** [HomeView.swift](WhiteRabbits/Views/Home/HomeView.swift)'s `shouldShowIntention` changed from "day 1 + every 7th day" (~weekly, 4–5×/month) to exactly three fixed dates a month. Verified exhaustively across all 31 possible day values — fires only on 1, 11, 21. No new UI, no notifications, no streak/journal mechanics added; the intention still lives in Settings and this is purely a display-condition change on the existing Home "gift line."
 - Both the Swift `defaultValue:` literals and the `Localizable.xcstrings` catalog were kept in sync for every changed key, per the lesson recorded in the Settings pass above.
 
+## Completed — Whole-app customer-facing language audit (21 August 2026)
+
+Status: **done, approved, committed and pushed.** This pass is closed; do not reopen without a new agreed brief.
+
+Every customer-facing string was audited against product truth — the live surface (Home, Settings, alarm, 11:11, notifications, widget: 70 live catalog keys, the 500-line affirmation bank, the 12 whispers, and a handful of hardcoded strings) came back clean, with no wish/journal/friends-circle/streak/habit-tracker/angel-number language. One change was approved and shipped:
+
+- The 11:11 push notification title changed from `✨11:11✨` to plain **`11:11`**. Scoped narrowly: a new `LuckyMinuteCopy.notificationTitle` constant was added ([LuckyHourShareCardView.swift](WhiteRabbits/Views/Home/LuckyHourShareCardView.swift)) so only `LuckyHourScheduler.swift`'s notification title changed — the shareable 11:11 postcard image still uses the original sparkled `LuckyMinuteCopy.sparkle` text, since that wasn't part of the approved change.
+
+Judgement calls explicitly resolved as "keep, no change":
+- Affirmation line "You've got a lucky streak in miniature." stays — idiomatic, not a habit-tracker mechanic.
+- AlarmKit secondary button "Say it" stays as-is.
+- No pre-permission explainer screen added — out of scope for this pass.
+- The ~95 dead/internal catalog keys (`circle.*`, `journal.*`, `tab.*`, `milestone.*`, old `intention.*`, etc.) and the entirely-unreferenced `RitualSheetView.swift` were confirmed genuinely unreachable by any customer — left untouched, not renamed or cleaned up.
+
 ## Next outstanding task
 
-**Whole-app customer-facing language audit.** Settings is now done, but the wider string catalog still carries a large population of stale copy from earlier product concepts — `circle.*`, `journal.*`, `tab.journal`, `milestone.*`, `today.journal.*`, and similar — left over from the old journal/friends-circle/streak direction. `CURRENT.md`'s standing instruction not to infer product requirements from stale keys still applies. This audit was explicitly deferred, not started, in this session — needs its own agreed brief/scope before any Claude session touches it, per the working method above (one app, one contained task per session).
+None currently agreed. The Settings pass, affirmation-bank swap, intention cadence, and language audit are all closed. Await a new brief before starting further work.
 
 ## Next-chat starter
 
-> We are continuing White Rabbits. Read `AKA-CURRENT.md`, then this White Rabbits `CURRENT.md`, then the app's authoritative Studio docs. Cursor is unavailable until 13 September, Claude is temporarily implementing, and GG is holding continuity/product/copy/QA. The Settings copy/hierarchy pass, the 500-line affirmation bank swap, the cleaned 11:11 whispers, and the intention-reminder cadence (1st/11th/21st) are all complete and shipped. The next agreed task is a whole-app customer-facing language audit (stale journal/circle/streak-era strings) — this needs a contained brief before work starts. First tell me what is already complete according to the files and what remains before making any new changes.
+> We are continuing White Rabbits. Read `AKA-CURRENT.md`, then this White Rabbits `CURRENT.md`, then the app's authoritative Studio docs. Cursor is unavailable until 13 September, Claude is temporarily implementing, and GG is holding continuity/product/copy/QA. The Settings copy/hierarchy pass, the 500-line affirmation bank swap, the cleaned 11:11 whispers, the intention-reminder cadence (1st/11th/21st), and the whole-app customer-facing language audit are all complete and shipped. There is no agreed next task yet — first tell me what is already complete according to the files, then wait for a new contained brief before making any changes.

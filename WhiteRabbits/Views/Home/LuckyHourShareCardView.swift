@@ -12,6 +12,7 @@ import UIKit
 
 enum LuckyMinuteCopy {
     static let sparkle = "✨11:11✨"
+    static let notificationTitle = "11:11"
 
     static func whisper(for date: Date = Date()) -> String {
         let day = Calendar.current.ordinality(of: .day, in: .year, for: date) ?? 1
