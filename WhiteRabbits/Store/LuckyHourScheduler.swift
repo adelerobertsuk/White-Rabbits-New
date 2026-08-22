@@ -135,4 +135,5 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
 
 extension Notification.Name {
     static let didOpenLuckyHour = Notification.Name("white-rabbits.didOpenLuckyHour")
+    static let didCompleteRitual = Notification.Name("white-rabbits.didCompleteRitual")
 }

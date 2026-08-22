@@ -100,7 +100,10 @@ final class AppStore: ObservableObject {
         persist()
     }
 
-    /// Marks the month as said, and unlocks this month's charm.
+    /// Marks the month as said, and unlocks this month's charm. This is
+    /// the single unlock event — the Year of Luck grid listens for
+    /// `.didCompleteRitual` to play its door-reveal animation, whether
+    /// the ritual was said from the hero button or the door itself.
     func completeRitual(_ date: Date = Date()) {
         let key = monthKey(date)
         var record = data.months[key] ?? MonthRecord(
@@ -113,6 +116,7 @@ final class AppStore: ObservableObject {
         if record.saidAt == nil { record.saidAt = date }
         data.months[key] = record
         persist()
+        NotificationCenter.default.post(name: .didCompleteRitual, object: nil)
     }
 
     var unlockedCharmIds: Set<String> {

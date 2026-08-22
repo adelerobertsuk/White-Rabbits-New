@@ -222,6 +222,7 @@ struct HomeView: View {
 private struct HeroRingView: View {
     @EnvironmentObject private var store: AppStore
     @Environment(\.palette) private var palette
+    @Environment(\.colorScheme) private var colorScheme
     var progress: CGFloat
     var enchanted: Bool
     var celebrating: Bool
@@ -231,6 +232,9 @@ private struct HeroRingView: View {
     @State private var breathe = false
     @State private var sparkleTurn: Double = 0
     @State private var sparkleOut = false
+    /// A brief, subtle brightening of the ring's own glow at the moment
+    /// a month is revealed — not a redesign, just a transient pulse.
+    @State private var pulseGlow = false
 
     var body: some View {
         ZStack {
@@ -245,12 +249,30 @@ private struct HeroRingView: View {
                 .padding(10)
                 .animation(.easeOut(duration: 0.8), value: progress)
 
-            // A shallow porcelain/frosted-glass medallion: a finer edge and
-            // a softer, shallower shadow than before. The progress arc and
-            // bunny above are untouched.
+            // A shallow porcelain/frosted-glass medallion: a soft radial
+            // fill so it reads as lit from within, a delicate luminous
+            // rim (cool-white in dark mode), the original fine edge, and
+            // a shallow shadow. The progress arc and bunny are untouched.
             Circle()
-                .fill(palette.card)
+                .fill(
+                    RadialGradient(
+                        colors: [
+                            colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.8),
+                            palette.card
+                        ],
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: 120
+                    )
+                )
                 .padding(26)
+                .overlay {
+                    Circle()
+                        .stroke(colorScheme == .dark ? Color.white.opacity(0.5) : Color.white.opacity(0.75), lineWidth: 1)
+                        .padding(26)
+                        .blur(radius: 1.2)
+                        .opacity(0.7)
+                }
                 .overlay {
                     Circle()
                         .strokeBorder(palette.line, lineWidth: 0.75)
@@ -279,13 +301,23 @@ private struct HeroRingView: View {
             }
         }
         .frame(width: 248, height: 248)
-        .shadow(color: palette.accentGlow, radius: 16, y: 20)
+        .shadow(color: palette.accentGlow, radius: pulseGlow ? 28 : 16, y: 20)
         .onAppear { settleIntoTheDay() }
         .onChange(of: enchanted) { _, on in
             if on { settleIntoTheDay() }
         }
         .onChange(of: celebrating) { _, on in
             if on { comeAlive() }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .didCompleteRitual)) { _ in
+            withAnimation(.easeOut(duration: 0.25)) {
+                pulseGlow = true
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    pulseGlow = false
+                }
+            }
         }
     }
 
