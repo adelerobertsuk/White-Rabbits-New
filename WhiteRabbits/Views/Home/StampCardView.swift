@@ -75,31 +75,31 @@ struct StampCardView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .firstTextBaseline) {
-                VStack(alignment: .leading, spacing: 1) {
+                VStack(alignment: .leading, spacing: 2) {
                     Text(currentYear)
                         .kickerStyle()
                     Text(String(localized: "circle.stampCard.title", defaultValue: "Year of luck"))
-                        .font(.system(size: 22, weight: .light))
-                        .tracking(-0.88)
+                        .font(.system(size: 24, weight: .light))
+                        .tracking(-0.96)
                         .foregroundStyle(palette.ink)
                 }
                 Spacer()
                 Text(String(format: String(localized: "circle.stampCard.countShort", defaultValue: "%d OF 12"), store.unlockedCharmIds.count))
                     .kickerStyle()
             }
-            .padding(.horizontal, 2)
+            .padding(.horizontal, 4)
 
-            LazyVGrid(columns: columns, spacing: 5) {
+            LazyVGrid(columns: columns, spacing: 8) {
                 ForEach(BunnyData.all) { bunny in
                     stampCell(bunny)
                 }
             }
         }
-        .padding(.top, 10)
-        .padding(.horizontal, 12)
-        .padding(.bottom, 8)
+        .padding(.top, 16)
+        .padding(.horizontal, 14)
+        .padding(.bottom, 12)
         .cardBackground(dashed: true)
         .overlay {
             RadialGradient(
@@ -123,7 +123,7 @@ struct StampCardView: View {
         let isCurrent = bunny.id == current.id
         let tappable = isCurrent && !unlocked && canRevealCurrent
 
-        return VStack(spacing: 3) {
+        return VStack(spacing: 5) {
             Group {
                 if tappable || (isCurrent && isAnimatingReveal) {
                     revealableDoor(bunny)
@@ -138,7 +138,7 @@ struct StampCardView: View {
 
             Text(monthAbbrev(bunny.month))
                 .font(.system(size: 8, weight: .semibold))
-                .tracking(1.0)
+                .tracking(1.12)
                 .textCase(.uppercase)
                 .foregroundStyle(isCurrent && (unlocked || bunnyRevealed) ? palette.ink : palette.faint)
         }

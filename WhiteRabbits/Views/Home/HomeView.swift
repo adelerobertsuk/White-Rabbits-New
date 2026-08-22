@@ -27,13 +27,13 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 4) {
+                VStack(spacing: 8) {
                     chrome
                     hero
                     StampCardView()
                 }
                 .padding(.horizontal, Layout.screenInset)
-                .padding(.bottom, 8)
+                .padding(.bottom, 16)
             }
             .scrollBounceBehavior(.basedOnSize)
             .scrollIndicators(.hidden)
@@ -71,7 +71,7 @@ struct HomeView: View {
             Spacer()
             SettingsMarkButton(isPresented: $showSettings)
         }
-        .padding(.top, 2)
+        .padding(.top, 8)
     }
 
     private var hero: some View {
@@ -84,7 +84,7 @@ struct HomeView: View {
             }
             .buttonStyle(.plain)
             .disabled(!canSayIt)
-            .padding(.bottom, 10)
+            .padding(.bottom, 16)
 
             wordmark
 
@@ -94,19 +94,18 @@ struct HomeView: View {
                     .tracking(0.14)
                     .foregroundStyle(palette.muted)
                     .multilineTextAlignment(.center)
-                    .padding(.top, 8)
+                    .padding(.top, 12)
             }
 
             Text(giftLine)
-                .font(.system(size: 16, weight: .light))
-                .tracking(-0.4)
-                .lineSpacing(4)
+                .font(.system(size: 17, weight: .light))
+                .tracking(-0.425)
+                .lineSpacing(6.8)
                 .foregroundStyle(palette.ink)
                 .multilineTextAlignment(.center)
-                .lineLimit(2)
-                .padding(.horizontal, 16)
-                .padding(.top, 8)
-                .padding(.bottom, 6)
+                .padding(.horizontal, 20)
+                .padding(.top, 12)
+                .padding(.bottom, 8)
 
             if canSayIt {
                 Button {
@@ -116,22 +115,22 @@ struct HomeView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(PillButtonStyle())
-                .padding(.top, 6)
+                .padding(.top, 8)
             }
 
             luckyShare
         }
         .frame(maxWidth: .infinity)
-        .padding(.top, 2)
+        .padding(.top, 4)
     }
 
     /// Ink on the 1st. The rest of the year it sits in the paper, like a letterpress stamp.
     private var wordmark: some View {
         let lit = store.isFirstOfMonth()
         return Text("White Rabbits")
-            .font(.system(size: 34, weight: .light))
-            .tracking(-1.9)
-            .lineSpacing(-1.6)
+            .font(.system(size: 38, weight: .light))
+            .tracking(-2.09)
+            .lineSpacing(-1.9)
             .multilineTextAlignment(.center)
             .foregroundStyle(palette.ink.opacity(lit ? 1 : 0.28))
             .shadow(color: lit ? .clear : palette.bg.opacity(0.95), radius: 0, y: 0.8)
@@ -218,7 +217,7 @@ struct HomeView: View {
     }
 }
 
-/// Hero ring. Most days he sits still.
+/// The original 248pt ring. Most days he sits still.
 /// On the 1st he breathes. When you say the words, he comes alive once.
 private struct HeroRingView: View {
     @EnvironmentObject private var store: AppStore
@@ -228,11 +227,11 @@ private struct HeroRingView: View {
     var enchanted: Bool
     var celebrating: Bool
 
-    private let ringSize: CGFloat = 210
-    private let bunnyPadding: CGFloat = 42
-    private let medallionPadding: CGFloat = 22
-    private let trackPadding: CGFloat = 8
-    private let sparkleRadius: CGFloat = 90
+    private let ringSize: CGFloat = 248
+    private let bunnyPadding: CGFloat = 50
+    private let medallionPadding: CGFloat = 26
+    private let trackPadding: CGFloat = 10
+    private let sparkleRadius: CGFloat = 108
 
     @State private var tilt: Double = 0
     @State private var lift: CGFloat = 0
