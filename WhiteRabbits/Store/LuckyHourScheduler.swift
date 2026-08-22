@@ -29,9 +29,9 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
 
     func sync(enabled: Bool) async throws -> LuckyHourSyncResult {
         let center = UNUserNotificationCenter.current()
-        center.removePendingNotificationRequests(withIdentifiers: [Self.requestID])
 
         guard enabled else {
+            center.removePendingNotificationRequests(withIdentifiers: [Self.requestID])
             return LuckyHourSyncResult(denied: false)
         }
 
@@ -48,6 +48,22 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
             break
         }
 
+        // This runs on every launch and foreground, which is normally fine —
+        // it just refreshes today's whisper line. But if it runs inside the
+        // 11:11 window itself, cancelling an already-due request that the OS
+        // hasn't delivered yet (common if the phone was locked right at
+        // 11:11) makes the fresh trigger compute "next fire" as tomorrow,
+        // silently skipping today. So inside that window, leave an existing
+        // pending request alone rather than touch it.
+        let now = Calendar.current.dateComponents([.hour, .minute], from: Date())
+        if now.hour == 11, let minute = now.minute, minute <= 15 {
+            let pending = await center.pendingNotificationRequests()
+            if pending.contains(where: { $0.identifier == Self.requestID }) {
+                return LuckyHourSyncResult(denied: false)
+            }
+        }
+
+        center.removePendingNotificationRequests(withIdentifiers: [Self.requestID])
         let content = Self.message()
 
         var components = DateComponents()

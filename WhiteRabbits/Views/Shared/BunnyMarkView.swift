@@ -37,11 +37,17 @@ struct BunnyMarkView: View {
     var unlocked: Bool = true
     var showGlow: Bool = false
     var style: Style = .charm
+    /// Year of Luck: the revealed drawing itself, unchanged geometry,
+    /// rendered in the app's own neutral ink instead of that month's
+    /// pastel/seasonal colours. Default false leaves every other call
+    /// site (hero bunny, settings mark) completely untouched.
+    var monochrome: Bool = false
 
     @Environment(\.palette) private var palette
 
     private var fillColor: Color {
         guard style == .charm else { return .clear }
+        guard !monochrome else { return .clear }
         return unlocked ? Color(hex: bunny.fillHex) : Color.clear
     }
     private var strokeColor: Color {
@@ -49,10 +55,14 @@ struct BunnyMarkView: View {
         case .mark, .asset:
             return palette.ink
         case .charm:
+            if monochrome { return palette.faint }
             return unlocked ? Color(hex: bunny.strokeHex) : palette.muted
         }
     }
-    private var accentColor: Color { unlocked ? Color(hex: bunny.accentHex) : palette.muted }
+    private var accentColor: Color {
+        guard !monochrome else { return palette.faint }
+        return unlocked ? Color(hex: bunny.accentHex) : palette.muted
+    }
 
     /// `.mark` is a head-and-ears logomark for tiny chrome.
     /// `.asset` is the seated brand bunny with its round tail.

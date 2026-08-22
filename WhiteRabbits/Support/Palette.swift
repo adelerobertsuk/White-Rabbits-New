@@ -67,6 +67,33 @@ struct Palette {
     }
 }
 
+/// A material emboss: the shape's own fill recedes into the surface, and
+/// a highlight/shadow pair — carrying real weight, not a 1px nudge —
+/// carves it via light rather than colour. Bone-on-bone in light mode,
+/// dark-on-dark in dark mode. Used for the wordmark, the closed-door ✦,
+/// and the door tile itself.
+struct MaterialEmboss: ViewModifier {
+    var colorScheme: ColorScheme
+    var strength: CGFloat = 1
+    /// Lets call sites toggle the effect (e.g. only when a month is
+    /// still "in the paper") without an Optional ViewModifier.
+    var active: Bool = true
+
+    func body(content: Content) -> some View {
+        let highlight: Color = colorScheme == .dark ? Color.white.opacity(0.16) : Color.white.opacity(0.85)
+        let shadow: Color = colorScheme == .dark ? Color.black.opacity(0.55) : Color.black.opacity(0.24)
+        content
+            .shadow(color: active ? highlight : .clear, radius: 1.1 * strength, x: -1 * strength, y: -1.3 * strength)
+            .shadow(color: active ? shadow : .clear, radius: 1.3 * strength, x: 1 * strength, y: 1.5 * strength)
+    }
+}
+
+extension View {
+    func materialEmboss(_ colorScheme: ColorScheme, strength: CGFloat = 1, active: Bool = true) -> some View {
+        modifier(MaterialEmboss(colorScheme: colorScheme, strength: strength, active: active))
+    }
+}
+
 private struct PaletteKey: EnvironmentKey {
     static let defaultValue: Palette = .light
 }

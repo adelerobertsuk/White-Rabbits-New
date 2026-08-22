@@ -245,10 +245,18 @@ private struct HeroRingView: View {
                 .padding(10)
                 .animation(.easeOut(duration: 0.8), value: progress)
 
+            // A shallow porcelain/frosted-glass medallion: a finer edge and
+            // a softer, shallower shadow than before. The progress arc and
+            // bunny above are untouched.
             Circle()
                 .fill(palette.card)
                 .padding(26)
-                .shadow(color: palette.ink.opacity(0.08), radius: 20, y: 16)
+                .overlay {
+                    Circle()
+                        .strokeBorder(palette.line, lineWidth: 0.75)
+                        .padding(26)
+                }
+                .shadow(color: palette.ink.opacity(0.05), radius: 14, y: 8)
 
             BunnyMarkView(bunny: store.currentBunny(), style: .asset)
                 .padding(50)
