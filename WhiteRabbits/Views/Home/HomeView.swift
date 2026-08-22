@@ -4,7 +4,7 @@
 //
 //  The original Today: ink bunny in a thin ring, White Rabbits,
 //  a quiet greeting, then the year of stamps.
-//  Alarm and intention live behind the settings mark.
+//  Alarm and intention live behind the settings cog.
 //
 
 import SwiftUI
@@ -236,76 +236,107 @@ private struct HeroRingView: View {
     /// a month is revealed — not a redesign, just a transient pulse.
     @State private var pulseGlow = false
 
+    private var tubeCore: Color {
+        colorScheme == .dark
+            ? Color.white.opacity(0.95)
+            : Color.white
+    }
+
+    private var tubePearl: Color {
+        colorScheme == .dark
+            ? Color(red: 0.94, green: 0.95, blue: 0.98)
+            : Color(red: 0.92, green: 0.94, blue: 0.97)
+    }
+
+    private var tubeWarm: Color {
+        palette.accent.opacity(colorScheme == .dark ? 0.55 : 0.4)
+    }
+
     var body: some View {
         ZStack {
-            // Embedded light-tube channel: a fine recessed groove, then the
-            // lit segment that grows with collected months — architectural
-            // strip-light, not a flat stroke.
+            // Recessed channel — dormant tube, fine and architectural.
             Circle()
                 .stroke(
                     colorScheme == .dark
-                        ? Color.white.opacity(0.06)
-                        : palette.ink.opacity(0.07),
-                    lineWidth: 5.5
+                        ? Color.black.opacity(0.65)
+                        : palette.ink.opacity(0.06),
+                    lineWidth: 5.2
                 )
-                .blur(radius: 0.6)
+                .blur(radius: 0.55)
                 .padding(10)
 
             Circle()
                 .stroke(
                     colorScheme == .dark
-                        ? Color.black.opacity(0.55)
-                        : palette.ink.opacity(0.05),
-                    lineWidth: 3.4
+                        ? Color.white.opacity(0.07)
+                        : palette.ink.opacity(0.045),
+                    lineWidth: 3.6
                 )
                 .padding(10)
 
+            // Inner lip of the channel (catches a little ambient light).
             Circle()
                 .stroke(
                     colorScheme == .dark
-                        ? Color.white.opacity(0.12)
-                        : palette.track,
-                    lineWidth: 2.4
+                        ? Color.white.opacity(0.14)
+                        : Color.white.opacity(0.55),
+                    lineWidth: 1.15
                 )
+                .blur(radius: colorScheme == .dark ? 0.8 : 0.5)
                 .padding(10)
 
+            // Soft outer bloom of the lit segment (the tube glowing through the surface).
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(
+                    tubePearl.opacity(colorScheme == .dark ? 0.55 : 0.7),
+                    style: StrokeStyle(lineWidth: 7.5, lineCap: .round)
+                )
+                .rotationEffect(.degrees(-90))
+                .blur(radius: colorScheme == .dark ? 5.5 : 4.5)
+                .padding(10)
+                .opacity(pulseGlow ? 1 : 0.85)
+
+            // Warm secondary halo — restrained, not neon.
+            Circle()
+                .trim(from: 0, to: progress)
+                .stroke(
+                    tubeWarm,
+                    style: StrokeStyle(lineWidth: 5.5, lineCap: .round)
+                )
+                .rotationEffect(.degrees(-90))
+                .blur(radius: 3.2)
+                .padding(10)
+
+            // Bright core of the embedded LED strip.
             Circle()
                 .trim(from: 0, to: progress)
                 .stroke(
                     AngularGradient(
-                        colors: colorScheme == .dark
-                            ? [
-                                Color.white.opacity(0.25),
-                                palette.accent.opacity(0.95),
-                                Color.white.opacity(0.85),
-                                palette.accent.opacity(0.7),
-                                Color.white.opacity(0.25)
-                            ]
-                            : [
-                                Color.white.opacity(0.95),
-                                palette.accent.opacity(0.75),
-                                Color(red: 0.92, green: 0.94, blue: 0.97),
-                                palette.accent.opacity(0.55),
-                                Color.white.opacity(0.95)
-                            ],
+                        colors: [
+                            tubeCore.opacity(0.55),
+                            tubePearl,
+                            tubeCore,
+                            tubeWarm.opacity(0.85),
+                            tubePearl,
+                            tubeCore.opacity(0.55)
+                        ],
                         center: .center,
                         angle: .degrees(-90)
                     ),
-                    style: StrokeStyle(lineWidth: 2.6, lineCap: .round)
+                    style: StrokeStyle(lineWidth: 2.35, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
                 .padding(10)
                 .shadow(
-                    color: colorScheme == .dark
-                        ? palette.accent.opacity(pulseGlow ? 0.85 : 0.45)
-                        : Color.white.opacity(pulseGlow ? 0.95 : 0.55),
-                    radius: pulseGlow ? 10 : 5
+                    color: tubePearl.opacity(pulseGlow ? 0.95 : 0.7),
+                    radius: pulseGlow ? 12 : 7
                 )
                 .shadow(
                     color: colorScheme == .dark
-                        ? Color.white.opacity(pulseGlow ? 0.35 : 0.15)
-                        : palette.accent.opacity(pulseGlow ? 0.35 : 0.18),
-                    radius: pulseGlow ? 14 : 7
+                        ? Color.white.opacity(pulseGlow ? 0.55 : 0.28)
+                        : Color.white.opacity(pulseGlow ? 0.9 : 0.55),
+                    radius: pulseGlow ? 16 : 9
                 )
                 .animation(.easeOut(duration: 0.8), value: progress)
 
@@ -375,15 +406,17 @@ private struct HeroRingView: View {
         .frame(width: 248, height: 248)
         .shadow(
             color: colorScheme == .dark
-                ? palette.accentGlow
+                ? Color.white.opacity(pulseGlow ? 0.28 : 0.14)
                 : Color(red: 0.92, green: 0.94, blue: 0.97).opacity(pulseGlow ? 0.95 : 0.7),
-            radius: pulseGlow ? 28 : (colorScheme == .dark ? 16 : 22),
-            y: colorScheme == .dark ? 20 : 10
+            radius: pulseGlow ? 28 : (colorScheme == .dark ? 20 : 22),
+            y: colorScheme == .dark ? 12 : 10
         )
         .shadow(
-            color: colorScheme == .dark ? .clear : Color.white.opacity(pulseGlow ? 0.9 : 0.65),
-            radius: colorScheme == .dark ? 0 : (pulseGlow ? 18 : 12),
-            y: colorScheme == .dark ? 0 : -2
+            color: colorScheme == .dark
+                ? palette.accent.opacity(pulseGlow ? 0.35 : 0.18)
+                : Color.white.opacity(pulseGlow ? 0.9 : 0.65),
+            radius: colorScheme == .dark ? (pulseGlow ? 22 : 14) : (pulseGlow ? 18 : 12),
+            y: colorScheme == .dark ? 8 : -2
         )
         .onAppear { settleIntoTheDay() }
         .onChange(of: enchanted) { _, on in

@@ -33,6 +33,7 @@ struct StampCardView: View {
     @State private var bunnyLift: CGFloat = 0
     @State private var bunnyScale: CGFloat = 0.92
     @State private var sparkleBurst: Double = 0
+    @State private var sparkleStagger: Double = 0
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 4)
     private var current: Bunny { store.currentBunny() }
@@ -166,13 +167,13 @@ struct StampCardView: View {
                 .fill(
                     RadialGradient(
                         colors: [
-                            Color.white.opacity(0.95),
-                            lightCurrentGlow.opacity(0.55),
+                            Color.white.opacity(0.98),
+                            lightCurrentGlow.opacity(0.7),
                             Color.clear
                         ],
                         center: .center,
                         startRadius: 0,
-                        endRadius: 48
+                        endRadius: 52
                     )
                 )
                 .blendMode(colorScheme == .dark ? .screen : .plusLighter)
@@ -192,18 +193,20 @@ struct StampCardView: View {
                 .scaleEffect(doorPressed ? 0.94 : 1)
                 .offset(y: doorPressed ? 1.5 : 0)
                 .opacity(doorDismissed ? 0 : 1)
-
-            if showRevealSparkle {
-                constellationBurst
-            }
         }
-        .compositingGroup()
         .shadow(
             color: bunnyRevealed
                 ? (colorScheme == .dark ? palette.accent.opacity(0.55) : lightCurrentGlow.opacity(0.7))
                 : .clear,
             radius: bunnyRevealed ? 14 : 0
         )
+        // Sparkles sit outside the tile so the poof can escape the door.
+        .overlay {
+            if showRevealSparkle {
+                constellationBurst
+                    .allowsHitTesting(false)
+            }
+        }
         .contentShape(Rectangle())
         .onTapGesture {
             guard !isAnimatingReveal else { return }
@@ -211,27 +214,55 @@ struct StampCardView: View {
         }
     }
 
+    /// A small elegant “poof of luck” — pearl flakes and ✦ / ✧ / ⋆ that
+    /// radiate past the tile edge. Not confetti-party, but clearly visible.
     private var constellationBurst: some View {
-        let sizes: [CGFloat] = [5, 7, 6, 8, 5, 9, 6, 7, 5, 8, 6, 7]
-        let glyphs = ["✦", "✧", "⋆", "✦", "✧", "⋆", "✦", "✧", "⋆", "✦", "✧", "⋆"]
+        let count = 22
+        let sizes: [CGFloat] = [5, 8, 6, 10, 5, 9, 7, 11, 6, 8, 5, 9, 7, 10, 6, 8, 5, 12, 7, 9, 6, 8]
+        let glyphs = ["✦", "✧", "⋆", "✦", "✧", "⋆", "✦", "✧", "⋆", "✦", "✧", "⋆",
+                      "✦", "✧", "⋆", "✦", "✧", "⋆", "✦", "✧", "⋆", "✦"]
         return ZStack {
-            ForEach(0..<12, id: \.self) { i in
-                let angle = Double(i) * (.pi / 6.0)
-                let distBase = 22.0 + Double(i % 3) * 10.0
-                let dist = distBase + sparkleBurst * (14.0 + Double(i % 4) * 4.0)
+            // Soft pearl flash behind the burst.
+            Circle()
+                .fill(
+                    RadialGradient(
+                        colors: [
+                            Color.white.opacity(0.9),
+                            lightCurrentGlow.opacity(0.45),
+                            Color.clear
+                        ],
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: 56
+                    )
+                )
+                .frame(width: 110, height: 110)
+                .scaleEffect(0.55 + sparkleBurst * 0.85)
+                .opacity(max(0, 0.95 - sparkleBurst * 0.55))
+                .blendMode(colorScheme == .dark ? .screen : .plusLighter)
+
+            ForEach(0..<count, id: \.self) { i in
+                let angle = Double(i) * (.pi * 2.0 / Double(count)) + Double(i % 3) * 0.08
+                let appear = min(1.0, max(0.0, sparkleStagger - Double(i) * 0.035))
+                let distBase = 18.0 + Double(i % 5) * 7.0
+                let dist = distBase + sparkleBurst * (28.0 + Double(i % 4) * 8.0)
                 Text(glyphs[i])
                     .font(.system(size: sizes[i], weight: .light))
                     .foregroundStyle(sparkleColor)
-                    .offset(x: cos(angle) * dist, y: sin(angle) * dist - Double(bunnyLift) * 0.3)
-                    .opacity(max(0.0, 1.0 - sparkleBurst * 0.55))
-                    .scaleEffect(0.85 + sparkleBurst * 0.35)
+                    .shadow(color: Color.white.opacity(0.75), radius: 2)
+                    .offset(
+                        x: cos(angle) * dist,
+                        y: sin(angle) * dist - Double(bunnyLift) * 0.35 - sparkleBurst * 6
+                    )
+                    .opacity(appear * max(0.0, 1.0 - sparkleBurst * 0.42))
+                    .scaleEffect(0.55 + sparkleBurst * 0.55 + appear * 0.2)
             }
         }
-        .allowsHitTesting(false)
+        .frame(width: 160, height: 160)
     }
 
     private var sparkleColor: Color {
-        colorScheme == .dark ? Color.white.opacity(0.92) : lightCurrentGlow.opacity(0.95)
+        colorScheme == .dark ? Color.white.opacity(0.96) : Color.white.opacity(0.98)
     }
 
     @ViewBuilder
@@ -268,11 +299,13 @@ struct StampCardView: View {
     /// success haptic at the peak → settle into permanent glow.
     private func triggerReveal(for bunny: Bunny, alreadyCompleted: Bool) {
         isAnimatingReveal = true
-        bunnyLift = 6
-        bunnyScale = 0.88
+        bunnyLift = 8
+        bunnyScale = 0.82
         sparkleBurst = 0
+        sparkleStagger = 0
         underLightOpacity = 0
         bloomOpacity = 0
+        showRevealSparkle = false
 
         Haptics.light()
         withAnimation(.easeOut(duration: 0.12)) {
@@ -280,66 +313,65 @@ struct StampCardView: View {
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
-            withAnimation(.easeInOut(duration: 0.26)) {
+            withAnimation(.easeInOut(duration: 0.28)) {
                 doorDismissed = true
             }
-            withAnimation(.easeOut(duration: 0.28)) {
-                underLightOpacity = colorScheme == .dark ? 0.7 : 0.9
+            withAnimation(.easeOut(duration: 0.3)) {
+                underLightOpacity = colorScheme == .dark ? 0.85 : 1.0
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.34) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.36) {
             if !alreadyCompleted {
                 store.completeRitual()
             }
-            withAnimation(.easeOut(duration: 0.18)) {
+            withAnimation(.easeOut(duration: 0.14)) {
                 bunnyRevealed = true
             }
-            // One tiny joyful hop — then soft settle.
-            withAnimation(.spring(response: 0.34, dampingFraction: 0.52)) {
-                bunnyLift = -7
-                bunnyScale = 1.06
+            // One clear joyful hop — then soft settle. Not a bounce loop.
+            withAnimation(.spring(response: 0.36, dampingFraction: 0.48)) {
+                bunnyLift = -12
+                bunnyScale = 1.1
             }
         }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.48) {
-            withAnimation(.easeOut(duration: 0.22)) {
+            showRevealSparkle = true
+            withAnimation(.easeOut(duration: 0.28)) {
                 bloomOpacity = bloomPeakOpacity
-                sparkleBurst = 1
-            }
-            withAnimation(.easeOut(duration: 0.12)) {
-                showRevealSparkle = true
+                sparkleBurst = 1.05
+                sparkleStagger = 1
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) {
-            // Peak of hop + poof.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.56) {
+            // Peak of hop + poof of luck.
             Haptics.success()
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.62) {
-            withAnimation(.spring(response: 0.42, dampingFraction: 0.78)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.68) {
+            withAnimation(.spring(response: 0.44, dampingFraction: 0.76)) {
                 bunnyLift = 0
                 bunnyScale = 1
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.95) {
-            withAnimation(.easeInOut(duration: 0.35)) {
-                showRevealSparkle = false
-                sparkleBurst = 1.35
-                underLightOpacity = 0.25
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.05) {
+            withAnimation(.easeInOut(duration: 0.4)) {
+                sparkleBurst = 1.55
+                underLightOpacity = 0.22
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.15) {
-            withAnimation(.easeInOut(duration: 0.45)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.25) {
+            withAnimation(.easeInOut(duration: 0.4)) {
                 bloomOpacity = 0
                 underLightOpacity = 0
+                showRevealSparkle = false
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.45) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.55) {
             isAnimatingReveal = false
             doorPressed = false
             doorDismissed = false
@@ -348,6 +380,7 @@ struct StampCardView: View {
             bunnyLift = 0
             bunnyScale = 1
             sparkleBurst = 0
+            sparkleStagger = 0
             underLightOpacity = 0
         }
     }
