@@ -27,13 +27,13 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 8) {
+                VStack(spacing: 4) {
                     chrome
                     hero
                     StampCardView()
                 }
                 .padding(.horizontal, Layout.screenInset)
-                .padding(.bottom, 28)
+                .padding(.bottom, 8)
             }
             .scrollBounceBehavior(.basedOnSize)
             .scrollIndicators(.hidden)
@@ -71,7 +71,7 @@ struct HomeView: View {
             Spacer()
             SettingsMarkButton(isPresented: $showSettings)
         }
-        .padding(.top, 8)
+        .padding(.top, 2)
     }
 
     private var hero: some View {
@@ -84,7 +84,7 @@ struct HomeView: View {
             }
             .buttonStyle(.plain)
             .disabled(!canSayIt)
-            .padding(.bottom, 20)
+            .padding(.bottom, 10)
 
             wordmark
 
@@ -94,18 +94,19 @@ struct HomeView: View {
                     .tracking(0.14)
                     .foregroundStyle(palette.muted)
                     .multilineTextAlignment(.center)
-                    .padding(.top, 12)
+                    .padding(.top, 8)
             }
 
             Text(giftLine)
-                .font(.system(size: 17, weight: .light))
-                .tracking(-0.425)
-                .lineSpacing(6.8)
+                .font(.system(size: 16, weight: .light))
+                .tracking(-0.4)
+                .lineSpacing(4)
                 .foregroundStyle(palette.ink)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 20)
-                .padding(.top, 12)
-                .padding(.bottom, 11)
+                .lineLimit(2)
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
+                .padding(.bottom, 6)
 
             if canSayIt {
                 Button {
@@ -115,22 +116,22 @@ struct HomeView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(PillButtonStyle())
-                .padding(.top, 8)
+                .padding(.top, 6)
             }
 
             luckyShare
         }
         .frame(maxWidth: .infinity)
-        .padding(.top, 8)
+        .padding(.top, 2)
     }
 
     /// Ink on the 1st. The rest of the year it sits in the paper, like a letterpress stamp.
     private var wordmark: some View {
         let lit = store.isFirstOfMonth()
         return Text("White Rabbits")
-            .font(.system(size: 38, weight: .light))
-            .tracking(-2.09)
-            .lineSpacing(-1.9)
+            .font(.system(size: 34, weight: .light))
+            .tracking(-1.9)
+            .lineSpacing(-1.6)
             .multilineTextAlignment(.center)
             .foregroundStyle(palette.ink.opacity(lit ? 1 : 0.28))
             .shadow(color: lit ? .clear : palette.bg.opacity(0.95), radius: 0, y: 0.8)
@@ -184,7 +185,7 @@ struct HomeView: View {
                 }
                 .buttonStyle(PillButtonStyle(filled: false))
                 .tint(palette.ink)
-                .padding(.top, 12)
+                .padding(.top, 8)
             }
         }
     }
@@ -217,7 +218,7 @@ struct HomeView: View {
     }
 }
 
-/// The original 248pt ring. Most days he sits still.
+/// Hero ring. Most days he sits still.
 /// On the 1st he breathes. When you say the words, he comes alive once.
 private struct HeroRingView: View {
     @EnvironmentObject private var store: AppStore
@@ -226,6 +227,12 @@ private struct HeroRingView: View {
     var progress: CGFloat
     var enchanted: Bool
     var celebrating: Bool
+
+    private let ringSize: CGFloat = 210
+    private let bunnyPadding: CGFloat = 42
+    private let medallionPadding: CGFloat = 22
+    private let trackPadding: CGFloat = 8
+    private let sparkleRadius: CGFloat = 90
 
     @State private var tilt: Double = 0
     @State private var lift: CGFloat = 0
@@ -263,7 +270,7 @@ private struct HeroRingView: View {
                     lineWidth: 5.2
                 )
                 .blur(radius: 0.55)
-                .padding(10)
+                .padding(trackPadding)
 
             Circle()
                 .stroke(
@@ -272,7 +279,7 @@ private struct HeroRingView: View {
                         : palette.ink.opacity(0.045),
                     lineWidth: 3.6
                 )
-                .padding(10)
+                .padding(trackPadding)
 
             // Inner lip of the channel (catches a little ambient light).
             Circle()
@@ -283,7 +290,7 @@ private struct HeroRingView: View {
                     lineWidth: 1.15
                 )
                 .blur(radius: colorScheme == .dark ? 0.8 : 0.5)
-                .padding(10)
+                .padding(trackPadding)
 
             // Soft outer bloom of the lit segment (the tube glowing through the surface).
             Circle()
@@ -294,7 +301,7 @@ private struct HeroRingView: View {
                 )
                 .rotationEffect(.degrees(-90))
                 .blur(radius: colorScheme == .dark ? 5.5 : 4.5)
-                .padding(10)
+                .padding(trackPadding)
                 .opacity(pulseGlow ? 1 : 0.85)
 
             // Warm secondary halo — restrained, not neon.
@@ -306,7 +313,7 @@ private struct HeroRingView: View {
                 )
                 .rotationEffect(.degrees(-90))
                 .blur(radius: 3.2)
-                .padding(10)
+                .padding(trackPadding)
 
             // Bright core of the embedded LED strip.
             Circle()
@@ -327,7 +334,7 @@ private struct HeroRingView: View {
                     style: StrokeStyle(lineWidth: 2.35, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
-                .padding(10)
+                .padding(trackPadding)
                 .shadow(
                     color: tubePearl.opacity(pulseGlow ? 0.95 : 0.7),
                     radius: pulseGlow ? 12 : 7
@@ -356,24 +363,24 @@ private struct HeroRingView: View {
                         ],
                         center: .center,
                         startRadius: 0,
-                        endRadius: 120
+                        endRadius: ringSize / 2
                     )
                 )
-                .padding(26)
+                .padding(medallionPadding)
                 .overlay {
                     Circle()
                         .stroke(
                             colorScheme == .dark ? Color.white.opacity(0.5) : Color.white.opacity(0.95),
                             lineWidth: colorScheme == .dark ? 1 : 1.25
                         )
-                        .padding(26)
+                        .padding(medallionPadding)
                         .blur(radius: colorScheme == .dark ? 1.2 : 1.4)
                         .opacity(colorScheme == .dark ? 0.7 : 0.85)
                 }
                 .overlay {
                     Circle()
                         .strokeBorder(palette.line, lineWidth: 0.75)
-                        .padding(26)
+                        .padding(medallionPadding)
                 }
                 .shadow(
                     color: colorScheme == .dark
@@ -384,7 +391,7 @@ private struct HeroRingView: View {
                 )
 
             BunnyMarkView(bunny: store.currentBunny(), style: .asset)
-                .padding(50)
+                .padding(bunnyPadding)
                 .offset(y: lift)
                 .rotationEffect(.degrees(tilt), anchor: .bottom)
                 .scaleEffect(breathe ? 1.03 : 1)
@@ -395,15 +402,15 @@ private struct HeroRingView: View {
                         .font(.system(size: 8, weight: .light))
                         .foregroundStyle(palette.accent)
                         .offset(
-                            x: cos(Double(i) * .pi / 3 + sparkleTurn) * 108,
-                            y: sin(Double(i) * .pi / 3 + sparkleTurn) * 108
+                            x: cos(Double(i) * .pi / 3 + sparkleTurn) * sparkleRadius,
+                            y: sin(Double(i) * .pi / 3 + sparkleTurn) * sparkleRadius
                         )
                         .opacity(sparkleOut ? 0 : (enchanted ? 0.55 : 1))
                         .scaleEffect(sparkleOut ? 1.4 : 1)
                 }
             }
         }
-        .frame(width: 248, height: 248)
+        .frame(width: ringSize, height: ringSize)
         .shadow(
             color: colorScheme == .dark
                 ? Color.white.opacity(pulseGlow ? 0.28 : 0.14)
