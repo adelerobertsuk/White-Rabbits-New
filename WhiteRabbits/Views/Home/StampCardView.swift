@@ -28,9 +28,11 @@ struct StampCardView: View {
     @State private var doorDismissed = false
     @State private var bunnyRevealed = false
     @State private var showRevealSparkle = false
-    /// A soft, temporary light wash across the card at the moment of
-    /// reveal — pure lighting, not a permanent UI change.
     @State private var bloomOpacity: Double = 0
+    @State private var underLightOpacity: Double = 0
+    @State private var bunnyLift: CGFloat = 0
+    @State private var bunnyScale: CGFloat = 0.92
+    @State private var sparkleBurst: Double = 0
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 4)
     private var current: Bunny { store.currentBunny() }
@@ -149,31 +151,59 @@ struct StampCardView: View {
     @ViewBuilder
     private func revealableDoor(_ bunny: Bunny) -> some View {
         ZStack {
-            monthTile(bunny, isCurrent: true)
+            // Tile plate (illuminated current-month treatment once revealed).
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(palette.card)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .strokeBorder(palette.line, lineWidth: 0.75)
+                }
+                .materialEmboss(colorScheme, strength: 0.55)
+                .opacity(bunnyRevealed || doorDismissed ? 1 : 0)
+
+            // Light that appears underneath as the door opens.
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(
+                    RadialGradient(
+                        colors: [
+                            Color.white.opacity(0.95),
+                            lightCurrentGlow.opacity(0.55),
+                            Color.clear
+                        ],
+                        center: .center,
+                        startRadius: 0,
+                        endRadius: 48
+                    )
+                )
+                .blendMode(colorScheme == .dark ? .screen : .plusLighter)
+                .opacity(underLightOpacity)
+
+            if bunnyRevealed || doorDismissed {
+                currentMonthRim()
+            }
+
+            BunnyMarkView(bunny: bunny, unlocked: true, style: .charm, monochrome: true)
+                .padding(6)
+                .scaleEffect(bunnyScale)
+                .offset(y: bunnyLift)
                 .opacity(bunnyRevealed ? 1 : 0)
 
             closedDoor()
-                .scaleEffect(doorPressed ? 0.96 : 1)
+                .scaleEffect(doorPressed ? 0.94 : 1)
+                .offset(y: doorPressed ? 1.5 : 0)
                 .opacity(doorDismissed ? 0 : 1)
 
-            Text("✦")
-                .font(.system(size: 18, weight: .regular))
-                .foregroundStyle(palette.accent)
-                .opacity(showRevealSparkle ? 1 : 0)
-
             if showRevealSparkle {
-                ForEach(0..<6, id: \.self) { i in
-                    Image(systemName: "sparkle")
-                        .font(.system(size: i.isMultiple(of: 2) ? 7 : 5, weight: .light))
-                        .foregroundStyle(colorScheme == .dark ? Color.white.opacity(0.9) : lightCurrentGlow)
-                        .offset(
-                            x: cos(Double(i) * .pi / 3) * 28,
-                            y: sin(Double(i) * .pi / 3) * 28
-                        )
-                        .opacity(0.85)
-                }
+                constellationBurst
             }
         }
+        .compositingGroup()
+        .shadow(
+            color: bunnyRevealed
+                ? (colorScheme == .dark ? palette.accent.opacity(0.55) : lightCurrentGlow.opacity(0.7))
+                : .clear,
+            radius: bunnyRevealed ? 14 : 0
+        )
         .contentShape(Rectangle())
         .onTapGesture {
             guard !isAnimatingReveal else { return }
@@ -181,67 +211,144 @@ struct StampCardView: View {
         }
     }
 
-    /// The single reveal sequence, however it starts: the primary path is
-    /// automatic, the instant the first-of-month ritual is completed
-    /// (`.didCompleteRitual`, `alreadyCompleted: true`); the fallback is a
-    /// direct tap on the still-closed current door, which completes the
-    /// ritual itself partway through. Same choreography either way:
-    /// press → door unlocks → bunny appears → luminous bloom from the tile
-    /// → delicate sparkles → success haptic → settle into the permanent glow.
+    private var constellationBurst: some View {
+        let sizes: [CGFloat] = [5, 7, 6, 8, 5, 9, 6, 7, 5, 8, 6, 7]
+        let glyphs = ["✦", "✧", "⋆", "✦", "✧", "⋆", "✦", "✧", "⋆", "✦", "✧", "⋆"]
+        return ZStack {
+            ForEach(0..<12, id: \.self) { i in
+                let angle = Double(i) * (.pi / 6.0)
+                let distBase = 22.0 + Double(i % 3) * 10.0
+                let dist = distBase + sparkleBurst * (14.0 + Double(i % 4) * 4.0)
+                Text(glyphs[i])
+                    .font(.system(size: sizes[i], weight: .light))
+                    .foregroundStyle(sparkleColor)
+                    .offset(x: cos(angle) * dist, y: sin(angle) * dist - Double(bunnyLift) * 0.3)
+                    .opacity(max(0.0, 1.0 - sparkleBurst * 0.55))
+                    .scaleEffect(0.85 + sparkleBurst * 0.35)
+            }
+        }
+        .allowsHitTesting(false)
+    }
+
+    private var sparkleColor: Color {
+        colorScheme == .dark ? Color.white.opacity(0.92) : lightCurrentGlow.opacity(0.95)
+    }
+
+    @ViewBuilder
+    private func currentMonthRim() -> some View {
+        if colorScheme == .dark {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(Color.white.opacity(0.85), lineWidth: 1.5)
+                .blur(radius: 1.2)
+        } else {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(
+                    RadialGradient(
+                        colors: [
+                            Color.white.opacity(0.95),
+                            lightCurrentGlow.opacity(0.35),
+                            Color.clear
+                        ],
+                        center: .center,
+                        startRadius: 2,
+                        endRadius: 52
+                    )
+                )
+                .blendMode(.plusLighter)
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(Color.white.opacity(0.95), lineWidth: 1.25)
+                .blur(radius: 0.9)
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(lightCurrentGlow.opacity(0.65), lineWidth: 0.75)
+        }
+    }
+
+    /// press → light haptic → door responds → door recedes → under-light →
+    /// bunny appears with one tiny hop → pearl bloom + constellation →
+    /// success haptic at the peak → settle into permanent glow.
     private func triggerReveal(for bunny: Bunny, alreadyCompleted: Bool) {
         isAnimatingReveal = true
+        bunnyLift = 6
+        bunnyScale = 0.88
+        sparkleBurst = 0
+        underLightOpacity = 0
+        bloomOpacity = 0
 
         Haptics.light()
-        withAnimation(.easeOut(duration: 0.1)) {
+        withAnimation(.easeOut(duration: 0.12)) {
             doorPressed = true
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            withAnimation(.easeInOut(duration: 0.22)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
+            withAnimation(.easeInOut(duration: 0.26)) {
                 doorDismissed = true
+            }
+            withAnimation(.easeOut(duration: 0.28)) {
+                underLightOpacity = colorScheme == .dark ? 0.7 : 0.9
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.32) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.34) {
             if !alreadyCompleted {
                 store.completeRitual()
             }
-            withAnimation(.easeOut(duration: 0.28)) {
+            withAnimation(.easeOut(duration: 0.18)) {
                 bunnyRevealed = true
             }
-        }
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.52) {
-            withAnimation(.easeOut(duration: 0.2)) {
-                bloomOpacity = bloomPeakOpacity
+            // One tiny joyful hop — then soft settle.
+            withAnimation(.spring(response: 0.34, dampingFraction: 0.52)) {
+                bunnyLift = -7
+                bunnyScale = 1.06
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.62) {
-            Haptics.success()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.48) {
+            withAnimation(.easeOut(duration: 0.22)) {
+                bloomOpacity = bloomPeakOpacity
+                sparkleBurst = 1
+            }
             withAnimation(.easeOut(duration: 0.12)) {
                 showRevealSparkle = true
             }
         }
 
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) {
+            // Peak of hop + poof.
+            Haptics.success()
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.62) {
+            withAnimation(.spring(response: 0.42, dampingFraction: 0.78)) {
+                bunnyLift = 0
+                bunnyScale = 1
+            }
+        }
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.95) {
-            withAnimation(.easeInOut(duration: 0.28)) {
+            withAnimation(.easeInOut(duration: 0.35)) {
                 showRevealSparkle = false
+                sparkleBurst = 1.35
+                underLightOpacity = 0.25
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.05) {
-            withAnimation(.easeInOut(duration: 0.55)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.15) {
+            withAnimation(.easeInOut(duration: 0.45)) {
                 bloomOpacity = 0
+                underLightOpacity = 0
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.35) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.45) {
             isAnimatingReveal = false
             doorPressed = false
             doorDismissed = false
             bunnyRevealed = false
             showRevealSparkle = false
+            bunnyLift = 0
+            bunnyScale = 1
+            sparkleBurst = 0
+            underLightOpacity = 0
         }
     }
 
@@ -287,33 +394,7 @@ struct StampCardView: View {
                 .materialEmboss(colorScheme, strength: 0.55)
 
             if isCurrent {
-                if colorScheme == .dark {
-                    // Approved Dark Mode rim — do not change.
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .stroke(Color.white.opacity(0.85), lineWidth: 1.5)
-                        .blur(radius: 1.2)
-                } else {
-                    // Light Mode: cool pearl illumination, not warm accent wash.
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(
-                            RadialGradient(
-                                colors: [
-                                    Color.white.opacity(0.95),
-                                    lightCurrentGlow.opacity(0.35),
-                                    Color.clear
-                                ],
-                                center: .center,
-                                startRadius: 2,
-                                endRadius: 52
-                            )
-                        )
-                        .blendMode(.plusLighter)
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .stroke(Color.white.opacity(0.95), lineWidth: 1.25)
-                        .blur(radius: 0.9)
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .stroke(lightCurrentGlow.opacity(0.65), lineWidth: 0.75)
-                }
+                currentMonthRim()
             }
 
             BunnyMarkView(bunny: bunny, unlocked: true, style: .charm, monochrome: true)

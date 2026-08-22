@@ -238,15 +238,75 @@ private struct HeroRingView: View {
 
     var body: some View {
         ZStack {
+            // Embedded light-tube channel: a fine recessed groove, then the
+            // lit segment that grows with collected months — architectural
+            // strip-light, not a flat stroke.
             Circle()
-                .stroke(palette.track, lineWidth: 3.2)
+                .stroke(
+                    colorScheme == .dark
+                        ? Color.white.opacity(0.06)
+                        : palette.ink.opacity(0.07),
+                    lineWidth: 5.5
+                )
+                .blur(radius: 0.6)
+                .padding(10)
+
+            Circle()
+                .stroke(
+                    colorScheme == .dark
+                        ? Color.black.opacity(0.55)
+                        : palette.ink.opacity(0.05),
+                    lineWidth: 3.4
+                )
+                .padding(10)
+
+            Circle()
+                .stroke(
+                    colorScheme == .dark
+                        ? Color.white.opacity(0.12)
+                        : palette.track,
+                    lineWidth: 2.4
+                )
                 .padding(10)
 
             Circle()
                 .trim(from: 0, to: progress)
-                .stroke(palette.accent, style: StrokeStyle(lineWidth: 3.2, lineCap: .round))
+                .stroke(
+                    AngularGradient(
+                        colors: colorScheme == .dark
+                            ? [
+                                Color.white.opacity(0.25),
+                                palette.accent.opacity(0.95),
+                                Color.white.opacity(0.85),
+                                palette.accent.opacity(0.7),
+                                Color.white.opacity(0.25)
+                            ]
+                            : [
+                                Color.white.opacity(0.95),
+                                palette.accent.opacity(0.75),
+                                Color(red: 0.92, green: 0.94, blue: 0.97),
+                                palette.accent.opacity(0.55),
+                                Color.white.opacity(0.95)
+                            ],
+                        center: .center,
+                        angle: .degrees(-90)
+                    ),
+                    style: StrokeStyle(lineWidth: 2.6, lineCap: .round)
+                )
                 .rotationEffect(.degrees(-90))
                 .padding(10)
+                .shadow(
+                    color: colorScheme == .dark
+                        ? palette.accent.opacity(pulseGlow ? 0.85 : 0.45)
+                        : Color.white.opacity(pulseGlow ? 0.95 : 0.55),
+                    radius: pulseGlow ? 10 : 5
+                )
+                .shadow(
+                    color: colorScheme == .dark
+                        ? Color.white.opacity(pulseGlow ? 0.35 : 0.15)
+                        : palette.accent.opacity(pulseGlow ? 0.35 : 0.18),
+                    radius: pulseGlow ? 14 : 7
+                )
                 .animation(.easeOut(duration: 0.8), value: progress)
 
             // A shallow porcelain/frosted-glass medallion: a soft radial
