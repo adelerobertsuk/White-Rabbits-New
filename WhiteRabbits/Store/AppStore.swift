@@ -216,7 +216,19 @@ final class AppStore: ObservableObject {
     }
 
     func scheduleTestLuckyHour() async {
-        try? await LuckyHourScheduler.shared.scheduleTest()
+        do {
+            let result = try await LuckyHourScheduler.shared.scheduleTest()
+            luckyHourAuthorizationDenied = result.denied
+            if result.denied, data.luckyHourEnabled {
+                data.luckyHourEnabled = false
+                persist()
+            }
+            if result.scheduled {
+                Haptics.success()
+            }
+        } catch {
+            luckyHourAuthorizationDenied = false
+        }
     }
 
     /// Asks for notification permission if needed, then sets the daily 11:11 tap.

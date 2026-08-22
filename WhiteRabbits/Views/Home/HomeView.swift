@@ -251,13 +251,16 @@ private struct HeroRingView: View {
 
             // A shallow porcelain/frosted-glass medallion: a soft radial
             // fill so it reads as lit from within, a delicate luminous
-            // rim (cool-white in dark mode), the original fine edge, and
-            // a shallow shadow. The progress arc and bunny are untouched.
+            // rim (cool pearl in light; white catch in dark), the original
+            // fine edge, and a shallow shadow. Progress arc and bunny stay.
             Circle()
                 .fill(
                     RadialGradient(
                         colors: [
-                            colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.8),
+                            colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.96),
+                            colorScheme == .dark
+                                ? palette.card
+                                : Color(red: 0.96, green: 0.97, blue: 0.99).opacity(0.9),
                             palette.card
                         ],
                         center: .center,
@@ -268,17 +271,26 @@ private struct HeroRingView: View {
                 .padding(26)
                 .overlay {
                     Circle()
-                        .stroke(colorScheme == .dark ? Color.white.opacity(0.5) : Color.white.opacity(0.75), lineWidth: 1)
+                        .stroke(
+                            colorScheme == .dark ? Color.white.opacity(0.5) : Color.white.opacity(0.95),
+                            lineWidth: colorScheme == .dark ? 1 : 1.25
+                        )
                         .padding(26)
-                        .blur(radius: 1.2)
-                        .opacity(0.7)
+                        .blur(radius: colorScheme == .dark ? 1.2 : 1.4)
+                        .opacity(colorScheme == .dark ? 0.7 : 0.85)
                 }
                 .overlay {
                     Circle()
                         .strokeBorder(palette.line, lineWidth: 0.75)
                         .padding(26)
                 }
-                .shadow(color: palette.ink.opacity(0.05), radius: 14, y: 8)
+                .shadow(
+                    color: colorScheme == .dark
+                        ? palette.ink.opacity(0.05)
+                        : Color(red: 0.55, green: 0.58, blue: 0.64).opacity(0.12),
+                    radius: colorScheme == .dark ? 14 : 16,
+                    y: colorScheme == .dark ? 8 : 6
+                )
 
             BunnyMarkView(bunny: store.currentBunny(), style: .asset)
                 .padding(50)
@@ -301,7 +313,18 @@ private struct HeroRingView: View {
             }
         }
         .frame(width: 248, height: 248)
-        .shadow(color: palette.accentGlow, radius: pulseGlow ? 28 : 16, y: 20)
+        .shadow(
+            color: colorScheme == .dark
+                ? palette.accentGlow
+                : Color(red: 0.92, green: 0.94, blue: 0.97).opacity(pulseGlow ? 0.95 : 0.7),
+            radius: pulseGlow ? 28 : (colorScheme == .dark ? 16 : 22),
+            y: colorScheme == .dark ? 20 : 10
+        )
+        .shadow(
+            color: colorScheme == .dark ? .clear : Color.white.opacity(pulseGlow ? 0.9 : 0.65),
+            radius: colorScheme == .dark ? 0 : (pulseGlow ? 18 : 12),
+            y: colorScheme == .dark ? 0 : -2
+        )
         .onAppear { settleIntoTheDay() }
         .onChange(of: enchanted) { _, on in
             if on { settleIntoTheDay() }

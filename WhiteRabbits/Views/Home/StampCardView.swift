@@ -57,11 +57,18 @@ struct StampCardView: View {
     }
 
     private var bloomColor: Color {
-        colorScheme == .dark ? .white : palette.accent
+        // Light: cool pearl, not warm accent (that read as muddy beige).
+        // Dark: unchanged approved white.
+        colorScheme == .dark ? .white : Color.white
     }
 
     private var bloomPeakOpacity: Double {
-        colorScheme == .dark ? 0.55 : 0.32
+        colorScheme == .dark ? 0.55 : 0.72
+    }
+
+    /// Soft cool illumination for the current month in Light Mode only.
+    private var lightCurrentGlow: Color {
+        Color(red: 0.92, green: 0.94, blue: 0.97)
     }
 
     var body: some View {
@@ -153,6 +160,19 @@ struct StampCardView: View {
                 .font(.system(size: 18, weight: .regular))
                 .foregroundStyle(palette.accent)
                 .opacity(showRevealSparkle ? 1 : 0)
+
+            if showRevealSparkle {
+                ForEach(0..<6, id: \.self) { i in
+                    Image(systemName: "sparkle")
+                        .font(.system(size: i.isMultiple(of: 2) ? 7 : 5, weight: .light))
+                        .foregroundStyle(colorScheme == .dark ? Color.white.opacity(0.9) : lightCurrentGlow)
+                        .offset(
+                            x: cos(Double(i) * .pi / 3) * 28,
+                            y: sin(Double(i) * .pi / 3) * 28
+                        )
+                        .opacity(0.85)
+                }
+            }
         }
         .contentShape(Rectangle())
         .onTapGesture {
@@ -166,59 +186,57 @@ struct StampCardView: View {
     /// (`.didCompleteRitual`, `alreadyCompleted: true`); the fallback is a
     /// direct tap on the still-closed current door, which completes the
     /// ritual itself partway through. Same choreography either way:
-    /// press (light haptic, tiny scale-down) → the door recedes and fades
-    /// away cleanly → the existing bunny underneath appears smoothly in
-    /// place → a tiny ✦ moment with a success haptic and a soft light
-    /// bloom across the card → everything breathes back to settle.
+    /// press → door unlocks → bunny appears → luminous bloom from the tile
+    /// → delicate sparkles → success haptic → settle into the permanent glow.
     private func triggerReveal(for bunny: Bunny, alreadyCompleted: Bool) {
         isAnimatingReveal = true
 
         Haptics.light()
-        withAnimation(.easeOut(duration: 0.08)) {
+        withAnimation(.easeOut(duration: 0.1)) {
             doorPressed = true
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) {
-            withAnimation(.easeInOut(duration: 0.2)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            withAnimation(.easeInOut(duration: 0.22)) {
                 doorDismissed = true
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.28) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.32) {
             if !alreadyCompleted {
                 store.completeRitual()
             }
-            withAnimation(.easeOut(duration: 0.22)) {
+            withAnimation(.easeOut(duration: 0.28)) {
                 bunnyRevealed = true
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            Haptics.success()
-            withAnimation(.easeOut(duration: 0.1)) {
-                showRevealSparkle = true
-            }
-            withAnimation(.easeOut(duration: 0.15)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.52) {
+            withAnimation(.easeOut(duration: 0.2)) {
                 bloomOpacity = bloomPeakOpacity
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.68) {
-            withAnimation(.easeInOut(duration: 0.14)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.62) {
+            Haptics.success()
+            withAnimation(.easeOut(duration: 0.12)) {
+                showRevealSparkle = true
+            }
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.95) {
+            withAnimation(.easeInOut(duration: 0.28)) {
                 showRevealSparkle = false
             }
         }
 
-        // The bloom holds at its peak briefly, then breathes back down
-        // rather than cutting off — slower and later than the door/bunny
-        // mechanics, which settle on their own at 0.85s.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
-            withAnimation(.easeInOut(duration: 0.5)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.05) {
+            withAnimation(.easeInOut(duration: 0.55)) {
                 bloomOpacity = 0
             }
         }
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.85) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.35) {
             isAnimatingReveal = false
             doorPressed = false
             doorDismissed = false
@@ -269,26 +287,54 @@ struct StampCardView: View {
                 .materialEmboss(colorScheme, strength: 0.55)
 
             if isCurrent {
-                // A white rim reads clearly in dark mode but is nearly
-                // invisible against the pale bone tile in light mode, so
-                // the warm accent edge carries the illumination in light
-                // mode while the white rim adds the cool pearlescent
-                // catch in dark mode.
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(colorScheme == .dark ? Color.white.opacity(0.85) : palette.accent.opacity(0.95), lineWidth: 1.5)
-                    .blur(radius: colorScheme == .dark ? 1.2 : 0.6)
+                if colorScheme == .dark {
+                    // Approved Dark Mode rim — do not change.
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(Color.white.opacity(0.85), lineWidth: 1.5)
+                        .blur(radius: 1.2)
+                } else {
+                    // Light Mode: cool pearl illumination, not warm accent wash.
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(
+                            RadialGradient(
+                                colors: [
+                                    Color.white.opacity(0.95),
+                                    lightCurrentGlow.opacity(0.35),
+                                    Color.clear
+                                ],
+                                center: .center,
+                                startRadius: 2,
+                                endRadius: 52
+                            )
+                        )
+                        .blendMode(.plusLighter)
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(Color.white.opacity(0.95), lineWidth: 1.25)
+                        .blur(radius: 0.9)
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .stroke(lightCurrentGlow.opacity(0.65), lineWidth: 0.75)
+                }
             }
 
             BunnyMarkView(bunny: bunny, unlocked: true, style: .charm, monochrome: true)
                 .padding(6)
         }
         .shadow(
-            color: isCurrent ? palette.accent.opacity(colorScheme == .dark ? 0.7 : 0.6) : .clear,
-            radius: isCurrent ? 20 : 0
+            color: isCurrent
+                ? (colorScheme == .dark
+                    ? palette.accent.opacity(0.7)
+                    : lightCurrentGlow.opacity(0.85))
+                : .clear,
+            radius: isCurrent ? (colorScheme == .dark ? 20 : 16) : 0
         )
         .shadow(
-            color: isCurrent ? palette.accent.opacity(colorScheme == .dark ? 0.5 : 0.35) : .clear,
-            radius: isCurrent ? 8 : 0
+            color: isCurrent
+                ? (colorScheme == .dark
+                    ? palette.accent.opacity(0.5)
+                    : Color.white.opacity(0.95))
+                : .clear,
+            radius: isCurrent ? (colorScheme == .dark ? 8 : 10) : 0,
+            y: isCurrent && colorScheme == .light ? -1 : 0
         )
     }
 

@@ -11,12 +11,20 @@ import UserNotifications
 
 struct LuckyHourSyncResult {
     var denied: Bool
+    /// True when a daily 11:11 request is sitting in the pending queue.
+    var pendingScheduled: Bool = false
+}
+
+struct LuckyHourTestResult {
+    var denied: Bool
+    var scheduled: Bool
 }
 
 @MainActor
 final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
     static let shared = LuckyHourScheduler()
     static let requestID = "white-rabbits.lucky-hour"
+    static let testRequestID = "white-rabbits.lucky-hour.test"
 
     private override init() {
         super.init()
@@ -32,35 +40,31 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
 
         guard enabled else {
             center.removePendingNotificationRequests(withIdentifiers: [Self.requestID])
-            return LuckyHourSyncResult(denied: false)
+            return LuckyHourSyncResult(denied: false, pendingScheduled: false)
         }
 
         let settings = await center.notificationSettings()
         switch settings.authorizationStatus {
         case .denied:
-            return LuckyHourSyncResult(denied: true)
+            return LuckyHourSyncResult(denied: true, pendingScheduled: false)
         case .notDetermined:
             let granted = try await center.requestAuthorization(options: [.alert, .sound])
             guard granted else {
-                return LuckyHourSyncResult(denied: true)
+                return LuckyHourSyncResult(denied: true, pendingScheduled: false)
             }
         default:
             break
         }
 
-        // This runs on every launch and foreground, which is normally fine —
-        // it just refreshes today's whisper line. But if it runs inside the
-        // 11:11 window itself, cancelling an already-due request that the OS
-        // hasn't delivered yet (common if the phone was locked right at
-        // 11:11) makes the fresh trigger compute "next fire" as tomorrow,
-        // silently skipping today. So inside that window, leave an existing
-        // pending request alone rather than touch it.
-        let now = Calendar.current.dateComponents([.hour, .minute], from: Date())
-        if now.hour == 11, let minute = now.minute, minute <= 15 {
-            let pending = await center.pendingNotificationRequests()
-            if pending.contains(where: { $0.identifier == Self.requestID }) {
-                return LuckyHourSyncResult(denied: false)
-            }
+        // Reliability fix: do not cancel and re-add the daily trigger on
+        // every launch/foreground. That churn was racing the real 11:11
+        // delivery (especially if the phone was locked at fire time) and
+        // could push the next fire to tomorrow. If a correct pending
+        // request already exists, leave it alone.
+        let pending = await center.pendingNotificationRequests()
+        if let existing = pending.first(where: { $0.identifier == Self.requestID }),
+           isDaily1111Trigger(existing.trigger) {
+            return LuckyHourSyncResult(denied: false, pendingScheduled: true)
         }
 
         center.removePendingNotificationRequests(withIdentifiers: [Self.requestID])
@@ -73,30 +77,45 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
         let request = UNNotificationRequest(identifier: Self.requestID, content: content, trigger: trigger)
         try await center.add(request)
 
-        return LuckyHourSyncResult(denied: false)
+        let verified = await center.pendingNotificationRequests()
+            .contains(where: { $0.identifier == Self.requestID })
+        return LuckyHourSyncResult(denied: false, pendingScheduled: verified)
     }
 
-    func scheduleTest() async throws {
+    /// Fires in a few seconds so a physical device can be tested without
+    /// waiting for tomorrow's real 11:11. Does not touch the production
+    /// daily request.
+    func scheduleTest() async throws -> LuckyHourTestResult {
         let center = UNUserNotificationCenter.current()
         let settings = await center.notificationSettings()
         switch settings.authorizationStatus {
         case .denied:
-            return
+            return LuckyHourTestResult(denied: true, scheduled: false)
         case .notDetermined:
             let granted = try await center.requestAuthorization(options: [.alert, .sound])
-            guard granted else { return }
+            guard granted else {
+                return LuckyHourTestResult(denied: true, scheduled: false)
+            }
         default:
             break
         }
 
+        center.removePendingNotificationRequests(withIdentifiers: [Self.testRequestID])
         let content = Self.message()
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)
         let request = UNNotificationRequest(
-            identifier: Self.requestID + ".test",
+            identifier: Self.testRequestID,
             content: content,
             trigger: trigger
         )
         try await center.add(request)
+        return LuckyHourTestResult(denied: false, scheduled: true)
+    }
+
+    /// Whether the daily 11:11 request is currently pending (for Settings diagnostics).
+    func hasPendingDailyRequest() async -> Bool {
+        let pending = await UNUserNotificationCenter.current().pendingNotificationRequests()
+        return pending.contains { $0.identifier == Self.requestID && isDaily1111Trigger($0.trigger) }
     }
 
     func userNotificationCenter(
@@ -114,6 +133,13 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
         await MainActor.run {
             NotificationCenter.default.post(name: .didOpenLuckyHour, object: nil)
         }
+    }
+
+    private func isDaily1111Trigger(_ trigger: UNNotificationTrigger?) -> Bool {
+        guard let calendar = trigger as? UNCalendarNotificationTrigger, calendar.repeats else {
+            return false
+        }
+        return calendar.dateComponents.hour == 11 && calendar.dateComponents.minute == 11
     }
 
     private static func isLuckyHour(_ request: UNNotificationRequest) -> Bool {
