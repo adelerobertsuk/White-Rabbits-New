@@ -87,6 +87,18 @@ final class AppStore: ObservableObject {
         monthRecord()?.intention?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
     }
 
+    /// The quiet line under the bunny on Home, and on the 11:11 share card.
+    func dailyGiftLine(for date: Date = Date()) -> String {
+        if isFirstOfMonth(date) && !ritualCompleted(date) {
+            return String(localized: "greeting.ritual", defaultValue: "White Rabbits, White Rabbits!")
+        }
+        let day = Calendar.current.component(.day, from: date)
+        if (day == 1 || day == 11 || day == 21), !intention.isEmpty {
+            return intention
+        }
+        return Affirmations.line(for: date)
+    }
+
     func setIntention(_ text: String, date: Date = Date()) {
         let key = monthKey(date)
         var record = data.months[key] ?? MonthRecord(

@@ -2,13 +2,14 @@
 //  SettingsButton.swift
 //  WhiteRabbits
 //
-//  The small settings cog in the top-right corner.
+//  The small bunny-mark circle in the top-right corner.
 //
 
 import SwiftUI
 
 struct SettingsMarkButton: View {
     @Binding var isPresented: Bool
+    @EnvironmentObject private var store: AppStore
     @Environment(\.palette) private var palette
 
     var body: some View {
@@ -16,9 +17,8 @@ struct SettingsMarkButton: View {
             Haptics.light()
             isPresented = true
         } label: {
-            Image(systemName: "gearshape")
-                .font(.system(size: 16, weight: .regular))
-                .foregroundStyle(palette.ink)
+            BunnyMarkView(bunny: store.currentBunny(), style: .mark)
+                .frame(width: 22, height: 22)
                 .frame(width: 40, height: 40)
                 .background(Circle().fill(palette.card))
                 .overlay(Circle().strokeBorder(palette.line, lineWidth: 1))

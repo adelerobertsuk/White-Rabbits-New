@@ -10,16 +10,22 @@ import SwiftUI
 
 struct CardBackground: ViewModifier {
     @Environment(\.palette) private var palette
+    @Environment(\.colorScheme) private var colorScheme
     var cornerRadius: CGFloat = 20
     var dashed: Bool = false
 
     func body(content: Content) -> some View {
         content
-            .background(
-                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-                    .fill(palette.card)
-                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
-            )
+            .background {
+                let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+                if colorScheme == .dark {
+                    shape
+                        .fill(palette.card)
+                        .background(.ultraThinMaterial, in: shape)
+                } else {
+                    shape.fill(palette.card)
+                }
+            }
             .overlay(
                 RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .strokeBorder(

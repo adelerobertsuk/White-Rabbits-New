@@ -22,14 +22,14 @@ struct Palette {
 
     static let light = Palette(
         bg: Color(hex: "F6F1EA"),
-        card: Color(hex: "FFFCF8").opacity(0.78),
+        card: Color(hex: "FFFCF8"),
         ink: Color(hex: "2A2622"),
         muted: Color(hex: "5F5850"),
         faint: Color(hex: "9A9188"),
         line: Color(hex: "2A2622").opacity(0.1),
         track: Color(hex: "2A2622").opacity(0.08),
         accent: Color(hex: "C4A36A"),
-        accentGlow: Color(hex: "C4A36A").opacity(0.3),
+        accentGlow: Color(hex: "C4A36A").opacity(0.14),
         danger: Color(hex: "A33B2B")
     )
 
@@ -211,22 +211,25 @@ extension View {
 /// `radial-gradient(120% 70% at 50% -8%, accent-glow, transparent 52%)`.
 struct SanctuaryBackground: View {
     @Environment(\.palette) private var palette
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         ZStack {
             palette.bg
-            GeometryReader { geo in
-                EllipticalGradient(
-                    gradient: Gradient(colors: [
-                        palette.accentGlow,
-                        Color.clear
-                    ]),
-                    center: .center,
-                    startRadiusFraction: 0,
-                    endRadiusFraction: 0.52
-                )
-                .frame(width: geo.size.width * 1.2, height: geo.size.height * 0.7)
-                .position(x: geo.size.width * 0.5, y: geo.size.height * -0.08)
+            if colorScheme == .dark {
+                GeometryReader { geo in
+                    EllipticalGradient(
+                        gradient: Gradient(colors: [
+                            palette.accentGlow,
+                            Color.clear
+                        ]),
+                        center: .center,
+                        startRadiusFraction: 0,
+                        endRadiusFraction: 0.52
+                    )
+                    .frame(width: geo.size.width * 1.2, height: geo.size.height * 0.7)
+                    .position(x: geo.size.width * 0.5, y: geo.size.height * -0.08)
+                }
             }
         }
         .ignoresSafeArea()

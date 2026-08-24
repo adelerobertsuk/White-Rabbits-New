@@ -166,13 +166,7 @@ struct HomeView: View {
 
     /// A daily treat under the bunny. Your own note surfaces a few times a month.
     private var giftLine: String {
-        if canSayIt {
-            return String(localized: "greeting.ritual", defaultValue: "White Rabbits, White Rabbits!")
-        }
-        if shouldShowIntention {
-            return store.intention
-        }
-        return Affirmations.line()
+        store.dailyGiftLine()
     }
 
     private var luckyShare: some View {
@@ -187,13 +181,6 @@ struct HomeView: View {
                 .padding(.top, 8)
             }
         }
-    }
-
-    /// Past-you, three times a month: the 1st, 11th and 21st.
-    private var shouldShowIntention: Bool {
-        guard !store.intention.isEmpty else { return false }
-        let day = Calendar.current.component(.day, from: Date())
-        return day == 1 || day == 11 || day == 21
     }
 
     private func sayTheWords() {
@@ -245,149 +232,153 @@ private struct HeroRingView: View {
     private var tubeCore: Color {
         colorScheme == .dark
             ? Color.white.opacity(0.95)
-            : Color.white
+            : palette.ink.opacity(0.22)
     }
 
     private var tubePearl: Color {
         colorScheme == .dark
             ? Color(red: 0.94, green: 0.95, blue: 0.98)
-            : Color(red: 0.92, green: 0.94, blue: 0.97)
+            : palette.accent.opacity(0.55)
     }
 
     private var tubeWarm: Color {
-        palette.accent.opacity(colorScheme == .dark ? 0.55 : 0.4)
+        palette.accent.opacity(colorScheme == .dark ? 0.55 : 0.35)
     }
 
     var body: some View {
         ZStack {
-            // Recessed channel — dormant tube, fine and architectural.
-            Circle()
-                .stroke(
-                    colorScheme == .dark
-                        ? Color.black.opacity(0.65)
-                        : palette.ink.opacity(0.06),
-                    lineWidth: 5.2
-                )
-                .blur(radius: 0.55)
-                .padding(trackPadding)
+            if colorScheme == .dark {
+                // Recessed channel — dormant tube, fine and architectural.
+                Circle()
+                    .stroke(Color.black.opacity(0.65), lineWidth: 5.2)
+                    .blur(radius: 0.55)
+                    .padding(trackPadding)
 
-            Circle()
-                .stroke(
-                    colorScheme == .dark
-                        ? Color.white.opacity(0.07)
-                        : palette.ink.opacity(0.045),
-                    lineWidth: 3.6
-                )
-                .padding(trackPadding)
+                Circle()
+                    .stroke(Color.white.opacity(0.07), lineWidth: 3.6)
+                    .padding(trackPadding)
+            } else {
+                Circle()
+                    .stroke(palette.track, lineWidth: 2.4)
+                    .padding(trackPadding)
+            }
 
             // Inner lip of the channel (catches a little ambient light).
             Circle()
                 .stroke(
                     colorScheme == .dark
                         ? Color.white.opacity(0.14)
-                        : Color.white.opacity(0.55),
+                        : palette.line,
                     lineWidth: 1.15
                 )
-                .blur(radius: colorScheme == .dark ? 0.8 : 0.5)
+                .blur(radius: colorScheme == .dark ? 0.8 : 0)
                 .padding(trackPadding)
 
-            // Soft outer bloom of the lit segment (the tube glowing through the surface).
-            Circle()
-                .trim(from: 0, to: progress)
-                .stroke(
-                    tubePearl.opacity(colorScheme == .dark ? 0.55 : 0.7),
-                    style: StrokeStyle(lineWidth: 7.5, lineCap: .round)
-                )
-                .rotationEffect(.degrees(-90))
-                .blur(radius: colorScheme == .dark ? 5.5 : 4.5)
-                .padding(trackPadding)
-                .opacity(pulseGlow ? 1 : 0.85)
+            if colorScheme == .dark {
+                // Soft outer bloom of the lit segment (the tube glowing through the surface).
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(
+                        tubePearl.opacity(0.55),
+                        style: StrokeStyle(lineWidth: 7.5, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(-90))
+                    .blur(radius: 5.5)
+                    .padding(trackPadding)
+                    .opacity(pulseGlow ? 1 : 0.85)
 
-            // Warm secondary halo — restrained, not neon.
-            Circle()
-                .trim(from: 0, to: progress)
-                .stroke(
-                    tubeWarm,
-                    style: StrokeStyle(lineWidth: 5.5, lineCap: .round)
-                )
-                .rotationEffect(.degrees(-90))
-                .blur(radius: 3.2)
-                .padding(trackPadding)
+                // Warm secondary halo — restrained, not neon.
+                Circle()
+                    .trim(from: 0, to: progress)
+                    .stroke(
+                        tubeWarm,
+                        style: StrokeStyle(lineWidth: 5.5, lineCap: .round)
+                    )
+                    .rotationEffect(.degrees(-90))
+                    .blur(radius: 3.2)
+                    .padding(trackPadding)
+            }
 
             // Bright core of the embedded LED strip.
             Circle()
                 .trim(from: 0, to: progress)
                 .stroke(
-                    AngularGradient(
-                        colors: [
-                            tubeCore.opacity(0.55),
-                            tubePearl,
-                            tubeCore,
-                            tubeWarm.opacity(0.85),
-                            tubePearl,
-                            tubeCore.opacity(0.55)
-                        ],
-                        center: .center,
-                        angle: .degrees(-90)
-                    ),
-                    style: StrokeStyle(lineWidth: 2.35, lineCap: .round)
+                    colorScheme == .dark
+                        ? AnyShapeStyle(
+                            AngularGradient(
+                                colors: [
+                                    tubeCore.opacity(0.55),
+                                    tubePearl,
+                                    tubeCore,
+                                    tubeWarm.opacity(0.85),
+                                    tubePearl,
+                                    tubeCore.opacity(0.55)
+                                ],
+                                center: .center,
+                                angle: .degrees(-90)
+                            )
+                        )
+                        : AnyShapeStyle(palette.accent.opacity(0.75)),
+                    style: StrokeStyle(lineWidth: colorScheme == .dark ? 2.35 : 2.2, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
                 .padding(trackPadding)
                 .shadow(
-                    color: tubePearl.opacity(pulseGlow ? 0.95 : 0.7),
+                    color: colorScheme == .dark
+                        ? tubePearl.opacity(pulseGlow ? 0.95 : 0.7)
+                        : .clear,
                     radius: pulseGlow ? 12 : 7
                 )
                 .shadow(
                     color: colorScheme == .dark
                         ? Color.white.opacity(pulseGlow ? 0.55 : 0.28)
-                        : Color.white.opacity(pulseGlow ? 0.9 : 0.55),
+                        : .clear,
                     radius: pulseGlow ? 16 : 9
                 )
                 .animation(.easeOut(duration: 0.8), value: progress)
 
-            // A shallow porcelain/frosted-glass medallion: a soft radial
-            // fill so it reads as lit from within, a delicate luminous
-            // rim (cool pearl in light; white catch in dark), the original
-            // fine edge, and a shallow shadow. Progress arc and bunny stay.
-            Circle()
-                .fill(
-                    RadialGradient(
-                        colors: [
-                            colorScheme == .dark ? Color.white.opacity(0.05) : Color.white.opacity(0.96),
-                            colorScheme == .dark
-                                ? palette.card
-                                : Color(red: 0.96, green: 0.97, blue: 0.99).opacity(0.9),
-                            palette.card
-                        ],
-                        center: .center,
-                        startRadius: 0,
-                        endRadius: ringSize / 2
-                    )
-                )
-                .padding(medallionPadding)
-                .overlay {
+            // Medallion: calm off-white in light mode (matches widget); lit porcelain in dark.
+            Group {
+                if colorScheme == .dark {
                     Circle()
-                        .stroke(
-                            colorScheme == .dark ? Color.white.opacity(0.5) : Color.white.opacity(0.95),
-                            lineWidth: colorScheme == .dark ? 1 : 1.25
+                        .fill(
+                            RadialGradient(
+                                colors: [
+                                    Color.white.opacity(0.05),
+                                    palette.card,
+                                    palette.card
+                                ],
+                                center: .center,
+                                startRadius: 0,
+                                endRadius: ringSize / 2
+                            )
                         )
                         .padding(medallionPadding)
-                        .blur(radius: colorScheme == .dark ? 1.2 : 1.4)
-                        .opacity(colorScheme == .dark ? 0.7 : 0.85)
-                }
-                .overlay {
+                        .overlay {
+                            Circle()
+                                .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                                .padding(medallionPadding)
+                                .blur(radius: 1.2)
+                                .opacity(0.7)
+                        }
+                        .overlay {
+                            Circle()
+                                .strokeBorder(palette.line, lineWidth: 0.75)
+                                .padding(medallionPadding)
+                        }
+                        .shadow(color: palette.ink.opacity(0.05), radius: 14, y: 8)
+                } else {
                     Circle()
-                        .strokeBorder(palette.line, lineWidth: 0.75)
+                        .fill(palette.card)
                         .padding(medallionPadding)
+                        .overlay {
+                            Circle()
+                                .strokeBorder(palette.line, lineWidth: 0.75)
+                                .padding(medallionPadding)
+                        }
+                        .shadow(color: palette.ink.opacity(0.08), radius: 16, y: 6)
                 }
-                .shadow(
-                    color: colorScheme == .dark
-                        ? palette.ink.opacity(0.05)
-                        : Color(red: 0.55, green: 0.58, blue: 0.64).opacity(0.12),
-                    radius: colorScheme == .dark ? 14 : 16,
-                    y: colorScheme == .dark ? 8 : 6
-                )
+            }
 
             BunnyMarkView(bunny: store.currentBunny(), style: .asset)
                 .padding(bunnyPadding)
@@ -413,16 +404,16 @@ private struct HeroRingView: View {
         .shadow(
             color: colorScheme == .dark
                 ? Color.white.opacity(pulseGlow ? 0.28 : 0.14)
-                : Color(red: 0.92, green: 0.94, blue: 0.97).opacity(pulseGlow ? 0.95 : 0.7),
-            radius: pulseGlow ? 28 : (colorScheme == .dark ? 20 : 22),
+                : palette.accentGlow.opacity(pulseGlow ? 0.35 : 0.22),
+            radius: colorScheme == .dark ? (pulseGlow ? 28 : 20) : (pulseGlow ? 18 : 14),
             y: colorScheme == .dark ? 12 : 10
         )
         .shadow(
             color: colorScheme == .dark
                 ? palette.accent.opacity(pulseGlow ? 0.35 : 0.18)
-                : Color.white.opacity(pulseGlow ? 0.9 : 0.65),
-            radius: colorScheme == .dark ? (pulseGlow ? 22 : 14) : (pulseGlow ? 18 : 12),
-            y: colorScheme == .dark ? 8 : -2
+                : .clear,
+            radius: colorScheme == .dark ? (pulseGlow ? 22 : 14) : 0,
+            y: colorScheme == .dark ? 8 : 0
         )
         .onAppear { settleIntoTheDay() }
         .onChange(of: enchanted) { _, on in

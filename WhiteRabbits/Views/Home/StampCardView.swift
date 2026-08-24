@@ -137,10 +137,10 @@ struct StampCardView: View {
             .aspectRatio(1, contentMode: .fit)
 
             Text(monthAbbrev(bunny.month))
-                .font(.system(size: 8, weight: .semibold))
+                .font(.system(size: 8, weight: isCurrent && (unlocked || bunnyRevealed) ? .bold : .semibold))
                 .tracking(1.12)
                 .textCase(.uppercase)
-                .foregroundStyle(isCurrent && (unlocked || bunnyRevealed) ? palette.ink : palette.faint)
+                .foregroundStyle(isCurrent && (unlocked || bunnyRevealed) ? palette.accent : palette.faint)
         }
     }
 
@@ -271,6 +271,8 @@ struct StampCardView: View {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .stroke(Color.white.opacity(0.85), lineWidth: 1.5)
                 .blur(radius: 1.2)
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(palette.accent.opacity(0.75), lineWidth: 1.75)
         } else {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(
@@ -291,6 +293,9 @@ struct StampCardView: View {
                 .blur(radius: 0.9)
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .stroke(lightCurrentGlow.opacity(0.65), lineWidth: 0.75)
+            // Warm ring: the open door. Collected months stay quiet grey tiles.
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(palette.accent.opacity(0.82), lineWidth: 2)
         }
     }
 

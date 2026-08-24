@@ -35,8 +35,13 @@ enum LuckyMinuteCopy {
 }
 
 struct LuckyHourShareCardView: View {
-    private let palette = Palette.light
-    private let bunny = BunnyData.bunny(forMonth: 1)
+    let bunny: Bunny
+    let giftLine: String
+    let colorScheme: ColorScheme
+
+    private var palette: Palette {
+        Palette.current(for: colorScheme)
+    }
 
     static let cardSize = CGSize(width: 240, height: 280)
 
@@ -54,27 +59,34 @@ struct LuckyHourShareCardView: View {
                 .foregroundStyle(palette.ink)
                 .padding(.top, 18)
 
-            Text(LuckyMinuteCopy.whisper())
+            Text(giftLine)
                 .font(.system(size: 14, weight: .medium))
                 .foregroundStyle(palette.muted)
                 .multilineTextAlignment(.center)
+                .lineLimit(3)
+                .minimumScaleFactor(0.85)
+                .padding(.horizontal, 16)
                 .padding(.top, 10)
 
             Spacer(minLength: 0)
         }
         .frame(width: Self.cardSize.width, height: Self.cardSize.height)
         .background(palette.bg)
-        .environment(\.colorScheme, .light)
+        .environment(\.colorScheme, colorScheme)
         .environment(\.palette, palette)
     }
 }
 
 /// One tap. The postcard only. No extra words in the message box.
 struct LuckyHourShareLink<Label: View>: View {
+    @EnvironmentObject private var store: AppStore
+    @Environment(\.colorScheme) private var colorScheme
+
     @ViewBuilder var label: () -> Label
 
     @State private var image: PlatformImage?
     @State private var fileURL: URL?
+    @State private var renderKey = ""
 
     var body: some View {
         Group {
@@ -91,21 +103,31 @@ struct LuckyHourShareLink<Label: View>: View {
             } else {
                 Button {
                     Haptics.medium()
-                    prepare()
+                    prepare(force: true)
                 } label: {
                     label()
                 }
                 .buttonStyle(.plain)
             }
         }
-        .onAppear { prepare() }
+        .onAppear { prepare(force: false) }
+        .onChange(of: colorScheme) { _, _ in prepare(force: true) }
     }
 
-    private func prepare() {
-        guard image == nil else { return }
+    private func prepare(force: Bool) {
+        let key = "\(colorScheme)-\(store.dailyGiftLine())-\(store.currentBunny().id)"
+        guard force || image == nil || renderKey != key else { return }
+        renderKey = key
+        image = nil
+        fileURL = nil
         #if canImport(UIKit)
         let size = LuckyHourShareCardView.cardSize
-        let renderer = ImageRenderer(content: LuckyHourShareCardView())
+        let card = LuckyHourShareCardView(
+            bunny: store.currentBunny(),
+            giftLine: store.dailyGiftLine(),
+            colorScheme: colorScheme
+        )
+        let renderer = ImageRenderer(content: card)
         renderer.scale = 3
         renderer.proposedSize = ProposedViewSize(width: size.width, height: size.height)
         renderer.isOpaque = true
@@ -138,6 +160,18 @@ private typealias PlatformImage = UIImage
 private typealias PlatformImage = NSImage
 #endif
 
-#Preview {
-    LuckyHourShareCardView()
+#Preview("Light") {
+    LuckyHourShareCardView(
+        bunny: BunnyData.bunny(forMonth: 8),
+        giftLine: Affirmations.line(),
+        colorScheme: .light
+    )
+}
+
+#Preview("Dark") {
+    LuckyHourShareCardView(
+        bunny: BunnyData.bunny(forMonth: 8),
+        giftLine: Affirmations.line(),
+        colorScheme: .dark
+    )
 }
