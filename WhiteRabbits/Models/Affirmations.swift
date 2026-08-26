@@ -29,6 +29,18 @@ enum Affirmations {
         return all[index]
     }
 
+    /// The day's line before any personal intention is layered on top: the
+    /// ritual greeting on the 1st, the affirmation-of-the-day otherwise. One
+    /// shared implementation for the main app (`AppStore.dailyGiftLine`,
+    /// used by both Home and the 11:11 share card) and the widget extension,
+    /// so neither hand-duplicates this rule and the two can't drift apart.
+    static func dailyLine(for date: Date = Date()) -> String {
+        if Calendar.current.component(.day, from: date) == 1 {
+            return String(localized: "greeting.ritual", defaultValue: "White Rabbits, White Rabbits!")
+        }
+        return line(for: date)
+    }
+
     /// 500 lines, curated. See Reference/affirmations/curation-notes.md for provenance.
     static let all: [String] = [
         "Luck likes you today.",

@@ -46,11 +46,11 @@ struct CharmProvider: TimelineProvider {
 
     /// The 1st says the words. Every other day is the quiet line.
     /// Intention stays in the app, so the Home Screen never feels like homework.
+    /// Shares `Affirmations.dailyLine` with the main app (Home and the 11:11
+    /// share card both go through `AppStore.dailyGiftLine`) so this and the
+    /// in-app surfaces can't independently drift on what "today's line" is.
     private func giftLine(for date: Date) -> String {
-        if Calendar.current.component(.day, from: date) == 1 {
-            return String(localized: "greeting.ritual", defaultValue: "White Rabbits, White Rabbits!")
-        }
-        return Affirmations.line(for: date)
+        Affirmations.dailyLine(for: date)
     }
 }
 
