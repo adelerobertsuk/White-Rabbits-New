@@ -437,6 +437,10 @@ struct StampCardView: View {
 
             BunnyMarkView(bunny: bunny, unlocked: true, style: .charm, monochrome: true)
                 .padding(6)
+
+            if bunny.month == 9 {
+                SeptemberMakerMark()
+            }
         }
         .shadow(
             color: isCurrent
@@ -469,9 +473,49 @@ struct StampCardView: View {
     }
 }
 
+/// Microscopic printer's mark inside the open September tile only.
+private struct SeptemberMakerMark: View {
+    @Environment(\.palette) private var palette
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        Text("JYR · 01.09")
+            .font(.system(size: 5, weight: .light))
+            .tracking(0.6)
+            .foregroundStyle(palette.ink.opacity(colorScheme == .dark ? 0.22 : 0.18))
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            .padding(.bottom, 5)
+            .allowsHitTesting(false)
+            .accessibilityHidden(true)
+    }
+}
+
 #Preview {
     StampCardView()
         .environmentObject(AppStore())
         .environment(\.palette, .light)
         .padding()
+}
+
+#Preview("September maker mark") {
+    let bunny = BunnyData.bunny(forMonth: 9)
+    let palette = Palette.light
+    return ZStack {
+        RoundedRectangle(cornerRadius: 16, style: .continuous)
+            .fill(palette.card)
+            .overlay {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(palette.line, lineWidth: 0.75)
+            }
+        BunnyMarkView(bunny: bunny, unlocked: true, style: .charm, monochrome: true)
+            .padding(6)
+            .environment(\.palette, palette)
+        SeptemberMakerMark()
+            .environment(\.palette, palette)
+            .environment(\.colorScheme, .light)
+    }
+    .frame(width: 88, height: 88)
+    .padding(40)
+    .background(palette.bg)
+    .environment(\.palette, palette)
 }
