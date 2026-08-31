@@ -110,6 +110,7 @@ final class AppStore: ObservableObject {
         record.intention = trimmed.isEmpty ? nil : trimmed
         data.months[key] = record
         persist()
+        Task { await refreshLuckyHour() }
     }
 
     /// Marks the month as said, and unlocks this month's charm. This is
@@ -129,6 +130,7 @@ final class AppStore: ObservableObject {
         data.months[key] = record
         persist()
         NotificationCenter.default.post(name: .didCompleteRitual, object: nil)
+        Task { await refreshLuckyHour() }
     }
 
     var unlockedCharmIds: Set<String> {
@@ -229,7 +231,7 @@ final class AppStore: ObservableObject {
 
     func scheduleTestLuckyHour() async {
         do {
-            let result = try await LuckyHourScheduler.shared.scheduleTest()
+            let result = try await LuckyHourScheduler.shared.scheduleTest(body: dailyGiftLine())
             luckyHourAuthorizationDenied = result.denied
             if result.denied, data.luckyHourEnabled {
                 data.luckyHourEnabled = false
@@ -246,7 +248,13 @@ final class AppStore: ObservableObject {
     /// Asks for notification permission if needed, then sets the daily 11:11 tap.
     func refreshLuckyHour() async {
         do {
-            let result = try await LuckyHourScheduler.shared.sync(enabled: data.luckyHourEnabled)
+            let upcoming = upcomingLuckyHourEntries().map {
+                LuckyHourScheduleEntry(fireDate: $0.fireDate, body: $0.body)
+            }
+            let result = try await LuckyHourScheduler.shared.sync(
+                enabled: data.luckyHourEnabled,
+                upcoming: upcoming
+            )
             luckyHourAuthorizationDenied = result.denied
             if result.denied, data.luckyHourEnabled {
                 data.luckyHourEnabled = false
@@ -255,6 +263,22 @@ final class AppStore: ObservableObject {
         } catch {
             luckyHourAuthorizationDenied = false
         }
+    }
+
+    private func upcomingLuckyHourEntries(from now: Date = Date(), days: Int = 7) -> [(fireDate: Date, body: String)] {
+        let calendar = Calendar.current
+        var entries: [(fireDate: Date, body: String)] = []
+        for offset in 0..<days {
+            guard let dayStart = calendar.date(byAdding: .day, value: offset, to: calendar.startOfDay(for: now)) else {
+                continue
+            }
+            var components = calendar.dateComponents([.year, .month, .day], from: dayStart)
+            components.hour = 11
+            components.minute = 11
+            guard let fireDate = calendar.date(from: components), fireDate > now else { continue }
+            entries.append((fireDate: fireDate, body: dailyGiftLine(for: dayStart)))
+        }
+        return entries
     }
 
     /// Keeps both the monthly alarm and the optional 11:11 tap in sync.
