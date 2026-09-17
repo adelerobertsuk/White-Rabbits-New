@@ -87,16 +87,32 @@ final class AppStore: ObservableObject {
         monthRecord()?.intention?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
     }
 
-    /// The quiet line under the bunny on Home, and on the 11:11 share card.
+    /// The quiet line under the bunny on Home, and on the lucky-minute share card.
     func dailyGiftLine(for date: Date = Date()) -> String {
         if isFirstOfMonth(date) && !ritualCompleted(date) {
             return String(localized: "greeting.ritual", defaultValue: "White Rabbits, White Rabbits!")
         }
         let day = Calendar.current.component(.day, from: date)
-        if (day == 1 || day == 11 || day == 21), !intention.isEmpty {
+        if (day == 7 || day == 14 || day == 21), !intention.isEmpty {
             return intention
         }
         return Affirmations.line(for: date)
+    }
+
+    var hasHandledCurrentMonthIntentionPrompt: Bool {
+        monthRecord()?.intentionPromptHandledAt != nil
+    }
+
+    func markCurrentMonthIntentionPromptHandled(at date: Date = Date()) {
+        let key = monthKey(date)
+        var record = data.months[key] ?? MonthRecord(
+            key: key,
+            year: Calendar.current.component(.year, from: date),
+            month: Calendar.current.component(.month, from: date)
+        )
+        record.intentionPromptHandledAt = date
+        data.months[key] = record
+        persist()
     }
 
     func setIntention(_ text: String, date: Date = Date()) {
@@ -211,12 +227,23 @@ final class AppStore: ObservableObject {
 
     var luckyHourEnabled: Bool { data.luckyHourEnabled }
 
-    /// 11:11, and a little while after, so there is time to send it on.
+    var luckyMinuteHour: Int { data.luckyMinuteHour }
+    var luckyMinute: Int { data.luckyMinute }
+
+    var luckyMinuteDate: Date {
+        var components = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+        components.hour = data.luckyMinuteHour
+        components.minute = data.luckyMinute
+        components.second = 0
+        return Calendar.current.date(from: components) ?? Date()
+    }
+
+    /// The configured lucky minute, and a little while after, so there is time to send it on.
     func isLuckyShareWindow(_ date: Date = Date()) -> Bool {
         let parts = Calendar.current.dateComponents([.hour, .minute], from: date)
-        guard parts.hour == 11 else { return false }
+        guard parts.hour == data.luckyMinuteHour else { return false }
         let minute = parts.minute ?? 0
-        return minute >= 11 && minute < 21
+        return minute >= data.luckyMinute && minute < data.luckyMinute + 10
     }
 
     func shouldOfferLuckyShare(at date: Date = Date()) -> Bool {
@@ -225,6 +252,13 @@ final class AppStore: ObservableObject {
 
     func setLuckyHourEnabled(_ on: Bool) {
         data.luckyHourEnabled = on
+        persist()
+        Task { await refreshLuckyHour() }
+    }
+
+    func setLuckyMinute(_ date: Date) {
+        data.luckyMinuteHour = Calendar.current.component(.hour, from: date)
+        data.luckyMinute = Calendar.current.component(.minute, from: date)
         persist()
         Task { await refreshLuckyHour() }
     }
@@ -245,7 +279,7 @@ final class AppStore: ObservableObject {
         }
     }
 
-    /// Asks for notification permission if needed, then sets the daily 11:11 tap.
+    /// Asks for notification permission if needed, then sets the daily lucky-minute tap.
     func refreshLuckyHour() async {
         do {
             let upcoming = upcomingLuckyHourEntries().map {
@@ -273,15 +307,15 @@ final class AppStore: ObservableObject {
                 continue
             }
             var components = calendar.dateComponents([.year, .month, .day], from: dayStart)
-            components.hour = 11
-            components.minute = 11
+            components.hour = data.luckyMinuteHour
+            components.minute = data.luckyMinute
             guard let fireDate = calendar.date(from: components), fireDate > now else { continue }
             entries.append((fireDate: fireDate, body: dailyGiftLine(for: dayStart)))
         }
         return entries
     }
 
-    /// Keeps both the monthly alarm and the optional 11:11 tap in sync.
+    /// Keeps both the monthly alarm and the optional lucky-minute tap in sync.
     func refreshScheduledItems() async {
         await refreshAlarms()
         await refreshLuckyHour()

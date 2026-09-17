@@ -35,7 +35,7 @@ struct StampCardView: View {
     @State private var sparkleBurst: Double = 0
     @State private var sparkleStagger: Double = 0
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 4), count: 4)
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 14), count: 3)
     private var current: Bunny { store.currentBunny() }
     private var canRevealCurrent: Bool {
         store.isFirstOfMonth() && !store.ritualCompleted()
@@ -51,11 +51,11 @@ struct StampCardView: View {
     /// bloom can originate near it rather than from dead centre.
     private var bloomCenter: UnitPoint {
         let index = current.month - 1
-        let row = index / 4
-        let col = index % 4
-        let x = (CGFloat(col) + 0.5) / 4
+        let row = index / 3
+        let col = index % 3
+        let x = (CGFloat(col) + 0.5) / 3
         let headerFraction: CGFloat = 0.16
-        let y = headerFraction + (1 - headerFraction) * (CGFloat(row) + 0.5) / 3
+        let y = headerFraction + (1 - headerFraction) * (CGFloat(row) + 0.5) / 4
         return UnitPoint(x: x, y: y)
     }
 
@@ -71,36 +71,29 @@ struct StampCardView: View {
 
     /// Soft cool illumination for the current month in Light Mode only.
     private var lightCurrentGlow: Color {
-        Color(red: 0.92, green: 0.94, blue: 0.97)
+        palette.pearlGlow
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(alignment: .firstTextBaseline) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(currentYear)
-                        .kickerStyle()
-                    Text(String(localized: "circle.stampCard.title", defaultValue: "Year of luck"))
-                        .font(.system(size: 24, weight: .light))
-                        .tracking(-0.96)
-                        .foregroundStyle(palette.ink)
-                }
+                Text("\(currentYear) · YEAR OF LUCK")
+                    .kickerStyle()
                 Spacer()
                 Text(String(format: String(localized: "circle.stampCard.countShort", defaultValue: "%d OF 12"), store.unlockedCharmIds.count))
                     .kickerStyle()
             }
             .padding(.horizontal, 4)
 
-            LazyVGrid(columns: columns, spacing: 8) {
+            LazyVGrid(columns: columns, spacing: 20) {
                 ForEach(BunnyData.all) { bunny in
                     stampCell(bunny)
                 }
             }
         }
-        .padding(.top, 16)
-        .padding(.horizontal, 14)
-        .padding(.bottom, 12)
-        .cardBackground(dashed: true)
+        .padding(.top, 46)
+        .padding(.horizontal, 4)
+        .padding(.bottom, 32)
         .overlay {
             RadialGradient(
                 colors: [bloomColor.opacity(bloomOpacity), bloomColor.opacity(0)],
@@ -275,27 +268,13 @@ struct StampCardView: View {
                 .strokeBorder(palette.accent.opacity(0.75), lineWidth: 1.75)
         } else {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(
-                    RadialGradient(
-                        colors: [
-                            Color.white.opacity(0.95),
-                            lightCurrentGlow.opacity(0.35),
-                            Color.clear
-                        ],
-                        center: .center,
-                        startRadius: 2,
-                        endRadius: 52
-                    )
-                )
-                .blendMode(.plusLighter)
+                .stroke(palette.ultravioletGlow, lineWidth: 5)
+                .blur(radius: 7)
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(Color.white.opacity(0.95), lineWidth: 1.25)
-                .blur(radius: 0.9)
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .stroke(lightCurrentGlow.opacity(0.65), lineWidth: 0.75)
-            // Warm ring: the open door. Collected months stay quiet grey tiles.
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .strokeBorder(palette.accent.opacity(0.82), lineWidth: 2)
+                .strokeBorder(palette.pearl.opacity(0.96), lineWidth: 1.4)
+            RoundedRectangle(cornerRadius: 14.5, style: .continuous)
+                .strokeBorder(palette.coolPearl.opacity(0.8), lineWidth: 0.9)
+                .padding(1.5)
         }
     }
 
@@ -413,13 +392,8 @@ struct StampCardView: View {
 
     // MARK: - Months already here: the original artwork
 
-    /// Nothing about a month that's already happened is hidden — it
-    /// shows its own bunny and seasonal prop, in the same neutral ink as
-    /// every other revealed month: no pastel fills, no coloured
-    /// backgrounds. Same bone/dark tile and embossed surface as a closed
-    /// door — the only difference is the bunny is visible. The current
-    /// month alone carries the same restrained luminous edge as the hero
-    /// medallion; every other revealed month is visible but not glowing.
+    /// Revealed months retain their original artwork. The current month
+    /// alone has a soft yellow illuminated surface in light mode.
     @ViewBuilder
     private func monthTile(_ bunny: Bunny, isCurrent: Bool) -> some View {
         ZStack {
@@ -429,7 +403,7 @@ struct StampCardView: View {
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .strokeBorder(palette.line, lineWidth: 0.75)
                 }
-                .materialEmboss(colorScheme, strength: 0.55)
+                .materialEmboss(colorScheme, strength: 0.55, active: !isCurrent || colorScheme == .dark)
 
             if isCurrent {
                 currentMonthRim()
@@ -446,7 +420,7 @@ struct StampCardView: View {
             color: isCurrent
                 ? (colorScheme == .dark
                     ? palette.accent.opacity(0.7)
-                    : lightCurrentGlow.opacity(0.85))
+                    : palette.ultravioletGlow.opacity(0.8))
                 : .clear,
             radius: isCurrent ? (colorScheme == .dark ? 20 : 16) : 0
         )
@@ -454,7 +428,7 @@ struct StampCardView: View {
             color: isCurrent
                 ? (colorScheme == .dark
                     ? palette.accent.opacity(0.5)
-                    : Color.white.opacity(0.95))
+                    : Color.white.opacity(0.55))
                 : .clear,
             radius: isCurrent ? (colorScheme == .dark ? 8 : 10) : 0,
             y: isCurrent && colorScheme == .light ? -1 : 0

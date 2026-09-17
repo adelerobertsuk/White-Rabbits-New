@@ -18,6 +18,12 @@ struct Palette {
     let track: Color
     let accent: Color
     let accentGlow: Color
+    let pearl: Color
+    let pearlGlow: Color
+    let coolPearl: Color
+    let warmPearl: Color
+    let ultraviolet: Color
+    let ultravioletGlow: Color
     let danger: Color
 
     static let light = Palette(
@@ -30,6 +36,12 @@ struct Palette {
         track: Color(hex: "2A2622").opacity(0.08),
         accent: Color(hex: "C4A36A"),
         accentGlow: Color(hex: "C4A36A").opacity(0.14),
+        pearl: Color(hex: "FFFCF8"),
+        pearlGlow: Color(hex: "E8EDF2").opacity(0.7),
+        coolPearl: Color(hex: "D8E3EA"),
+        warmPearl: Color(hex: "F2E6D4"),
+        ultraviolet: Color(hex: "DCD2F2"),
+        ultravioletGlow: Color(hex: "CFC2EE").opacity(0.42),
         danger: Color(hex: "A33B2B")
     )
 
@@ -43,6 +55,12 @@ struct Palette {
         track: Color(hex: "F3ECE4").opacity(0.1),
         accent: Color(hex: "D4B57A"),
         accentGlow: Color(hex: "D4B57A").opacity(0.24),
+        pearl: Color(hex: "F3ECE4"),
+        pearlGlow: Color(hex: "DDE5ED").opacity(0.45),
+        coolPearl: Color(hex: "DDE5ED"),
+        warmPearl: Color(hex: "F3E8D8"),
+        ultraviolet: Color(hex: "CFC4F0"),
+        ultravioletGlow: Color(hex: "B9A9EA").opacity(0.32),
         danger: Color(hex: "E07A6A")
     )
 
@@ -62,6 +80,12 @@ struct Palette {
             track: track,
             accent: accent,
             accentGlow: accentGlow,
+            pearl: pearl,
+            pearlGlow: pearlGlow,
+            coolPearl: coolPearl,
+            warmPearl: warmPearl,
+            ultraviolet: ultraviolet,
+            ultravioletGlow: ultravioletGlow,
             danger: danger
         )
     }

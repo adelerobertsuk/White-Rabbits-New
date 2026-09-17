@@ -2,8 +2,7 @@
 //  LuckyHourScheduler.swift
 //  WhiteRabbits
 //
-//  A quiet daily tap at 11:11, local to this phone. Not an alarm.
-//  The first of the month still uses AlarmKit. This is the optional 11:11 nod.
+//  A quiet daily tap at the chosen lucky minute, local to this phone.
 //
 
 import Foundation
@@ -11,7 +10,7 @@ import UserNotifications
 
 struct LuckyHourSyncResult {
     var denied: Bool
-    /// True when a daily 11:11 request is sitting in the pending queue.
+    /// True when a daily lucky-minute request is sitting in the pending queue.
     var pendingScheduled: Bool = false
 }
 
@@ -37,7 +36,7 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
         super.init()
     }
 
-    /// Call once at launch so 11:11 can still appear if the app is open.
+    /// Call once at launch so the lucky minute can still appear if the app is open.
     func prepare() {
         UNUserNotificationCenter.current().delegate = self
     }
@@ -64,7 +63,7 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
         }
 
         // Reliability fix: do not cancel and re-add on every launch/foreground.
-        // That churn was racing the real 11:11 delivery. If the pending queue
+        // That churn was racing the real delivery. If the pending queue
         // already matches the next week of Home lines, leave it alone.
         let pending = await center.pendingNotificationRequests()
         let luckyPending = pending.filter { isLuckyHourProductionRequest($0) }
@@ -95,7 +94,7 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
     }
 
     /// Fires in a few seconds so a physical device can be tested without
-    /// waiting for tomorrow's real 11:11. Does not touch the production
+    /// waiting for tomorrow's real lucky minute. Does not touch the production
     /// daily request.
     func scheduleTest(body: String) async throws -> LuckyHourTestResult {
         let center = UNUserNotificationCenter.current()
@@ -124,7 +123,7 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
         return LuckyHourTestResult(denied: false, scheduled: true)
     }
 
-    /// Whether the daily 11:11 request is currently pending (for Settings diagnostics).
+    /// Whether the daily lucky-minute request is currently pending.
     func hasPendingDailyRequest() async -> Bool {
         let pending = await UNUserNotificationCenter.current().pendingNotificationRequests()
         return pending.contains(where: isLuckyHourProductionRequest)
@@ -152,13 +151,11 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
         }
     }
 
-    private func is1111Trigger(_ trigger: UNNotificationTrigger?, on fireDate: Date) -> Bool {
+    private func isLuckyMinuteTrigger(_ trigger: UNNotificationTrigger?, on fireDate: Date) -> Bool {
         guard let calendarTrigger = trigger as? UNCalendarNotificationTrigger else { return false }
         let calendar = Calendar.current
         guard let nextFire = calendarTrigger.nextTriggerDate() else { return false }
         return calendar.isDate(nextFire, equalTo: fireDate, toGranularity: .minute)
-            && calendar.component(.hour, from: nextFire) == 11
-            && calendar.component(.minute, from: nextFire) == 11
     }
 
     private func isLuckyHourProductionRequest(_ request: UNNotificationRequest) -> Bool {
@@ -192,7 +189,7 @@ final class LuckyHourScheduler: NSObject, UNUserNotificationCenterDelegate {
             let id = Self.requestID(for: entry.fireDate)
             guard let existing = pending.first(where: { $0.identifier == id }),
                   existing.content.body == entry.body,
-                  is1111Trigger(existing.trigger, on: entry.fireDate) else {
+                  isLuckyMinuteTrigger(existing.trigger, on: entry.fireDate) else {
                 return false
             }
         }

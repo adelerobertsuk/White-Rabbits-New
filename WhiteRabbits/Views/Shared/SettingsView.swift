@@ -19,6 +19,7 @@ struct SettingsView: View {
     @State private var exportURL: URL?
     @State private var showResetConfirm = false
     @State private var importFailed = false
+    @State private var showAlarmPicker = false
 
     var body: some View {
         NavigationStack {
@@ -26,8 +27,9 @@ struct SettingsView: View {
                 VStack(alignment: .leading, spacing: Layout.stackSpacing) {
                     header
                     youCard
-                    AlarmCardView()
-                    LuckyHourCardView()
+                    intentionCard
+                    alarmRow
+                    luckyMinuteRow
                     phoneCard
                     aboutCard
                     supportCard
@@ -39,21 +41,6 @@ struct SettingsView: View {
             .scrollBounceBehavior(.basedOnSize)
             .scrollIndicators(.hidden)
             .sanctuaryBackground()
-            .inlineNavigationTitle()
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(palette.muted)
-                            .frame(width: 30, height: 30)
-                            .background(Circle().fill(palette.track))
-                    }
-                    .accessibilityLabel(String(localized: "settings.close", defaultValue: "Close"))
-                }
-            }
         }
         .onAppear {
             name = store.firstName
@@ -88,15 +75,18 @@ struct SettingsView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text(String(localized: "settings.kicker", defaultValue: "Preferences"))
-                .kickerStyle()
-            Text(title)
+            Text("Settings")
                 .displayTitleStyle()
-            Text(String(localized: "settings.lede", defaultValue: "Everything stays on this device."))
+            Text("A calmer, luckier you.")
                 .font(.system(size: 15, weight: .medium))
                 .foregroundStyle(palette.muted)
         }
         .padding(.top, 4)
+        .overlay(alignment: .topTrailing) {
+            BunnyMarkView(bunny: store.currentBunny(), style: .mark)
+                .frame(width: 25, height: 25)
+                .opacity(0.72)
+        }
     }
 
     private var title: String {
@@ -106,11 +96,9 @@ struct SettingsView: View {
     }
 
     private var youCard: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            field(
-                label: String(localized: "settings.name.label", defaultValue: "Your name")
-            ) {
-                TextField(String(localized: "settings.name.placeholder", defaultValue: "Your name"), text: $name)
+        VStack(alignment: .leading, spacing: 10) {
+            field(label: "YOUR NAME") {
+                TextField(String(localized: "settings.name.placeholder", defaultValue: "Adele"), text: $name)
                     .font(.system(size: 17, weight: .medium))
                     .foregroundStyle(palette.ink)
                     .onSubmit { store.setName(name) }
@@ -118,11 +106,90 @@ struct SettingsView: View {
                         store.setName(newValue)
                     }
             }
+        }
+        .padding(Layout.cardPadding)
+        .cardBackground()
+    }
 
-            Rectangle().fill(palette.line).frame(height: 1)
+    private var alarmRow: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 14) {
+                BunnyMarkView(bunny: store.currentBunny(), style: .mark)
+                    .frame(width: 25, height: 25)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("White Rabbits alarm")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundStyle(palette.ink)
+                    Text("First of every month.")
+                        .font(.system(size: 11))
+                        .foregroundStyle(palette.muted)
+                }
+                Spacer()
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        showAlarmPicker.toggle()
+                    }
+                } label: {
+                    HStack(spacing: 6) {
+                        Text(alarmTimeLabel)
+                            .font(.system(size: 14, weight: .medium))
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 10, weight: .semibold))
+                    }
+                    .foregroundStyle(palette.muted)
+                }
+                .buttonStyle(.plain)
+            }
+            if showAlarmPicker {
+                DatePicker("Alarm time", selection: Binding(get: { store.alarmTime }, set: { store.setAlarmTime($0) }), displayedComponents: .hourAndMinute)
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
+                    .frame(maxWidth: .infinity)
+            }
+            HStack {
+                Spacer()
+                SanctuaryToggle(isOn: Binding(get: { store.alarmEnabled }, set: { store.setAlarmEnabled($0) }))
+            }
+            .padding(.top, 10)
+        }
+        .padding(Layout.cardPadding)
+        .cardBackground(cornerRadius: 18)
+    }
 
+    private var luckyMinuteRow: some View {
+        HStack(spacing: 14) {
+            Image(systemName: "sparkle")
+                .font(.system(size: 19, weight: .light))
+                .foregroundStyle(palette.accent)
+                .frame(width: 25)
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Your lucky minute")
+                    .font(.system(size: 15, weight: .medium))
+                    .foregroundStyle(palette.ink)
+                Text("A little nod from the universe.")
+                    .font(.system(size: 11))
+                    .foregroundStyle(palette.muted)
+            }
+            Spacer()
+            DatePicker("Lucky minute", selection: Binding(get: { store.luckyMinuteDate }, set: { store.setLuckyMinute($0) }), displayedComponents: .hourAndMinute)
+                .labelsHidden()
+                .datePickerStyle(.compact)
+                .tint(palette.muted)
+        }
+        .padding(Layout.cardPadding)
+        .cardBackground(cornerRadius: 18)
+    }
+
+    private var alarmTimeLabel: String {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return formatter.string(from: store.alarmTime)
+    }
+
+    private var intentionCard: some View {
+        VStack(alignment: .leading, spacing: 10) {
             field(
-                label: String(localized: "settings.intention.label", defaultValue: "Set an intention"),
+                label: String(localized: "settings.intention.label", defaultValue: "My intention"),
                 caption: String(localized: "settings.intention.caption", defaultValue: "A little note from you, to you.")
             ) {
                 TextField(

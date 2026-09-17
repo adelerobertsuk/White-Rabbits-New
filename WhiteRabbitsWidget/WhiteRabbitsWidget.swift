@@ -75,7 +75,7 @@ struct CharmWidgetView: View {
             case .accessoryRectangular:
                 lockRectangular
             default:
-                CharmRingView(bunny: entry.bunny)
+                WidgetMedallionView(bunny: entry.bunny, size: 76)
             }
         }
         .environment(\.palette, isLockScreen ? palette.withInk(.primary) : palette)
@@ -85,12 +85,6 @@ struct CharmWidgetView: View {
             } else {
                 ZStack {
                     palette.bg
-                    EllipticalGradient(
-                        gradient: Gradient(colors: [palette.accentGlow, Color.clear]),
-                        center: family == .systemMedium ? .leading : .center,
-                        startRadiusFraction: 0,
-                        endRadiusFraction: family == .systemMedium ? 0.9 : 0.72
-                    )
                 }
             }
         }
@@ -108,8 +102,8 @@ struct CharmWidgetView: View {
                 .frame(width: 28, height: 28)
                 .widgetAccentable()
             Text(entry.line)
-                .font(.system(size: 13, weight: .light))
-                .tracking(-0.2)
+                .font(.system(size: 13, weight: .light, design: .serif))
+                .tracking(-0.1)
                 .lineSpacing(2)
                 .foregroundStyle(.primary)
                 .multilineTextAlignment(.leading)
@@ -121,12 +115,11 @@ struct CharmWidgetView: View {
 
     private var medium: some View {
         HStack(spacing: 18) {
-            CharmRingView(bunny: entry.bunny)
-                .frame(width: 132, height: 132)
+            WidgetMedallionView(bunny: entry.bunny, size: 112)
 
             Text(entry.line)
-                .font(.system(size: 17, weight: .light))
-                .tracking(-0.425)
+                .font(.system(size: 17, weight: .light, design: .serif))
+                .tracking(-0.2)
                 .lineSpacing(5)
                 .foregroundStyle(palette.ink)
                 .multilineTextAlignment(.leading)
@@ -138,32 +131,29 @@ struct CharmWidgetView: View {
     }
 }
 
-private struct CharmRingView: View {
+private struct WidgetMedallionView: View {
     let bunny: Bunny
+    let size: CGFloat
     @Environment(\.palette) private var palette
 
     var body: some View {
-        GeometryReader { geo in
-            let side = min(geo.size.width, geo.size.height)
-            let scale = side / 248
+        ZStack {
+            Circle()
+                .fill(palette.card)
+                .overlay {
+                    Circle()
+                        .strokeBorder(palette.pearl.opacity(0.96), lineWidth: 1)
+                }
+                .overlay {
+                    Circle()
+                        .strokeBorder(palette.line.opacity(0.7), lineWidth: 0.75)
+                        .padding(3)
+                }
 
-            ZStack {
-                Circle()
-                    .stroke(palette.track, lineWidth: max(2.2, 3.2 * scale))
-                    .padding(10 * scale)
-
-                Circle()
-                    .fill(palette.card)
-                    .padding(26 * scale)
-                    .shadow(color: palette.ink.opacity(0.08), radius: 12 * scale, y: 10 * scale)
-
-                BunnyMarkView(bunny: bunny, style: .asset)
-                    .padding(50 * scale)
-            }
-            .frame(width: side, height: side)
-            .shadow(color: palette.accentGlow, radius: 16 * scale, y: 12 * scale)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            BunnyMarkView(bunny: bunny, style: .asset)
+                .padding(size * 0.2)
         }
+        .frame(width: size, height: size)
     }
 }
 

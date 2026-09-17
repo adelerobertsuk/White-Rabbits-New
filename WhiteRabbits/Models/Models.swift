@@ -28,6 +28,7 @@ struct MonthRecord: Codable, Hashable {
     var charmId: String?
     var saidAt: Date?
     var intention: String?
+    var intentionPromptHandledAt: Date?
 }
 
 /// Everything that gets saved to disk, in one place.
@@ -41,6 +42,8 @@ struct AppData: Codable {
     var alarmMinute: Int = 30
     var alarmEnabled: Bool = false
     var luckyHourEnabled: Bool = false
+    var luckyMinuteHour: Int = 11
+    var luckyMinute: Int = 11
     var firstOpenedAt: Date?
     var openCount: Int = 0
     var reviewPromptedAt: Date?
@@ -54,7 +57,7 @@ struct AppData: Codable {
 
     enum CodingKeys: String, CodingKey {
         case name, months, hapticsEnabled, forceDarkMode, previewFirstOfMonth
-        case alarmHour, alarmMinute, alarmEnabled, luckyHourEnabled
+        case alarmHour, alarmMinute, alarmEnabled, luckyHourEnabled, luckyMinuteHour, luckyMinute
         case firstOpenedAt, openCount, reviewPromptedAt
     }
 
@@ -69,6 +72,8 @@ struct AppData: Codable {
         alarmMinute = try container.decodeIfPresent(Int.self, forKey: .alarmMinute) ?? 30
         alarmEnabled = try container.decodeIfPresent(Bool.self, forKey: .alarmEnabled) ?? false
         luckyHourEnabled = try container.decodeIfPresent(Bool.self, forKey: .luckyHourEnabled) ?? false
+        luckyMinuteHour = try container.decodeIfPresent(Int.self, forKey: .luckyMinuteHour) ?? 11
+        luckyMinute = try container.decodeIfPresent(Int.self, forKey: .luckyMinute) ?? 11
         firstOpenedAt = try container.decodeIfPresent(Date.self, forKey: .firstOpenedAt)
         openCount = try container.decodeIfPresent(Int.self, forKey: .openCount) ?? 0
         reviewPromptedAt = try container.decodeIfPresent(Date.self, forKey: .reviewPromptedAt)
@@ -85,6 +90,8 @@ struct AppData: Codable {
         try container.encode(alarmMinute, forKey: .alarmMinute)
         try container.encode(alarmEnabled, forKey: .alarmEnabled)
         try container.encode(luckyHourEnabled, forKey: .luckyHourEnabled)
+        try container.encode(luckyMinuteHour, forKey: .luckyMinuteHour)
+        try container.encode(luckyMinute, forKey: .luckyMinute)
         try container.encodeIfPresent(firstOpenedAt, forKey: .firstOpenedAt)
         try container.encode(openCount, forKey: .openCount)
         try container.encodeIfPresent(reviewPromptedAt, forKey: .reviewPromptedAt)

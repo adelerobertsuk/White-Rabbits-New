@@ -2,7 +2,7 @@
 //  LuckyHourCardView.swift
 //  WhiteRabbits
 //
-//  One optional ritual. Every day, exactly 11:11, local to this phone.
+//  One optional ritual. Every day, at the user's chosen lucky minute.
 //
 
 import SwiftUI
@@ -16,10 +16,22 @@ struct LuckyHourCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .center) {
-                Text("11:11")
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("YOUR LUCKY MINUTE")
+                        .kickerStyle()
+                    DatePicker(
+                        "Lucky minute",
+                        selection: Binding(
+                            get: { store.luckyMinuteDate },
+                            set: { store.setLuckyMinute($0) }
+                        ),
+                        displayedComponents: .hourAndMinute
+                    )
+                    .labelsHidden()
+                    .datePickerStyle(.compact)
                     .font(.system(size: 28, weight: .light))
-                    .tracking(-0.8)
-                    .foregroundStyle(palette.ink)
+                    .tint(palette.ink)
+                }
                 Spacer()
                 SanctuaryToggle(
                     isOn: Binding(
@@ -74,7 +86,7 @@ struct LuckyHourCardView: View {
 
     private var statusLine: String {
         if store.luckyHourAuthorizationDenied {
-            return String(localized: "luckyHour.denied", defaultValue: "Notifications are off for White Rabbits. Turn them on in Settings so 11:11 can find you.")
+            return String(localized: "luckyHour.denied", defaultValue: "Notifications are off for White Rabbits. Turn them on in Settings so your lucky minute can find you.")
         }
         if store.luckyHourEnabled {
             return String(localized: "luckyHour.on", defaultValue: "A little nod from the universe.")

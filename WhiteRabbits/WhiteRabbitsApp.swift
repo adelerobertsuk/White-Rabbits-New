@@ -20,9 +20,58 @@ struct WhiteRabbitsApp: App {
     var body: some Scene {
         WindowGroup {
             PaletteProvider {
-                HomeView()
+                TabView {
+                    HomeView()
+                        .tabItem {
+                            Label {
+                                Text("Home")
+                            } icon: {
+                                Image(systemName: "house")
+                                    .font(.system(size: 15, weight: .light))
+                                    .symbolRenderingMode(.hierarchical)
+                            }
+                        }
+                    CollectionView()
+                        .tabItem {
+                            Label {
+                                Text("Collection")
+                            } icon: {
+                                Image(systemName: "sparkle")
+                                    .font(.system(size: 15, weight: .light))
+                                    .symbolRenderingMode(.hierarchical)
+                            }
+                        }
+                    SettingsView()
+                        .tabItem {
+                            Label {
+                                Text("Settings")
+                            } icon: {
+                                Image(systemName: "moon")
+                                    .font(.system(size: 15, weight: .light))
+                                    .symbolRenderingMode(.hierarchical)
+                            }
+                        }
+                }
+                .tint(Palette.light.accent)
+                .toolbarBackground(.visible, for: .tabBar)
+                .toolbarBackground(Palette.light.card.opacity(0.94), for: .tabBar)
             }
             .environmentObject(store)
+        }
+    }
+}
+
+struct CollectionView: View {
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                StampCardView()
+                    .padding(.horizontal, Layout.screenInset + 2)
+                    .padding(.bottom, 16)
+            }
+            .scrollIndicators(.hidden)
+            .sanctuaryBackground()
+            .toolbar(.hidden, for: .navigationBar)
         }
     }
 }

@@ -8,6 +8,8 @@
 
 import Foundation
 import SwiftUI
+import UserNotifications
+
 import AlarmKit
 import AppIntents
 import ActivityKit
@@ -34,65 +36,76 @@ final class MonthAlarmScheduler {
     static let shared = MonthAlarmScheduler()
 
     static let testAlarmID = UUID(uuidString: "B8A1B1E5-0001-4000-8000-000000000001")!
+    static let notificationPrefix = "white-rabbits.month"
+    static let testNotificationID = "white-rabbits.month.test"
 
     private let manager = AlarmManager.shared
 
     private init() {}
 
     func sync(enabled: Bool, hour: Int, minute: Int) async throws -> MonthAlarmSyncResult {
-        cancelMonthlyAlarms()
+        let center = UNUserNotificationCenter.current()
+        await removeNotificationRequests(from: center)
 
         guard enabled else {
             return MonthAlarmSyncResult(denied: false, nextDate: nil)
         }
 
-        switch manager.authorizationState {
+        let settings = await center.notificationSettings()
+        switch settings.authorizationStatus {
         case .denied:
             return MonthAlarmSyncResult(denied: true, nextDate: nil)
         case .notDetermined:
-            let state = try await manager.requestAuthorization()
-            guard state == .authorized else {
-                return MonthAlarmSyncResult(denied: state == .denied, nextDate: nil)
+            let granted = try await center.requestAuthorization(options: [.alert, .sound])
+            guard granted else {
+                return MonthAlarmSyncResult(denied: true, nextDate: nil)
             }
-        case .authorized:
+        case .authorized, .provisional, .ephemeral:
             break
         @unknown default:
             break
         }
 
         let upcoming = Self.upcomingFirsts(count: 12, hour: hour, minute: minute)
-        var scheduled: [Date] = []
-
         for date in upcoming {
-            if scheduled.count >= 12 { break }
-            do {
-                try await scheduleFixed(date: date, id: UUID())
-                scheduled.append(date)
-            } catch let error as AlarmManager.AlarmError {
-                if case .maximumLimitReached = error { break }
-                throw error
-            }
+            let content = UNMutableNotificationContent()
+            content.title = "White Rabbits"
+            content.body = "The first of the month is here."
+            content.sound = .default
+            content.userInfo = ["kind": "monthlyCharm"]
+            let components = Calendar.current.dateComponents(
+                [.year, .month, .day, .hour, .minute],
+                from: date
+            )
+            let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+            let request = UNNotificationRequest(
+                identifier: Self.notificationID(for: date),
+                content: content,
+                trigger: trigger
+            )
+            try await center.add(request)
         }
 
-        return MonthAlarmSyncResult(denied: false, nextDate: scheduled.first)
+        return MonthAlarmSyncResult(denied: false, nextDate: upcoming.first)
     }
 
     func scheduleTest() async throws {
-        switch manager.authorizationState {
-        case .denied:
-            return
-        case .notDetermined:
-            let state = try await manager.requestAuthorization()
-            guard state == .authorized else { return }
-        case .authorized:
-            break
-        @unknown default:
-            break
+        let center = UNUserNotificationCenter.current()
+        let settings = await center.notificationSettings()
+        if settings.authorizationStatus == .notDetermined {
+            _ = try await center.requestAuthorization(options: [.alert, .sound])
         }
-
-        try? manager.cancel(id: Self.testAlarmID)
-        let fireDate = Date().addingTimeInterval(15)
-        try await scheduleFixed(date: fireDate, id: Self.testAlarmID)
+        center.removePendingNotificationRequests(withIdentifiers: [Self.testNotificationID])
+        let content = UNMutableNotificationContent()
+        content.title = "White Rabbits"
+        content.body = "Your monthly charm is waiting."
+        content.sound = .default
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3, repeats: false)
+        try await center.add(UNNotificationRequest(
+            identifier: Self.testNotificationID,
+            content: content,
+            trigger: trigger
+        ))
     }
 
     private func cancelMonthlyAlarms() {
@@ -100,6 +113,19 @@ final class MonthAlarmScheduler {
         for alarm in alarms where alarm.id != Self.testAlarmID {
             try? manager.cancel(id: alarm.id)
         }
+    }
+
+    private func removeNotificationRequests(from center: UNUserNotificationCenter) async {
+        let pending = await center.pendingNotificationRequests()
+        let ids = pending
+            .filter { $0.identifier.hasPrefix("\(Self.notificationPrefix).") }
+            .map(\.identifier)
+        center.removePendingNotificationRequests(withIdentifiers: ids)
+    }
+
+    static func notificationID(for date: Date) -> String {
+        let day = Calendar.current.startOfDay(for: date).timeIntervalSince1970
+        return "\(notificationPrefix).\(Int(day))"
     }
 
     private func scheduleFixed(date: Date, id: UUID) async throws {

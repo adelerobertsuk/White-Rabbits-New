@@ -17,7 +17,9 @@ struct HomeView: View {
     @Environment(\.requestReview) private var requestReview
 
     @State private var didCelebrate = false
-    @State private var showSettings = false
+    @State private var showMonthlyReveal = false
+    @State private var hasStartedMonthlyReveal = false
+    @State private var showIntentionPrompt = false
 
     private var canSayIt: Bool { store.isFirstOfMonth() && !store.ritualCompleted() }
     private var ringProgress: CGFloat {
@@ -30,7 +32,6 @@ struct HomeView: View {
                 VStack(spacing: 8) {
                     chrome
                     hero
-                    StampCardView()
                 }
                 .padding(.horizontal, Layout.screenInset)
                 .padding(.bottom, 16)
@@ -39,16 +40,11 @@ struct HomeView: View {
             .scrollIndicators(.hidden)
             .sanctuaryBackground()
             .toolbar(.hidden, for: .navigationBar)
-            .sheet(isPresented: $showSettings) {
-                SettingsView()
-                    .presentationDragIndicator(.visible)
-                    .presentationBackground {
-                        SanctuaryBackground()
-                    }
-            }
             .task {
                 await store.refreshScheduledItems()
                 store.noteOpened()
+                startMonthlyRevealIfNeeded()
+                presentIntentionPromptIfNeeded()
                 offerReviewIfReady()
             }
             .onChange(of: scenePhase) { _, phase in
@@ -58,8 +54,10 @@ struct HomeView: View {
                     offerReviewIfReady()
                 }
             }
-            .onChange(of: showSettings) { _, open in
-                if !open { offerReviewIfReady() }
+            .overlay {
+                if showMonthlyReveal {
+                    monthlyReveal
+                }
             }
         }
     }
@@ -69,7 +67,9 @@ struct HomeView: View {
             Text(dateKicker)
                 .kickerStyle()
             Spacer()
-            SettingsMarkButton(isPresented: $showSettings)
+            BunnyMarkView(bunny: store.currentBunny(), style: .mark)
+                .frame(width: 22, height: 22)
+                .opacity(0.72)
         }
         .padding(.top, 8)
     }
@@ -84,9 +84,8 @@ struct HomeView: View {
             }
             .buttonStyle(.plain)
             .disabled(!canSayIt)
-            .padding(.bottom, 16)
-
-            wordmark
+            .padding(.top, 22)
+            .padding(.bottom, 22)
 
             if canSayIt {
                 Text(greeting)
@@ -98,14 +97,34 @@ struct HomeView: View {
             }
 
             Text(giftLine)
-                .font(.system(size: 17, weight: .light))
-                .tracking(-0.425)
+                .font(.system(size: 25, weight: .light, design: .serif))
+                .tracking(-0.3)
                 .lineSpacing(6.8)
-                .foregroundStyle(palette.ink)
+                .foregroundStyle(palette.ink.opacity(0.95))
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
                 .padding(.bottom, 8)
+
+            VStack(spacing: 10) {
+                HStack(spacing: 12) {
+                    Rectangle().fill(palette.line).frame(width: 42, height: 1)
+                    Image(systemName: "sparkle")
+                        .font(.system(size: 13, weight: .light))
+                        .foregroundStyle(palette.coolPearl)
+                    Rectangle().fill(palette.line).frame(width: 42, height: 1)
+                }
+                Text(luckyMinuteLabel)
+                    .font(.system(size: 25, weight: .light, design: .serif))
+                    .tracking(2.4)
+                    .foregroundStyle(palette.ink)
+                LuckyHourShareLink {
+                    Text("Share Your Luck")
+                }
+                .buttonStyle(PillButtonStyle(filled: false, compact: true))
+                .accessibilityLabel("Share your luck")
+            }
+            .padding(.top, 28)
 
             if canSayIt {
                 Button {
@@ -118,31 +137,18 @@ struct HomeView: View {
                 .padding(.top, 8)
             }
 
-            luckyShare
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 4)
-    }
-
-    /// Ink on the 1st. The rest of the year it sits in the paper, like a letterpress stamp.
-    private var wordmark: some View {
-        let lit = store.isFirstOfMonth()
-        return Text("White Rabbits")
-            .font(.system(size: 38, weight: .light))
-            .tracking(-2.09)
-            .lineSpacing(-1.9)
-            .multilineTextAlignment(.center)
-            .foregroundStyle(palette.ink.opacity(lit ? 1 : 0.28))
-            .shadow(color: lit ? .clear : palette.bg.opacity(0.95), radius: 0, y: 0.8)
-            .shadow(color: lit ? .clear : palette.ink.opacity(0.1), radius: 0, y: -0.5)
-            .animation(.easeOut(duration: 0.7), value: lit)
-            .accessibilityHidden(!lit)
+        .sheet(isPresented: $showIntentionPrompt) {
+            IntentionPromptView()
+        }
     }
 
     private var dateKicker: String {
         let formatter = DateFormatter()
         formatter.setLocalizedDateFormatFromTemplate("d MMMM yyyy")
-        return String(format: String(localized: "home.dateKicker", defaultValue: "Today  ·  %@"), formatter.string(from: Date()))
+        return String(format: String(localized: "home.dateKicker", defaultValue: "White Rabbits  ·  %@"), formatter.string(from: Date()))
     }
 
     private var greeting: String {
@@ -169,17 +175,71 @@ struct HomeView: View {
         store.dailyGiftLine()
     }
 
-    private var luckyShare: some View {
-        TimelineView(.periodic(from: .now, by: 20)) { context in
-            if store.shouldOfferLuckyShare(at: context.date) {
-                LuckyHourShareLink {
-                    Text(String(localized: "luckyHour.share.action", defaultValue: "Share today's luck"))
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(PillButtonStyle(filled: false))
-                .tint(palette.ink)
-                .padding(.top, 8)
+    private var luckyMinuteLabel: String {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return formatter.string(from: store.luckyMinuteDate)
+    }
+
+    private var monthlyReveal: some View {
+        ZStack {
+            palette.bg.opacity(0.92)
+                .ignoresSafeArea()
+            RadialGradient(
+                colors: [palette.card.opacity(0.96), palette.accentGlow.opacity(0.55), .clear],
+                center: .center,
+                startRadius: 4,
+                endRadius: 260
+            )
+            .ignoresSafeArea()
+            .phaseAnimator([false, true]) { content, phase in
+                content.opacity(phase ? 0.78 : 0.5).scaleEffect(phase ? 1.04 : 0.96)
+            } animation: { _ in
+                .easeInOut(duration: 2.4)
             }
+
+            VStack(spacing: 24) {
+                BunnyMarkView(bunny: store.currentBunny(), style: .asset)
+                    .frame(width: 190, height: 190)
+                    .phaseAnimator([false, true]) { content, phase in
+                        content.scaleEffect(phase ? 1.04 : 0.98).opacity(phase ? 1 : 0.86)
+                    } animation: { _ in
+                        .easeInOut(duration: 1.8)
+                    }
+                Image(systemName: "sparkles")
+                    .font(.system(size: 20, weight: .light))
+                    .foregroundStyle(palette.accent)
+                    .phaseAnimator([false, true]) { content, phase in
+                        content.opacity(phase ? 1 : 0.42).scaleEffect(phase ? 1.12 : 0.9)
+                    } animation: { _ in
+                        .easeInOut(duration: 1.3)
+                    }
+                Text("\(store.monthName().uppercased()) IS YOURS.")
+                    .font(.system(size: 15, weight: .medium))
+                    .tracking(2.1)
+                    .foregroundStyle(palette.ink)
+            }
+        }
+        .transition(.opacity)
+    }
+
+    private func startMonthlyRevealIfNeeded() {
+        guard canSayIt, !hasStartedMonthlyReveal else { return }
+        hasStartedMonthlyReveal = true
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(0.7))
+            Haptics.soft()
+            withAnimation(.easeInOut(duration: 0.8)) {
+                showMonthlyReveal = true
+            }
+            try? await Task.sleep(for: .seconds(0.8))
+            store.completeRitual()
+            Haptics.success()
+            try? await Task.sleep(for: .seconds(2.0))
+            withAnimation(.easeInOut(duration: 0.8)) {
+                showMonthlyReveal = false
+            }
+            presentIntentionPromptIfNeeded()
         }
     }
 
@@ -189,18 +249,96 @@ struct HomeView: View {
         withAnimation(.easeOut(duration: 0.7)) {
             didCelebrate = true
         }
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(0.9))
+            presentIntentionPromptIfNeeded()
+        }
         offerReviewIfReady(delay: 2.4)
+    }
+
+    private func presentIntentionPromptIfNeeded() {
+        guard store.isFirstOfMonth(), store.ritualCompleted(), !store.hasHandledCurrentMonthIntentionPrompt else { return }
+        guard !showIntentionPrompt else { return }
+        showIntentionPrompt = true
     }
 
     /// Apple's own stars sheet. Once, after a week of coming back.
     /// Never on top of saying White Rabbits.
     private func offerReviewIfReady(delay: Double = 1.2) {
-        guard !canSayIt, !showSettings, store.isEligibleForReview else { return }
+        guard !canSayIt, store.isEligibleForReview else { return }
         store.markReviewPrompted()
         Task { @MainActor in
             try? await Task.sleep(for: .seconds(delay))
             requestReview()
         }
+    }
+}
+
+private struct IntentionPromptView: View {
+    @EnvironmentObject private var store: AppStore
+    @Environment(\.palette) private var palette
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var intention = ""
+
+    var body: some View {
+        VStack(spacing: 22) {
+            Capsule()
+                .fill(palette.line)
+                .frame(width: 40, height: 5)
+                .padding(.top, 10)
+
+            Text("What would you like to carry into this month?")
+                .font(.system(size: 22, weight: .light, design: .serif))
+                .foregroundStyle(palette.ink)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal, 24)
+
+            TextField("", text: $intention, axis: .vertical)
+                .font(.system(size: 17, weight: .regular))
+                .foregroundStyle(palette.ink)
+                .lineLimit(1...3)
+                .textFieldStyle(.plain)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+                .background(palette.card)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .strokeBorder(palette.line, lineWidth: 1)
+                }
+                .padding(.horizontal, 24)
+                .onChange(of: intention) { _, value in
+                    if value.count > 120 {
+                        intention = String(value.prefix(120))
+                    }
+                }
+
+            HStack(spacing: 14) {
+                Button("Skip") {
+                    store.markCurrentMonthIntentionPromptHandled()
+                    dismiss()
+                }
+                .font(.system(size: 14, weight: .regular))
+                .foregroundStyle(palette.muted)
+
+                Button {
+                    store.setIntention(intention)
+                    store.markCurrentMonthIntentionPromptHandled()
+                    dismiss()
+                } label: {
+                    Text("Keep this")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(PillButtonStyle(compact: true))
+                .disabled(intention.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .opacity(intention.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.5 : 1)
+            }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 24)
+        }
+        .sanctuaryBackground()
+        .onAppear { intention = store.intention }
     }
 }
 
@@ -210,6 +348,8 @@ private struct HeroRingView: View {
     @EnvironmentObject private var store: AppStore
     @Environment(\.palette) private var palette
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.scenePhase) private var scenePhase
     var progress: CGFloat
     var enchanted: Bool
     var celebrating: Bool
@@ -223,7 +363,8 @@ private struct HeroRingView: View {
     @State private var tilt: Double = 0
     @State private var lift: CGFloat = 0
     @State private var breathe = false
-    @State private var sparkleTurn: Double = 0
+    @State private var orbitStarted = Date()
+    @State private var orbitCelebration = false
     @State private var sparkleOut = false
     /// A brief, subtle brightening of the ring's own glow at the moment
     /// a month is revealed — not a redesign, just a transient pulse.
@@ -259,8 +400,28 @@ private struct HeroRingView: View {
                     .padding(trackPadding)
             } else {
                 Circle()
-                    .stroke(palette.track, lineWidth: 2.4)
-                    .padding(trackPadding)
+                    .fill(
+                        RadialGradient(
+                            colors: [palette.pearl, palette.card, palette.pearlGlow],
+                            center: .center,
+                            startRadius: 8,
+                            endRadius: ringSize / 2
+                        )
+                    )
+                    .padding(18)
+                    .overlay {
+                        Circle()
+                            .stroke(palette.pearlGlow, lineWidth: 1)
+                            .padding(18)
+                    }
+                    .shadow(color: palette.pearlGlow.opacity(0.8), radius: 18, y: 8)
+
+                // Quiet pearl outline around the bunny.
+                Circle()
+                    .stroke(palette.coolPearl.opacity(0.45), lineWidth: 1.75)
+                    .padding(11)
+
+
             }
 
             // Inner lip of the channel (catches a little ambient light).
@@ -273,6 +434,7 @@ private struct HeroRingView: View {
                 )
                 .blur(radius: colorScheme == .dark ? 0.8 : 0)
                 .padding(trackPadding)
+                .opacity(colorScheme == .dark ? 1 : 0)
 
             if colorScheme == .dark {
                 // Soft outer bloom of the lit segment (the tube glowing through the surface).
@@ -301,7 +463,7 @@ private struct HeroRingView: View {
 
             // Bright core of the embedded LED strip.
             Circle()
-                .trim(from: 0, to: progress)
+                .trim(from: 0, to: colorScheme == .dark ? progress : 1)
                 .stroke(
                     colorScheme == .dark
                         ? AnyShapeStyle(
@@ -318,7 +480,7 @@ private struct HeroRingView: View {
                                 angle: .degrees(-90)
                             )
                         )
-                        : AnyShapeStyle(palette.accent.opacity(0.75)),
+                        : AnyShapeStyle(palette.pearl),
                     style: StrokeStyle(lineWidth: colorScheme == .dark ? 2.35 : 2.2, lineCap: .round)
                 )
                 .rotationEffect(.degrees(-90))
@@ -326,7 +488,7 @@ private struct HeroRingView: View {
                 .shadow(
                     color: colorScheme == .dark
                         ? tubePearl.opacity(pulseGlow ? 0.95 : 0.7)
-                        : .clear,
+                        : palette.pearl.opacity(0.65),
                     radius: pulseGlow ? 12 : 7
                 )
                 .shadow(
@@ -335,6 +497,7 @@ private struct HeroRingView: View {
                         : .clear,
                     radius: pulseGlow ? 16 : 9
                 )
+                .opacity(colorScheme == .dark ? 1 : 0)
                 .animation(.easeOut(duration: 0.8), value: progress)
 
             // Medallion: calm off-white in light mode (matches widget); lit porcelain in dark.
@@ -369,14 +532,22 @@ private struct HeroRingView: View {
                         .shadow(color: palette.ink.opacity(0.05), radius: 14, y: 8)
                 } else {
                     Circle()
-                        .fill(palette.card)
+                        .fill(
+                            RadialGradient(
+                                colors: [Color.white.opacity(0.28), palette.card, palette.card],
+                                center: .topLeading,
+                                startRadius: 0,
+                                endRadius: ringSize / 2
+                            )
+                        )
                         .padding(medallionPadding)
                         .overlay {
                             Circle()
-                                .strokeBorder(palette.line, lineWidth: 0.75)
+                                .strokeBorder(palette.ultraviolet.opacity(0.42), lineWidth: 0.9)
                                 .padding(medallionPadding)
                         }
-                        .shadow(color: palette.ink.opacity(0.08), radius: 16, y: 6)
+                        .shadow(color: palette.ultravioletGlow, radius: 18, y: 5)
+                        .shadow(color: Color.white.opacity(0.42), radius: 4)
                 }
             }
 
@@ -386,19 +557,49 @@ private struct HeroRingView: View {
                 .rotationEffect(.degrees(tilt), anchor: .bottom)
                 .scaleEffect(breathe ? 1.03 : 1)
 
-            if enchanted || celebrating {
-                ForEach(0..<6, id: \.self) { i in
-                    Image(systemName: "sparkle")
-                        .font(.system(size: 8, weight: .light))
-                        .foregroundStyle(palette.accent)
-                        .offset(
-                            x: cos(Double(i) * .pi / 3 + sparkleTurn) * sparkleRadius,
-                            y: sin(Double(i) * .pi / 3 + sparkleTurn) * sparkleRadius
-                        )
-                        .opacity(sparkleOut ? 0 : (enchanted ? 0.55 : 1))
-                        .scaleEffect(sparkleOut ? 1.4 : 1)
+            if enchanted || orbitCelebration {
+                TimelineView(.animation(minimumInterval: 1.0 / 30, paused: reduceMotion)) { context in
+                    let elapsed = context.date.timeIntervalSince(orbitStarted)
+                    let turn = reduceMotion ? 0 : elapsed / (orbitCelebration ? 2.0 : 8.0) * 360
+                    ZStack {
+                        Circle()
+                            .stroke(palette.pearl.opacity(0.95), lineWidth: 2.5)
+                            .padding(11)
+                            .shadow(color: palette.pearl, radius: 7)
+
+                        Circle()
+                            .stroke(
+                                AngularGradient(
+                                    colors: [.clear, .clear, palette.warmPearl.opacity(0.7), Color.white, .clear],
+                                    center: .center
+                                ),
+                                lineWidth: 4.5
+                            )
+                            .rotationEffect(.degrees(turn))
+                            .padding(11)
+                            .shadow(color: palette.warmPearl.opacity(0.9), radius: 10)
+                            .shadow(color: Color.white, radius: 4)
+
+                        ZStack {
+                            ForEach(0..<6, id: \.self) { i in
+                                Image(systemName: "sparkle")
+                                    .font(.system(size: 12, weight: .regular))
+                                    .foregroundStyle(palette.accent)
+                                    .shadow(color: Color.white, radius: 4)
+                                    .offset(
+                                        x: cos(Double(i) * .pi / 3) * sparkleRadius,
+                                        y: sin(Double(i) * .pi / 3) * sparkleRadius
+                                    )
+                            }
+                        }
+                        .rotationEffect(.degrees(turn))
+                    }
+                    .opacity(orbitCelebration ? 1 : 0.9)
                 }
+                .allowsHitTesting(false)
+                .accessibilityHidden(true)
             }
+
         }
         .frame(width: ringSize, height: ringSize)
         .shadow(
@@ -415,6 +616,23 @@ private struct HeroRingView: View {
             radius: colorScheme == .dark ? (pulseGlow ? 22 : 14) : 0,
             y: colorScheme == .dark ? 8 : 0
         )
+        .task(id: orbitCelebration) {
+            guard orbitCelebration else { return }
+            // Three gentle beats build to the end of the first full orbit.
+            for beat in 0..<3 {
+                do {
+                    try await Task.sleep(for: .milliseconds(650))
+                } catch {
+                    return
+                }
+                guard !Task.isCancelled, scenePhase == .active else { return }
+                if beat == 2 {
+                    Haptics.medium()
+                } else {
+                    Haptics.soft()
+                }
+            }
+        }
         .onAppear { settleIntoTheDay() }
         .onChange(of: enchanted) { _, on in
             if on { settleIntoTheDay() }
@@ -423,6 +641,11 @@ private struct HeroRingView: View {
             if on { comeAlive() }
         }
         .onReceive(NotificationCenter.default.publisher(for: .didCompleteRitual)) { _ in
+            orbitStarted = Date()
+            orbitCelebration = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                orbitCelebration = false
+            }
             withAnimation(.easeOut(duration: 0.25)) {
                 pulseGlow = true
             }
@@ -445,9 +668,7 @@ private struct HeroRingView: View {
         withAnimation(.easeInOut(duration: 2.2).repeatForever(autoreverses: true)) {
             breathe = true
         }
-        withAnimation(.linear(duration: 18).repeatForever(autoreverses: false)) {
-            sparkleTurn = .pi * 2
-        }
+        orbitStarted = Date()
     }
 
     private func comeAlive() {

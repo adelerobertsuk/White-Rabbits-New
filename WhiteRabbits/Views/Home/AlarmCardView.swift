@@ -19,7 +19,7 @@ struct AlarmCardView: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(alignment: .center) {
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(String(localized: "alarm.kicker", defaultValue: "Charm alarm"))
+                    Text(String(localized: "alarm.kicker", defaultValue: "White Rabbits alarm"))
                         .kickerStyle()
                     Button {
                         Haptics.light()
@@ -69,9 +69,14 @@ struct AlarmCardView: View {
                 .transition(.opacity.combined(with: .move(edge: .top)))
             }
 
-            Text(statusLine)
+            Text("First of every month.")
                 .font(.system(size: 13, weight: .medium))
                 .foregroundStyle(palette.muted)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text(statusLine)
+                .font(.system(size: 12, weight: .regular))
+                .foregroundStyle(palette.faint)
                 .fixedSize(horizontal: false, vertical: true)
 
             Button {
