@@ -6,9 +6,15 @@
 //
 
 import SwiftUI
+import UIKit
 import UniformTypeIdentifiers
 
 struct SettingsView: View {
+    private enum Field: Hashable {
+        case name
+        case intention
+    }
+
     @EnvironmentObject private var store: AppStore
     @Environment(\.palette) private var palette
     @Environment(\.dismiss) private var dismiss
@@ -20,6 +26,7 @@ struct SettingsView: View {
     @State private var showResetConfirm = false
     @State private var importFailed = false
     @State private var showAlarmPicker = false
+    @FocusState private var focusedField: Field?
 
     var body: some View {
         NavigationStack {
@@ -41,6 +48,26 @@ struct SettingsView: View {
             .scrollBounceBehavior(.basedOnSize)
             .scrollIndicators(.hidden)
             .sanctuaryBackground()
+            .contentShape(Rectangle())
+            .onTapGesture {
+                endEditing()
+            }
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button {
+                        endEditing()
+                    } label: {
+                        Text(String(localized: "settings.keyboard.done", defaultValue: "Done"))
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(palette.ink)
+                            .padding(.horizontal, 18)
+                            .padding(.vertical, 8)
+                            .background(Capsule(style: .continuous).fill(palette.accent))
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
         }
         .onAppear {
             name = store.firstName
@@ -101,6 +128,8 @@ struct SettingsView: View {
                 TextField(String(localized: "settings.name.placeholder", defaultValue: "Adele"), text: $name)
                     .font(.system(size: 17, weight: .medium))
                     .foregroundStyle(palette.ink)
+                    .focused($focusedField, equals: .name)
+                    .submitLabel(.done)
                     .onSubmit { store.setName(name) }
                     .onChange(of: name) { _, newValue in
                         store.setName(newValue)
@@ -200,6 +229,8 @@ struct SettingsView: View {
                 .font(.system(size: 17, weight: .medium))
                 .foregroundStyle(palette.ink)
                 .lineLimit(1...3)
+                .focused($focusedField, equals: .intention)
+                .submitLabel(.done)
                 .onSubmit { store.setIntention(intention) }
                 .onChange(of: intention) { _, newValue in
                     store.setIntention(newValue)
@@ -353,6 +384,11 @@ struct SettingsView: View {
                 Rectangle().fill(palette.line).frame(height: 1)
             }
         }
+    }
+
+    private func endEditing() {
+        focusedField = nil
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 
     private func writeSnapshotToTempFile() -> URL? {
