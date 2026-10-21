@@ -41,7 +41,7 @@ enum Affirmations {
         return line(for: date)
     }
 
-    /// 513 lines, curated. See White-Rabbits-Affirmations-Master-500.md for the source bank.
+    /// 513 lines, curated. See White-Rabbits-Affirmations-Master.md for the source bank.
     static let all: [String] = [
         "The universe is quietly rearranging things in your favour.",
         "Something you wished for is already on its way.",
