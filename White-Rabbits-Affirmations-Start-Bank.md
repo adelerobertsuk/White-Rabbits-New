@@ -1,14 +1,14 @@
 # Your White Rabbits lines - the new start bank
 
-Reviewed and finalised 27 October 2026 (revised after your cull).
+Reviewed and finalised 27 October 2026 (revised again 28 October after your meaning check).
 
-1034 lines in total: your 326 chosen lines (locked, exactly as you sent them, one removed at your request), 373 Gemini lines you kept and 335 Grok lines you kept. British spelling throughout. In the app the lines play in a thoughtfully shuffled order that spaces similar themes apart, like a playlist rather than batches - this document groups them by source for easy reading.
+1026 lines in total: your 320 chosen lines (locked, exactly as you sent them, seven removed at your request), 373 Gemini lines you kept and 333 Grok lines you kept. British spelling throughout. In the app the lines play in a thoughtfully shuffled order that spaces similar themes apart, like a playlist rather than batches - this document groups them by source for easy reading.
 
-This is the prepared revision of your 1,044-line start bank - it has not been applied to the app on your Mac yet. This revision removes "Take comfort in knowing you did the best you could." and the nine further lines you marked on the cull page. Lines from ChatGPT, Claude, Perplexity and Hark are not in this bank - they stay on your review page, unreviewed, for next time.
+This is the prepared revision of your 1,034-line start bank - it has not been applied to the app on your Mac yet. This revision removes the eight lines you approved on the meaning-check page on 28 October, including "Beautiful with small, honest choices." Lines from ChatGPT, Claude, Perplexity and Hark are not in this bank - they stay on your review page, unreviewed, for next time.
 
-## Your chosen lines (326)
+## Your chosen lines (320)
 
-Exactly as you edited and sent them, with #276 removed at your request. Locked.
+Exactly as you edited and sent them, with #276 and the six you approved on 28 October removed at your request. Locked.
 
 1. You belong here, exactly as you are.
 2. Something good is on its way.
@@ -56,7 +56,6 @@ Exactly as you edited and sent them, with #276 removed at your request. Locked.
 48. You deserve rest that actually restores you.
 50. Big dreams are allowed here.
 52. Good news is closer than it feels.
-53. More you every single day.
 54. Let hope be louder than fear today.
 55. Loved in quiet, steady ways.
 56. You can hold hope and heaviness together.
@@ -80,13 +79,11 @@ Exactly as you edited and sent them, with #276 removed at your request. Locked.
 76. You can let go of what drains you.
 77. Beautiful progress, quietly happening.
 78. Your intuition is worth listening to.
-79. Closer than you were yesterday.
 80. Take your time here, it is allowed.
 81. You deserve days that feel light.
 82. Growing through what you are going through.
 84. You can choose again, as many times as needed.
 87. Feel it all and still keep going.
-89. Becoming your next good chapter already.
 90. Keep your eyes on what feels hopeful.
 91. Held by more love than you see.
 92. Do this in your own way.
@@ -148,7 +145,6 @@ Exactly as you edited and sent them, with #276 removed at your request. Locked.
 162. Your story deserves telling.
 163. Closer to good news than you think.
 164. Trust your own goodness today.
-165. What’s meant for you, won’t pass you by.
 166. Your life is bigger than this moment.
 167. Building something that will last.
 168. You deserve peace that stays a while.
@@ -252,7 +248,6 @@ Exactly as you edited and sent them, with #276 removed at your request. Locked.
 286. Proud of your own heart today.
 287. Rest and still be worthy.
 288. Believe in your own goodness.
-289. More loved than yesterday knows.
 291. Grow slowly and still grow.
 292. Keep your heart ready, good things are coming.
 293. Trust your own light a little more.
@@ -320,7 +315,6 @@ Exactly as you edited and sent them, with #276 removed at your request. Locked.
 377. Exactly enough to be loved right now.
 378. Today will bring quiet proof you are growing.
 379. Keep believing in better days.
-380. Beautiful with small, honest choices.
 381. Moments that feel light and true matter.
 382. Grounded and full of hope at once.
 383. Your heart can feel safe to hope.
@@ -713,7 +707,7 @@ Exactly as you edited and sent them, with #276 removed at your request. Locked.
 372. You have everything inside you to take the next step.
 373. You are loved, you are capable, and you are enough.
 
-## Grok lines you kept (335)
+## Grok lines you kept (333)
 
 1. Good things are gathering.
 2. Good things are finding you.
@@ -773,280 +767,278 @@ Exactly as you edited and sent them, with #276 removed at your request. Locked.
 56. You belong in good places.
 57. Let kindness lead today.
 58. Strength grows in small steps.
-59. You are becoming who you need.
-60. Gratitude softens the hard days.
-61. Luck likes open hearts.
-62. You hold more light than you see.
-63. It's okay to take the slow path.
-64. Believe the kind words.
-65. Resilience lives in ordinary days.
-66. Small wins build real strength.
-67. Courage shows up in whispers.
-68. Let today be enough.
-69. Good fortune walks with you.
-70. Be patient with the process.
-71. You carry quiet greatness.
-72. Kindness returns in time.
-73. Feel free to start fresh.
-74. Ambition needs rest too.
-75. Keep believing in better.
-76. Your light is still shining.
-77. Grace meets you where you are.
-78. Progress doesn't always shout.
-79. You are becoming stronger.
-80. Keep the faith in small things.
-81. You are more than the hard moments.
-82. Your efforts ripple outward.
-83. Kindness is never wasted.
-84. Hope stays close by.
-85. Strength returns with each breath.
-86. Trust the next small step.
-87. Ambition looks different on everyone.
-88. Kind thoughts guide you well.
-89. Hope rebuilds what feels broken.
-90. Keep faith in the unseen growth.
-91. Strength lives in continuing.
-92. Your story has room to expand.
-93. Warmth returns when needed.
-94. Resilience is practiced daily.
-95. Trust your inner knowing.
-96. Small acts build real change.
-97. Feel free to protect your energy.
-98. Ambition thrives with patience.
-99. Good fortune leans toward you.
-100. Your effort is seen.
-101. Grace meets effort halfway.
-102. Let rest restore you fully.
-103. Strength shows in softness too.
-104. Warm thoughts surround you.
-105. Believe in second chances.
-106. You deserve gentle treatment.
-107. Hope is a steady friend.
-108. Keep showing care to yourself.
-109. Your path holds meaning.
-110. Luck favours open hands.
-111. Feel the support that exists.
-112. You are more capable than doubt says.
-113. Let today unfold kindly.
-114. Resilience lives in your choices.
-115. You belong to brighter seasons.
-116. Gratitude anchors the present.
-117. Your light reaches further than you think.
-118. Ambition can be kind.
-119. Kind days are coming.
-120. You are worthy of belonging.
-121. Hope softens the sharp edges.
-122. Strength returns after rest.
-123. Believe in your becoming.
-124. Your heart remains open.
-125. Warmth finds those who seek it.
-126. Let ease be welcome.
-127. You carry more resilience than fear.
-128. Progress is still progress.
-129. Kindness is a daily practice.
-130. You deserve to feel grounded.
-131. Trust the next right step.
-132. Grace is never far.
-133. Feel the quiet support.
-134. Ambition grows with care.
-135. You are allowed to take up space.
-136. Soft strength is lasting strength.
-137. Keep faith in gradual change.
-138. Your presence brings value.
-139. Hope walks beside you.
-140. You are becoming who you hoped.
-141. Let kindness return to you.
-142. Good luck stays nearby.
-143. Believe the encouraging voice.
-144. Your story continues with care.
-145. Warm thoughts for what comes next.
-146. You hold steady through change.
-147. Feel free to move slowly.
-148. Strength is built in ordinary moments.
-149. You deserve soft moments.
-150. Trust what is growing.
-151. Grace accompanies effort.
-152. Keep the door ajar for joy.
-153. Your light is steady.
-154. Kindness multiplies quietly.
-155. You are held by unseen care.
-156. Hope renews itself.
-157. Let rest be productive too.
-158. Ambition needs no rush.
-159. You carry wisdom in your bones.
-160. Soft days restore the spirit.
-161. Feel proud of continuing.
-162. Good things gather slowly.
-163. Believe in gentle progress.
-164. Your path is valid.
-165. Trust the small advances.
-166. Resilience lives in recovery.
-167. You belong in hopeful places.
-168. Kind thoughts protect you.
-169. Let courage arrive quietly.
-170. Strength shows in patience.
-171. You deserve ease and care.
-172. Hope is practical too.
-173. Your efforts create ripples.
-174. Good fortune is friendly.
-175. Ambition can rest and rise.
-176. Trust the process of becoming.
-177. Kindness finds its way home.
-178. Let gratitude lighten the load.
-179. Resilience is a daily companion.
-180. Warm thoughts guide the way.
-181. You deserve to feel supported.
-182. Hope stays loyal.
-183. Keep faith in your capacity.
-184. Strength returns with intention.
-185. Feel free to begin again.
-186. Good things are aligning gently.
-187. Believe in your steady heart.
-188. You carry light through dark.
-189. Soft landings are possible.
-190. Trust the next chapter.
-191. Kindness is strength in action.
-192. You are held more than you realise.
-193. Ambition thrives on care.
-194. Let ease enter freely.
-195. Resilience rebuilds quietly.
-196. Warmth is always available.
-197. Keep the pace that suits you.
-198. Good luck walks with open hearts.
-199. Believe the kind possibilities.
-200. Your light continues.
-201. Soft strength carries far.
-202. Trust what feels aligned.
-203. Kind days gather momentum.
-204. You deserve peaceful moments.
-205. Grace is present now.
-206. Let rest renew everything.
-207. You hold more power than fear.
-208. Resilience is practiced in small ways.
-209. Warm thoughts for the journey.
-210. You are enough for what comes.
-211. Hope is a reliable guide.
-212. Your value remains constant.
-213. Feel the quiet encouragement.
-214. Good things find their place.
-215. You carry enduring courage.
-216. Soft progress counts fully.
-217. Trust the support that exists.
-218. Kindness returns multiplied.
-219. You are held in ordinary moments.
-220. Ambition can be sustainable.
-221. Your path holds quiet promise.
-222. Warmth surrounds the willing.
-223. You deserve to feel hopeful.
-224. Hope rebuilds with each step.
-225. Keep showing care inward.
-226. Feel free to protect peace.
-227. Strength grows through kindness.
-228. Good fortune leans close.
-229. Believe in the work of rest.
-230. Your presence is meaningful.
-231. Kind thoughts are anchors.
-232. Let ease be part of ambition.
-233. Resilience shows in recovery.
-234. Warm thoughts for what awaits.
-235. You are worthy of good fortune.
-236. Keep faith in small victories.
-237. Your light reaches outward.
-238. Strength is found in softness.
-239. Feel proud of arriving here.
-240. Believe the encouraging truths.
-241. You carry quiet determination.
-242. Soft beginnings matter.
-243. Trust your capacity to adapt.
-244. Kindness is a form of strength.
-245. You are held through change.
-246. Ambition needs no perfection.
-247. Let rest be honoured.
-248. Your story continues hopefully.
-249. Resilience is lived daily.
-250. Warmth finds you again.
-251. You deserve gentle progress.
-252. Hope is always nearby.
-253. Feel the support available.
-254. Strength returns after pauses.
-255. You are enough in this moment.
-256. Believe in quiet power.
-257. Soft days have purpose.
-258. Trust the next gentle step.
-259. Kindness multiplies easily.
-260. You hold more light than doubt.
-261. Let courage be patient.
-262. Resilience lives in ordinary acts.
-263. Warm thoughts accompany you.
-264. Keep room for joy.
-265. Your presence brings calm.
-266. Strength shows in continuing.
-267. Feel free to move at your speed.
-268. Believe in your steady growth.
-269. You carry enduring hope.
-270. Trust what is forming.
-271. Kind days are returning.
-272. You deserve to feel loved.
-273. Grace meets you daily.
-274. Let ease restore balance.
-275. Resilience rebuilds with care.
-276. You are held by more than fear.
-277. Keep faith in the process.
-278. Feel proud of persistence.
-279. Good fortune stays near.
-280. Believe the soft encouragements.
-281. Soft strength endures longest.
-282. Trust the ground beneath.
-283. Kindness protects and builds.
-284. Hope is a daily practice.
-285. Let gratitude open doors.
-286. Your light is consistent.
-287. Strength grows in patience.
-288. Feel the quiet belonging.
-289. Good things find open space.
-290. Believe in second winds.
-291. You carry resilience forward.
-292. Soft progress is real progress.
-293. Trust the care around you.
-294. Kind thoughts steady the heart.
-295. Ambition thrives gently.
-296. Let rest deepen strength.
-297. Your story has bright pages ahead.
-298. Resilience is present now.
-299. Warm thoughts for every step.
-300. You deserve soft victories.
-301. Hope walks at your side.
-302. Feel free to claim ease.
-303. Strength lives in recovery.
-304. You hold more capacity than worry.
-305. Good luck favours the steady.
-306. Believe in gradual light.
-307. Your presence is a quiet gift.
-308. Trust the next kind action.
-309. Kindness returns in unexpected ways.
-310. You are held through ordinary days.
-311. Ambition needs kindness too.
-312. Let peace settle in.
-313. Your path continues with meaning.
-314. Resilience is practiced and real.
-315. You are enough, fully.
-316. Hope renews without demand.
-317. Feel proud of the quiet work.
-318. Strength returns with each choice.
-319. You carry light worth sharing.
-320. Soft beginnings lead somewhere.
-321. Trust your inner steadiness.
-322. Kind days build on each other.
-323. You deserve moments of pure ease.
-324. Grace is close at hand.
-325. Let courage arrive in its time.
-326. Your heart knows resilience.
-327. Believe in the power of continuing.
-328. You hold quiet, lasting strength.
-329. Hope remains a true companion.
-330. Keep faith in what is growing.
-331. Feel the support that stays.
-332. Strength shows in gentle persistence.
-333. You are becoming more whole.
-334. Trust the kindness available.
-335. You are loved in quiet ways.
+59. Gratitude softens the hard days.
+60. Luck likes open hearts.
+61. You hold more light than you see.
+62. It's okay to take the slow path.
+63. Believe the kind words.
+64. Resilience lives in ordinary days.
+65. Small wins build real strength.
+66. Courage shows up in whispers.
+67. Let today be enough.
+68. Good fortune walks with you.
+69. Be patient with the process.
+70. You carry quiet greatness.
+71. Kindness returns in time.
+72. Feel free to start fresh.
+73. Ambition needs rest too.
+74. Keep believing in better.
+75. Your light is still shining.
+76. Grace meets you where you are.
+77. Progress doesn't always shout.
+78. You are becoming stronger.
+79. Keep the faith in small things.
+80. You are more than the hard moments.
+81. Your efforts ripple outward.
+82. Kindness is never wasted.
+83. Hope stays close by.
+84. Strength returns with each breath.
+85. Trust the next small step.
+86. Ambition looks different on everyone.
+87. Kind thoughts guide you well.
+88. Hope rebuilds what feels broken.
+89. Keep faith in the unseen growth.
+90. Strength lives in continuing.
+91. Your story has room to expand.
+92. Warmth returns when needed.
+93. Resilience is practiced daily.
+94. Trust your inner knowing.
+95. Small acts build real change.
+96. Feel free to protect your energy.
+97. Ambition thrives with patience.
+98. Good fortune leans toward you.
+99. Your effort is seen.
+100. Grace meets effort halfway.
+101. Let rest restore you fully.
+102. Strength shows in softness too.
+103. Warm thoughts surround you.
+104. Believe in second chances.
+105. You deserve gentle treatment.
+106. Hope is a steady friend.
+107. Keep showing care to yourself.
+108. Your path holds meaning.
+109. Luck favours open hands.
+110. Feel the support that exists.
+111. You are more capable than doubt says.
+112. Let today unfold kindly.
+113. Resilience lives in your choices.
+114. You belong to brighter seasons.
+115. Gratitude anchors the present.
+116. Your light reaches further than you think.
+117. Ambition can be kind.
+118. Kind days are coming.
+119. You are worthy of belonging.
+120. Hope softens the sharp edges.
+121. Strength returns after rest.
+122. Believe in your becoming.
+123. Your heart remains open.
+124. Warmth finds those who seek it.
+125. Let ease be welcome.
+126. You carry more resilience than fear.
+127. Progress is still progress.
+128. Kindness is a daily practice.
+129. You deserve to feel grounded.
+130. Trust the next right step.
+131. Grace is never far.
+132. Feel the quiet support.
+133. Ambition grows with care.
+134. You are allowed to take up space.
+135. Soft strength is lasting strength.
+136. Keep faith in gradual change.
+137. Your presence brings value.
+138. Hope walks beside you.
+139. Let kindness return to you.
+140. Good luck stays nearby.
+141. Believe the encouraging voice.
+142. Your story continues with care.
+143. Warm thoughts for what comes next.
+144. You hold steady through change.
+145. Feel free to move slowly.
+146. Strength is built in ordinary moments.
+147. You deserve soft moments.
+148. Trust what is growing.
+149. Grace accompanies effort.
+150. Keep the door ajar for joy.
+151. Your light is steady.
+152. Kindness multiplies quietly.
+153. You are held by unseen care.
+154. Hope renews itself.
+155. Let rest be productive too.
+156. Ambition needs no rush.
+157. You carry wisdom in your bones.
+158. Soft days restore the spirit.
+159. Feel proud of continuing.
+160. Good things gather slowly.
+161. Believe in gentle progress.
+162. Your path is valid.
+163. Trust the small advances.
+164. Resilience lives in recovery.
+165. You belong in hopeful places.
+166. Kind thoughts protect you.
+167. Let courage arrive quietly.
+168. Strength shows in patience.
+169. You deserve ease and care.
+170. Hope is practical too.
+171. Your efforts create ripples.
+172. Good fortune is friendly.
+173. Ambition can rest and rise.
+174. Trust the process of becoming.
+175. Kindness finds its way home.
+176. Let gratitude lighten the load.
+177. Resilience is a daily companion.
+178. Warm thoughts guide the way.
+179. You deserve to feel supported.
+180. Hope stays loyal.
+181. Keep faith in your capacity.
+182. Strength returns with intention.
+183. Feel free to begin again.
+184. Good things are aligning gently.
+185. Believe in your steady heart.
+186. You carry light through dark.
+187. Soft landings are possible.
+188. Trust the next chapter.
+189. Kindness is strength in action.
+190. You are held more than you realise.
+191. Ambition thrives on care.
+192. Let ease enter freely.
+193. Resilience rebuilds quietly.
+194. Warmth is always available.
+195. Keep the pace that suits you.
+196. Good luck walks with open hearts.
+197. Believe the kind possibilities.
+198. Your light continues.
+199. Soft strength carries far.
+200. Trust what feels aligned.
+201. Kind days gather momentum.
+202. You deserve peaceful moments.
+203. Grace is present now.
+204. Let rest renew everything.
+205. You hold more power than fear.
+206. Resilience is practiced in small ways.
+207. Warm thoughts for the journey.
+208. You are enough for what comes.
+209. Hope is a reliable guide.
+210. Your value remains constant.
+211. Feel the quiet encouragement.
+212. Good things find their place.
+213. You carry enduring courage.
+214. Soft progress counts fully.
+215. Trust the support that exists.
+216. Kindness returns multiplied.
+217. You are held in ordinary moments.
+218. Ambition can be sustainable.
+219. Your path holds quiet promise.
+220. Warmth surrounds the willing.
+221. You deserve to feel hopeful.
+222. Hope rebuilds with each step.
+223. Keep showing care inward.
+224. Feel free to protect peace.
+225. Strength grows through kindness.
+226. Good fortune leans close.
+227. Believe in the work of rest.
+228. Your presence is meaningful.
+229. Kind thoughts are anchors.
+230. Let ease be part of ambition.
+231. Resilience shows in recovery.
+232. Warm thoughts for what awaits.
+233. You are worthy of good fortune.
+234. Keep faith in small victories.
+235. Your light reaches outward.
+236. Strength is found in softness.
+237. Feel proud of arriving here.
+238. Believe the encouraging truths.
+239. You carry quiet determination.
+240. Soft beginnings matter.
+241. Trust your capacity to adapt.
+242. Kindness is a form of strength.
+243. You are held through change.
+244. Ambition needs no perfection.
+245. Let rest be honoured.
+246. Your story continues hopefully.
+247. Resilience is lived daily.
+248. Warmth finds you again.
+249. You deserve gentle progress.
+250. Hope is always nearby.
+251. Feel the support available.
+252. Strength returns after pauses.
+253. You are enough in this moment.
+254. Believe in quiet power.
+255. Soft days have purpose.
+256. Trust the next gentle step.
+257. Kindness multiplies easily.
+258. You hold more light than doubt.
+259. Let courage be patient.
+260. Resilience lives in ordinary acts.
+261. Warm thoughts accompany you.
+262. Keep room for joy.
+263. Your presence brings calm.
+264. Strength shows in continuing.
+265. Feel free to move at your speed.
+266. Believe in your steady growth.
+267. You carry enduring hope.
+268. Trust what is forming.
+269. Kind days are returning.
+270. You deserve to feel loved.
+271. Grace meets you daily.
+272. Let ease restore balance.
+273. Resilience rebuilds with care.
+274. You are held by more than fear.
+275. Keep faith in the process.
+276. Feel proud of persistence.
+277. Good fortune stays near.
+278. Believe the soft encouragements.
+279. Soft strength endures longest.
+280. Trust the ground beneath.
+281. Kindness protects and builds.
+282. Hope is a daily practice.
+283. Let gratitude open doors.
+284. Your light is consistent.
+285. Strength grows in patience.
+286. Feel the quiet belonging.
+287. Good things find open space.
+288. Believe in second winds.
+289. You carry resilience forward.
+290. Soft progress is real progress.
+291. Trust the care around you.
+292. Kind thoughts steady the heart.
+293. Ambition thrives gently.
+294. Let rest deepen strength.
+295. Your story has bright pages ahead.
+296. Resilience is present now.
+297. Warm thoughts for every step.
+298. You deserve soft victories.
+299. Hope walks at your side.
+300. Feel free to claim ease.
+301. Strength lives in recovery.
+302. You hold more capacity than worry.
+303. Good luck favours the steady.
+304. Believe in gradual light.
+305. Your presence is a quiet gift.
+306. Trust the next kind action.
+307. Kindness returns in unexpected ways.
+308. You are held through ordinary days.
+309. Ambition needs kindness too.
+310. Let peace settle in.
+311. Your path continues with meaning.
+312. Resilience is practiced and real.
+313. You are enough, fully.
+314. Hope renews without demand.
+315. Feel proud of the quiet work.
+316. Strength returns with each choice.
+317. You carry light worth sharing.
+318. Soft beginnings lead somewhere.
+319. Trust your inner steadiness.
+320. Kind days build on each other.
+321. You deserve moments of pure ease.
+322. Grace is close at hand.
+323. Let courage arrive in its time.
+324. Your heart knows resilience.
+325. Believe in the power of continuing.
+326. You hold quiet, lasting strength.
+327. Hope remains a true companion.
+328. Keep faith in what is growing.
+329. Feel the support that stays.
+330. Strength shows in gentle persistence.
+331. You are becoming more whole.
+332. Trust the kindness available.
+333. You are loved in quiet ways.

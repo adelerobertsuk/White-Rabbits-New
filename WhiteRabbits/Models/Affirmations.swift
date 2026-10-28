@@ -4,7 +4,7 @@
 //
 //  One quiet line a day. Secular, light, no homework.
 //  A continuous day-counter picks the line (days since a fixed epoch, mod
-//  the bank size), so the whole 1,034-line start bank rotates through over time
+//  the bank size), so the whole 1,026-line start bank rotates through over time
 //  instead of resetting every January 1st.
 //  Tone: personal Instagram-positive luck (curated from Reference/affirmations).
 //
@@ -41,7 +41,7 @@ enum Affirmations {
         return line(for: date)
     }
 
-    /// 1,034 lines, reviewed by Adele 27 Oct 2026. See White-Rabbits-Affirmations-Start-Bank.md for the source bank.
+    /// 1,026 lines, reviewed by Adele 28 Oct 2026. See White-Rabbits-Affirmations-Start-Bank.md for the source bank.
     static let all: [String] = [
         "You can do hard things.",
         "Your kindness matters more than you know.",
@@ -211,7 +211,6 @@ enum Affirmations {
         "It is okay to want more.",
         "You hold quiet greatness within.",
         "Believe the kind words.",
-        "More you every single day.",
         "Take today one honest step at a time.",
         "You bring something irreplaceable to the people around you.",
         "Give yourself permission to pause and reflect.",
@@ -247,7 +246,6 @@ enum Affirmations {
         "Courage shows up in whispers.",
         "Be proud of your soft spots. They make you human.",
         "Luck tends to favour those who stay curious.",
-        "Closer than you were yesterday.",
         "Your story has room for wonder.",
         "Held by more love than you see.",
         "There is dignity in an ordinary, honest effort.",
@@ -263,7 +261,6 @@ enum Affirmations {
         "Take your time here, it is allowed.",
         "Good luck is circling near.",
         "Trust the next small step.",
-        "You are becoming who you need.",
         "Release the need to control how it all unfolds.",
         "Good things find their place.",
         "Trust the slow unfolding a little more.",
@@ -406,7 +403,6 @@ enum Affirmations {
         "Let gratitude steady the day.",
         "Great things are built from tiny, regular habits.",
         "A calm head makes every problem smaller.",
-        "Becoming your next good chapter already.",
         "Take heart in your own steady progress.",
         "Resilience lives in your choices.",
         "Closer to good news than you think.",
@@ -502,7 +498,6 @@ enum Affirmations {
         "Keep faith in your capacity.",
         "Trust your own light a little more.",
         "You are deserving of deep, uninterrupted rest.",
-        "What’s meant for you, won’t pass you by.",
         "Hope walks beside you.",
         "Braver with every try.",
         "Your story continues with care.",
@@ -560,7 +555,6 @@ enum Affirmations {
         "Take pride in how hard you've worked in secret.",
         "Steady effort attracts good luck.",
         "Proud of trying, that counts too.",
-        "You are becoming who you hoped.",
         "At home in your own life, more and more.",
         "Resilience rebuilds quietly.",
         "Trust yourself to handle whatever arrives today.",
@@ -708,7 +702,6 @@ enum Affirmations {
         "Trust your own becoming a little more.",
         "Leave what feels heavy when you can.",
         "Take pleasure in the quiet moments today.",
-        "Beautiful with small, honest choices.",
         "You are worthy of good fortune.",
         "Keep your heart ready, good things are coming.",
         "Hold steady. Better conditions are on the horizon.",
@@ -820,7 +813,6 @@ enum Affirmations {
         "Resilience is present now.",
         "Keep faith in the process.",
         "Warmth is always available.",
-        "More loved than yesterday knows.",
         "Closer to peace than you think.",
         "Your inner calm is your greatest advantage today.",
         "You are worthy of being treated with utter kindness.",
