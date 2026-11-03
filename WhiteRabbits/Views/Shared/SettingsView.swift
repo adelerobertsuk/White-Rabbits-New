@@ -85,16 +85,15 @@ struct SettingsView: View {
         .alert(String(localized: "settings.importFailed", defaultValue: "That file couldn't be read."), isPresented: $importFailed) {
             Button(String(localized: "settings.ok", defaultValue: "OK"), role: .cancel) {}
         }
-        .confirmationDialog(
+        .alert(
             String(localized: "settings.resetConfirm.title", defaultValue: "Clear everything on this device?"),
-            isPresented: $showResetConfirm,
-            titleVisibility: .visible
+            isPresented: $showResetConfirm
         ) {
+            Button(String(localized: "settings.cancel", defaultValue: "Cancel"), role: .cancel) {}
             Button(String(localized: "settings.resetConfirm.action", defaultValue: "Clear this device"), role: .destructive) {
                 store.resetDevice()
                 dismiss()
             }
-            Button(String(localized: "settings.cancel", defaultValue: "Cancel"), role: .cancel) {}
         } message: {
             Text(String(localized: "settings.resetConfirm.body", defaultValue: "Stamps and settings will be gone for good."))
         }
@@ -177,7 +176,7 @@ struct SettingsView: View {
             }
             HStack {
                 Spacer()
-                SanctuaryToggle(isOn: Binding(get: { store.alarmEnabled }, set: { store.setAlarmEnabled($0) }))
+                SanctuaryToggle(label: "White Rabbits alarm", isOn: Binding(get: { store.alarmEnabled }, set: { store.setAlarmEnabled($0) }))
             }
             .padding(.top, 10)
         }
@@ -233,6 +232,10 @@ struct SettingsView: View {
                 .submitLabel(.done)
                 .onSubmit { store.setIntention(intention) }
                 .onChange(of: intention) { _, newValue in
+                    if newValue.count > 120 {
+                        intention = String(newValue.prefix(120))
+                        return
+                    }
                     store.setIntention(newValue)
                 }
             }
@@ -376,7 +379,7 @@ struct SettingsView: View {
                     .foregroundStyle(palette.muted)
             }
             Spacer()
-            SanctuaryToggle(isOn: isOn)
+            SanctuaryToggle(label: title, isOn: isOn)
         }
         .padding(.vertical, 16)
         .overlay(alignment: .top) {

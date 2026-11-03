@@ -93,6 +93,7 @@ struct PillButtonStyle: ButtonStyle {
 /// A little switch: a 48x30 capsule track that turns ink-colored when on,
 /// with a sliding card-colored knob.
 struct SanctuaryToggle: View {
+    let label: String
     @Binding var isOn: Bool
     @Environment(\.palette) private var palette
 
@@ -116,5 +117,10 @@ struct SanctuaryToggle: View {
                 .animation(.easeOut(duration: 0.2), value: isOn)
         }
         .buttonStyle(.plain)
+        .accessibilityLabel(label)
+        .accessibilityValue(isOn
+            ? String(localized: "toggle.on", defaultValue: "On")
+            : String(localized: "toggle.off", defaultValue: "Off"))
+        .accessibilityAddTraits(.isToggle)
     }
 }

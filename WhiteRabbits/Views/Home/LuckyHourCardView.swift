@@ -34,6 +34,7 @@ struct LuckyHourCardView: View {
                 }
                 Spacer()
                 SanctuaryToggle(
+                    label: String(localized: "luckyHour.toggle", defaultValue: "Your lucky minute"),
                     isOn: Binding(
                         get: { store.luckyHourEnabled },
                         set: { store.setLuckyHourEnabled($0) }

@@ -46,6 +46,7 @@ struct AlarmCardView: View {
                 }
                 Spacer()
                 SanctuaryToggle(
+                    label: String(localized: "alarm.toggle", defaultValue: "White Rabbits alarm"),
                     isOn: Binding(
                         get: { store.alarmEnabled },
                         set: { store.setAlarmEnabled($0) }
