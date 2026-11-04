@@ -70,7 +70,15 @@ final class NotificationLineTests: XCTestCase {
             "Your heart has room for new joys.",
             "There’s joy in being wonderfully human.",
         ]
-        XCTAssertEqual(Array(bank.prefix(18)), front)
+        XCTAssertEqual(Array(bank[172..<177]), Array(front.prefix(5)))
+        for line in front {
+            let index = bank.firstIndex(of: line)
+            XCTAssertNotNil(index, line)
+            XCTAssertGreaterThanOrEqual(index ?? -1, 172, line)
+            XCTAssertLessThanOrEqual(index ?? 999, 204, line)
+        }
+        XCTAssertEqual(Affirmations.line(for: date(2026, 11, 4)), front[0])
+        XCTAssertEqual(Affirmations.line(for: date(2026, 11, 5)), front[1])
 
         let luck = bank.firstIndex(of: "Good luck looks lovely on you.")
         let wishes = bank.firstIndex(of: "Some of your wishes are already memories.")
