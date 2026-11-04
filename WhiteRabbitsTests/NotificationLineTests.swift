@@ -46,12 +46,62 @@ final class NotificationLineTests: XCTestCase {
     }
 
     func testReviewedBankHas500UniqueAffirmations() {
-        XCTAssertEqual(Affirmations.all.count, 500)
-        XCTAssertEqual(Set(Affirmations.all).count, 500)
-        XCTAssertTrue(Affirmations.all.contains("The stars are quietly rooting for you."))
-        XCTAssertTrue(Affirmations.all.contains("Good things are finding their way to you."))
-        XCTAssertTrue(Affirmations.all.contains("Resilience lives in ordinary days."))
-        XCTAssertFalse(Affirmations.all.contains("Good things are drawn to your care."))
-        XCTAssertFalse(Affirmations.all.contains("You deserve to feel hopeful."))
+        let bank = Affirmations.all
+        XCTAssertEqual(bank.count, 500)
+        XCTAssertEqual(Set(bank).count, 500)
+
+        let front = [
+            "Your kindness is never a small thing.",
+            "There’s still time for something extraordinary.",
+            "A beautiful life has many shapes.",
+            "Your best chapters aren’t behind you.",
+            "The love you give matters.",
+            "Life has more colours than this moment.",
+            "Your dreams matter even before they happen.",
+            "The little things count as living.",
+            "The world is better with you in it.",
+            "Beautiful things happen in imperfect lives.",
+            "Your joy can be quiet and still be beautiful.",
+            "Big dreams belong to ordinary people, too.",
+            "Your little corner of the world matters.",
+            "There’s more than one road to happiness.",
+            "Your life doesn’t need an audience to matter.",
+            "A hopeful heart is a beautiful thing.",
+            "Your heart has room for new joys.",
+            "There’s joy in being wonderfully human.",
+        ]
+        XCTAssertEqual(Array(bank.prefix(18)), front)
+
+        let luck = bank.firstIndex(of: "Good luck looks lovely on you.")
+        let wishes = bank.firstIndex(of: "Some of your wishes are already memories.")
+        XCTAssertEqual(luck, 255)
+        XCTAssertEqual(wishes, 410)
+
+        for favourite in [
+            "The stars are quietly rooting for you.",
+            "Good things are finding their way to you.",
+            "Resilience lives in ordinary days.",
+        ] {
+            XCTAssertTrue(bank.contains(favourite), favourite)
+        }
+        XCTAssertFalse(bank.contains("Good things are drawn to your care."))
+        XCTAssertFalse(bank.contains("Something lovely is on its way."))
+
+        for line in bank {
+            let words = line.split(whereSeparator: \.isWhitespace)
+            XCTAssertLessThanOrEqual(words.count, 12, line)
+            XCTAssertFalse(words.isEmpty, line)
+        }
+
+        func opening(_ line: String) -> [String] {
+            Array(line.split(whereSeparator: \.isWhitespace).prefix(2)).map { $0.lowercased() }
+        }
+        for index in bank.indices {
+            let start = opening(bank[index])
+            let end = min(bank.count, index + 4)
+            for later in (index + 1)..<end {
+                XCTAssertNotEqual(start, opening(bank[later]), "\(bank[index]) / \(bank[later])")
+            }
+        }
     }
 }
