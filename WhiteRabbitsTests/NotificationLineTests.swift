@@ -45,10 +45,13 @@ final class NotificationLineTests: XCTestCase {
         XCTAssertEqual(Affirmations.dailyLine(for: first, greetingDue: false, intention: ""), Affirmations.line(for: first))
     }
 
-    func testReviewedBankHas401UniqueAffirmations() {
-        XCTAssertEqual(Affirmations.all.count, 401)
-        XCTAssertEqual(Set(Affirmations.all).count, 401)
+    func testReviewedBankHas500UniqueAffirmations() {
+        XCTAssertEqual(Affirmations.all.count, 500)
+        XCTAssertEqual(Set(Affirmations.all).count, 500)
+        XCTAssertTrue(Affirmations.all.contains("The stars are quietly rooting for you."))
         XCTAssertTrue(Affirmations.all.contains("Good things are finding their way to you."))
+        XCTAssertTrue(Affirmations.all.contains("Resilience lives in ordinary days."))
         XCTAssertFalse(Affirmations.all.contains("Good things are drawn to your care."))
+        XCTAssertFalse(Affirmations.all.contains("You deserve to feel hopeful."))
     }
 }
