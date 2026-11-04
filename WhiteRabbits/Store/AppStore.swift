@@ -83,20 +83,19 @@ final class AppStore: ObservableObject {
         monthRecord(date)?.completed ?? false
     }
 
-    var intention: String {
-        monthRecord()?.intention?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+    var intention: String { intention(for: Date()) }
+
+    func intention(for date: Date) -> String {
+        monthRecord(date)?.intention?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
     }
 
     /// The quiet line under the bunny on Home, and on the lucky-minute share card.
     func dailyGiftLine(for date: Date = Date()) -> String {
-        if isFirstOfMonth(date) && !ritualCompleted(date) {
-            return String(localized: "greeting.ritual", defaultValue: "White Rabbits, White Rabbits!")
-        }
-        let day = Calendar.current.component(.day, from: date)
-        if (day == 7 || day == 14 || day == 21), !intention.isEmpty {
-            return intention
-        }
-        return Affirmations.line(for: date)
+        Affirmations.dailyLine(
+            for: date,
+            greetingDue: isFirstOfMonth(date) && !ritualCompleted(date),
+            intention: intention(for: date)
+        )
     }
 
     var hasHandledCurrentMonthIntentionPrompt: Bool {
@@ -299,7 +298,7 @@ final class AppStore: ObservableObject {
         }
     }
 
-    private func upcomingLuckyHourEntries(from now: Date = Date(), days: Int = 7) -> [(fireDate: Date, body: String)] {
+    func upcomingLuckyHourEntries(from now: Date = Date(), days: Int = 7) -> [(fireDate: Date, body: String)] {
         let calendar = Calendar.current
         var entries: [(fireDate: Date, body: String)] = []
         for offset in 0..<days {

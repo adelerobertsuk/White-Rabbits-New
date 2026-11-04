@@ -10,9 +10,18 @@
 		4E5099801F31CF479EE21276 /* WhiteRabbitsUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88AFA69FCA01A4699BCC58F7 /* WhiteRabbitsUITests.swift */; };
 		8622ED54185B23BB4FA62D5F /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 437904A366E441EDFF89C7D3 /* Foundation.framework */; };
 		8A11E20B30304D3900138B9D /* WhiteRabbitsWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8A11E20130304D3900138B9D /* WhiteRabbitsWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		9A11E0B12EFD89BFA1975DDE /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 437904A366E441EDFF89C7D3 /* Foundation.framework */; };
+		F18CC75E363433552F85DE19 /* NotificationLineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F210FAFDA8F18AAEAB5ED54 /* NotificationLineTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		17C8E3634DD9BDDA8CED3D5A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7FF37E0E30304D3900138B9D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7FF37E1530304D3900138B9D;
+			remoteInfo = WhiteRabbits;
+		};
 		8A11E20C30304D3900138B9D /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 7FF37E0E30304D3900138B9D /* Project object */;
@@ -44,10 +53,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		0F210FAFDA8F18AAEAB5ED54 /* NotificationLineTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NotificationLineTests.swift; sourceTree = "<group>"; };
 		437904A366E441EDFF89C7D3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS26.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		7FF37E1630304D3900138B9D /* WhiteRabbits.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhiteRabbits.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		88AFA69FCA01A4699BCC58F7 /* WhiteRabbitsUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = WhiteRabbitsUITests.swift; sourceTree = "<group>"; };
 		8A11E20130304D3900138B9D /* WhiteRabbitsWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = WhiteRabbitsWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		AFAFAF068F7608BCE423DCDF /* WhiteRabbitsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhiteRabbitsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DF630A169971A86983DA5322 /* WhiteRabbitsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhiteRabbitsUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -101,6 +112,14 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		111887F5A337814B78B5E948 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9A11E0B12EFD89BFA1975DDE /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		7FF37E1330304D3900138B9D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -142,6 +161,15 @@
 			name = iOS;
 			sourceTree = "<group>";
 		};
+		760CEF9115F428E417F65A5A /* WhiteRabbitsTests */ = {
+			isa = PBXGroup;
+			children = (
+				0F210FAFDA8F18AAEAB5ED54 /* NotificationLineTests.swift */,
+			);
+			name = WhiteRabbitsTests;
+			path = WhiteRabbitsTests;
+			sourceTree = "<group>";
+		};
 		7FF37E0D30304D3900138B9D = {
 			isa = PBXGroup;
 			children = (
@@ -150,6 +178,7 @@
 				7FF37E1730304D3900138B9D /* Products */,
 				2BCDB55EC1D83E1E101C80E1 /* Frameworks */,
 				C1B1B19B852D38CDDBC753E1 /* WhiteRabbitsUITests */,
+				760CEF9115F428E417F65A5A /* WhiteRabbitsTests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -159,6 +188,7 @@
 				7FF37E1630304D3900138B9D /* WhiteRabbits.app */,
 				8A11E20130304D3900138B9D /* WhiteRabbitsWidget.appex */,
 				DF630A169971A86983DA5322 /* WhiteRabbitsUITests.xctest */,
+				AFAFAF068F7608BCE423DCDF /* WhiteRabbitsTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -175,6 +205,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		4613E1734E4D26519DA93ADE /* WhiteRabbitsTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D148F1AEA953E230FBE3E52F /* Build configuration list for PBXNativeTarget "WhiteRabbitsTests" */;
+			buildPhases = (
+				92EE5D20152B8C270AFFCA25 /* Sources */,
+				111887F5A337814B78B5E948 /* Frameworks */,
+				E815A5496FBFB2040D727456 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8EEBE823DC5FBF1BCBAF9FD9 /* PBXTargetDependency */,
+			);
+			name = WhiteRabbitsTests;
+			productName = WhiteRabbitsTests;
+			productReference = AFAFAF068F7608BCE423DCDF /* WhiteRabbitsTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		7FF37E1530304D3900138B9D /* WhiteRabbits */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7FF37E2130304D3A00138B9D /* Build configuration list for PBXNativeTarget "WhiteRabbits" */;
@@ -270,6 +318,7 @@
 				7FF37E1530304D3900138B9D /* WhiteRabbits */,
 				8A11E20230304D3900138B9D /* WhiteRabbitsWidget */,
 				DCF7F0490653DDE83A24D7A5 /* WhiteRabbitsUITests */,
+				4613E1734E4D26519DA93ADE /* WhiteRabbitsTests */,
 			);
 		};
 /* End PBXProject section */
@@ -283,6 +332,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		8A11E20630304D3900138B9D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E815A5496FBFB2040D727456 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -313,6 +369,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		92EE5D20152B8C270AFFCA25 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F18CC75E363433552F85DE19 /* NotificationLineTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F5329C1F13142C41D9E59B06 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -328,6 +392,12 @@
 			isa = PBXTargetDependency;
 			target = 8A11E20230304D3900138B9D /* WhiteRabbitsWidget */;
 			targetProxy = 8A11E20C30304D3900138B9D /* PBXContainerItemProxy */;
+		};
+		8EEBE823DC5FBF1BCBAF9FD9 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = WhiteRabbits;
+			target = 7FF37E1530304D3900138B9D /* WhiteRabbits */;
+			targetProxy = 17C8E3634DD9BDDA8CED3D5A /* PBXContainerItemProxy */;
 		};
 		C27D6739A62157E45D3C181C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -350,6 +420,23 @@
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TEST_TARGET_NAME = WhiteRabbits;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		68941C12F89F25CE18EF6422 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.whiterabbits.WhiteRabbitsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WhiteRabbits.app/WhiteRabbits";
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -483,7 +570,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 29;
 				DEVELOPMENT_TEAM = FVJG2288UR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -524,7 +611,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 29;
 				DEVELOPMENT_TEAM = FVJG2288UR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -563,7 +650,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 29;
 				DEVELOPMENT_TEAM = FVJG2288UR;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WhiteRabbitsWidget/Info.plist;
@@ -596,7 +683,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 28;
+				CURRENT_PROJECT_VERSION = 29;
 				DEVELOPMENT_TEAM = FVJG2288UR;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WhiteRabbitsWidget/Info.plist;
@@ -624,6 +711,22 @@
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
+		};
+		D3C4E5E002B0E0D335F0EC87 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.whiterabbits.WhiteRabbitsTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WhiteRabbits.app/WhiteRabbits";
+			};
+			name = Debug;
 		};
 		EAE95DDA6A971E417BC52535 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -675,6 +778,15 @@
 			buildConfigurations = (
 				8A11E20730304D3900138B9D /* Debug */,
 				8A11E20830304D3900138B9D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D148F1AEA953E230FBE3E52F /* Build configuration list for PBXNativeTarget "WhiteRabbitsTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				68941C12F89F25CE18EF6422 /* Release */,
+				D3C4E5E002B0E0D335F0EC87 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
